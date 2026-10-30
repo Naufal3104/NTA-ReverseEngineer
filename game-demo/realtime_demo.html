@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTA - Realtime Browser Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #1a1a2e; 
+      color: #e8e8f0; 
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+    }
+    #container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #16213e;
+      border-bottom: 1px solid #2a2a4a;
+      flex-shrink: 0;
+    }
+    .resources {
+      display: flex;
+      gap: 20px;
+    }
+    .resource {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+    .resource .icon { font-size: 16px; }
+    .resource .value { font-weight: 600; }
+    .resource .prod { font-size: 11px; color: #4ade80; }
+    #mapContainer {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      background: #0f0f23;
+    }
+    #mapCanvas {
+      display: block;
+      cursor: grab;
+    }
+    #mapCanvas:active {
+      cursor: grabbing;
+    }
+    #bottombar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+      flex-shrink: 0;
+    }
+    #selectedTile {
+      font-size: 14px;
+      color: #ffd700;
+    }
+    #mapInfo {
+      font-size: 12px;
+      color: #a0a0b8;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 8px 16px;
+      background: #0f0f23;
+      border-top: 1px solid #2a2a4a;
+      font-size: 11px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #444;
+    }
+    #buildOptions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .build-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #1f1f3a;
+      border-radius: 6px;
+      border: 1px solid #2a2a4a;
+    }
+    .build-option-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .build-option-name { font-size: 12px; font-weight: 500; }
+    .build-option-cost { font-size: 10px; color: #a0a0b8; }
+    .build-option-cost .icon { color: #ffd700; }
+    .btn-attack {
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #f87171, #ef4444);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn-attack:hover { transform: scale(1.02); }
+    .btn-attack:active { transform: scale(0.98); }
+    .empty-state {
+      text-align: center;
+      color: #6a6a8a;
+      padding: 20px;
+      font-size: 12px;
+    }
+    #seasonInfo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(255,215,0,0.1);
+      border-radius: 20px;
+      border: 1px solid #ffd700;
+    }
+    .season-icon { font-size: 18px; }
+    .season-text { font-weight: 600; color: #ffd700; }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="topbar">
+      <div id="seasonInfo">
+        <span class="season-icon" id="seasonIcon">🌱</span>
+        <span class="season-text" id="seasonText">Spring Day 1</span>
+      </div>
+      <div class="resources" id="resourcesBar">
+        <div class="resource"><span class="icon">🌾</span><span class="value" id="resCrop">500</span><span class="prod" id="prodCrop">+0/s</span></div>
+        <div class="resource"><span class="icon">🪵</span><span class="value" id="resWood">300</span><span class="prod" id="prodWood">+0/s</span></div>
+        <div class="resource"><span class="icon">🪨</span><span class="value" id="resStone">200</span><span class="prod" id="prodStone">+0/s</span></div>
+      </div>
+    </div>
+    
+    <div id="mapContainer">
+      <canvas id="mapCanvas"></canvas>
+      <div id="mapTooltip" style="position:absolute; pointer-events:none; opacity:0; transition:opacity 0.2s; background:#1f1f3a; border:1px solid #ffd700; border-radius:6px; padding:8px 12px; font-size:11px; z-index:20; min-width:140px; box-shadow:0 4px 20px rgba(0,0,0,0.4);"></div>
+    </div>
+    
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#2d5a2d"></div>Sawah</div>
+      <div class="legend-item"><div class="legend-color" style="background:#4a3728"></div>Hutan</div>
+      <div class="legend-item"><div class="legend-color" style="background:#3d3d3d"></div>Tambang</div>
+      <div class="legend-item"><div class="legend-color" style="background:#5a2d2d;border-color:#ffd700"></div>Ibukota</div>
+    </div>
+    
+    <div id="buildOptions"></div>
+    
+    <div id="bottombar">
+      <div id="selectedTile">Pilih tile di peta</div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+(function() {
+  'use strict';
+  
+  // ===== GAME STATE =====
+  const state = {
+    resources: { crop: 500, wood: 300, stone: 200 },
+    production: { crop: 0, wood: 0, stone: 0 },
+    storage: { crop: 10000, wood: 10000, stone: 10000 },
+    season: 0, // 0=spring, 1=summer, 2=autumn, 3=winter
+    seasonDay: 0,
+    seasonTimer: 0,
+    ownedTiles: new Set(['PC']), // Start with player capital
+    tiles: new Map(),
+    selectedTile: null,
+    lastUpdate: performance.now()
+  };
+  
+  // Season config (realtime seconds per season)
+  const SEASON_SECONDS = 30; // 30 seconds per season for demo
+  const SEASONS = [
+    { name: 'Spring', icon: '🌱', bonus: { crop: 20, wood: 0, stone: 0 } },
+    { name: 'Summer', icon: '☀️', bonus: { crop: 0, wood: 20, stone: 0 } },
+    { name: 'Autumn', icon: '🍂', bonus: { crop: 0, wood: 0, stone: 20 } },
+    { name: 'Winter', icon: '❄️', bonus: { crop: -20, wood: -20, stone: -20 } }
+  ];
+  
+  // ===== CANVAS SETUP =====
+  const canvas = document.getElementById('mapCanvas');
+  const ctx = canvas.getContext('2d');
+  const container = document.getElementById('mapContainer');
+  const tooltip = document.getElementById('mapTooltip');
+  
+  const TILE_SIZE = 40;
+  let zoom = 1;
+  let offset = { x: 0, y: 0 };
+  let isDragging = false;
+  let lastMouse = { x: 0, y: 0 };
+  
+  function resize() {
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+  
+  function tileToScreen(col, row) {
+    const centerX = canvas.clientWidth / 2;
+    const centerY = canvas.clientHeight / 2;
+    const isoX = (col - row) * (TILE_SIZE / 2) * zoom;
+    const isoY = (col + row) * (TILE_SIZE / 4) * zoom;
+    return {
+      x: centerX + isoX + offset.x,
+      y: centerY + isoY + offset.y
+    };
+  }
+  
+  function screenToTile(sx, sy) {
+    const centerX = canvas.clientWidth / 2;
+    const centerY = canvas.clientHeight / 2;
+    const relX = sx - offset.x - centerX;
+    const relY = sy - offset.y - centerY;
+    
+    const tileCol = (relX / (TILE_SIZE * zoom) + relY / (TILE_SIZE * zoom * 0.5)) / 2;
+    const tileRow = (relY / (TILE_SIZE * zoom * 0.5) - relX / (TILE_SIZE * zoom)) / 2;
+    
+    return { col: Math.round(tileCol), row: Math.round(tileRow) };
+  }
+  
+  // ===== TILE DATA =====
+  function initTiles() {
+    if (!window.DATA || !window.DATA.map) return;
+    
+    // Add all plots
+    window.DATA.map.plots.forEach(p => {
+      state.tiles.set(p.id, {
+        id: p.id,
+        col: p.col,
+        row: p.row,
+        type: p.res,
+        level: p.level,
+        owner: 'neutral',
+        garrison: 0
+      });
+    });
+    
+    // Add player capital
+    const pc = window.DATA.map.playerCapital;
+    state.tiles.set('PC', {
+      id: 'PC',
+      col: pc.col,
+      row: pc.row,
+      type: 'capital',
+      level: 1,
+      owner: 'player1',
+      garrison: 50
+    });
+    
+    // Add enemy capital
+    const ec = window.DATA.map.enemyCapital;
+    state.tiles.set('EC', {
+      id: 'EC',
+      col: ec.col,
+      row: ec.row,
+      type: 'capital',
+      level: 1,
+      owner: 'enemy',
+      garrison: 50
+    });
+  }
+  
+  // Get tile type display name
+  function getTileTypeName(type) {
+    const names = { crop: 'Sawah', wood: 'Hutan', stone: 'Tambang', capital: 'Ibukota' };
+    return names[type] || type;
+  }
+  
+  // Get tile fill color
+  function getTileColor(type, owner) {
+    if (owner === 'enemy') return '#8B0000';
+    if (owner === 'player1') {
+      if (type === 'capital') return '#5a2d2d';
+      return { crop: '#2d5a2d', wood: '#4a3728', stone: '#3d3d3d' }[type] || '#2d5a2d';
+    }
+    // Neutral
+    return { crop: '#1a3a1a', wood: '#3a2a1a', stone: '#2a2a2a', capital: '#5a2d2d' }[type] || '#1a3a1a';
+  }
+  
+  function drawTile(tile) {
+    const pos = tileToScreen(tile.col, tile.row);
+    const halfSize = TILE_SIZE * zoom;
+    
+    // Draw diamond
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y - halfSize);
+    ctx.lineTo(pos.x + halfSize, pos.y);
+    ctx.lineTo(pos.x, pos.y + halfSize);
+    ctx.lineTo(pos.x - halfSize, pos.y);
+    ctx.closePath();
+    
+    // Fill
+    ctx.fillStyle = getTileColor(tile.type, tile.owner);
+    ctx.fill();
+    
+    // Border
+    const isSelected = state.selectedTile && state.selectedTile.id === tile.id;
+    const isPlayer = tile.owner === 'player1';
+    const isAttackable = state.ownedTiles.has(tile.id) === false && isAttackableTile(tile);
+    
+    if (isSelected) {
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 3;
+    } else if (isAttackable) {
+      ctx.strokeStyle = '#f87171';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+    } else if (isPlayer) {
+      ctx.strokeStyle = '#4ade80';
+      ctx.lineWidth = 2;
+    } else {
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Tile ID
+    ctx.fillStyle = '#fff';
+    ctx.font = `${Math.max(9, 11 * zoom)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tile.id.toUpperCase(), pos.x, pos.y);
+    
+    // Garrison indicator
+    if (tile.garrison > 0) {
+      ctx.fillStyle = tile.owner === 'enemy' ? '#f87171' : '#4ade80';
+      ctx.font = `${Math.max(8, 10 * zoom)}px sans-serif`;
+      ctx.fillText(tile.garrison.toString(), pos.x + halfSize - 8, pos.y - halfSize + 8);
+    }
+  }
+  
+  function isAttackableTile(tile) {
+    // Check if adjacent to any player-owned tile (Manhattan distance <= 6)
+    for (const myId of state.ownedTiles) {
+      const myTile = state.tiles.get(myId);
+      if (!myTile) continue;
+      const dist = Math.abs(tile.col - myTile.col) + Math.abs(tile.row - myTile.row);
+      if (dist <= 6) return true;
+    }
+    return false;
+  }
+  
+  function render() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw all tiles
+    state.tiles.forEach(tile => drawTile(tile));
+  }
+  
+  // ===== EVENT HANDLERS =====
+  canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = 'grabbing';
+  });
+  
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const dx = e.clientX - lastMouse.x;
+      const dy = e.clientY - lastMouse.y;
+      offset.x += dx;
+      offset.y += dy;
+      lastMouse = { x: e.clientX, y: e.clientY };
+      render();
+    } else {
+      const tile = screenToTile(e.clientX, e.clientY);
+      const hovered = findTileAt(tile.col, tile.row);
+      canvas.style.cursor = hovered ? 'pointer' : 'grab';
+      
+      // Show tooltip
+      if (hovered) {
+        tooltip.innerHTML = `
+          <strong>${hovered.id} - ${getTileTypeName(hovered.type)} Lv.${hovered.level}</strong><br>
+          Pemilik: ${hovered.owner === 'player1' ? 'Anda' : hovered.owner === 'enemy' ? 'Musuh' : 'Netral'}<br>
+          Garnisun: ${hovered.garrison} unit
+        `;
+        const rect = container.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - rect.left + 16) + 'px';
+        tooltip.style.top = (e.clientY - rect.top - 80) + 'px';
+        tooltip.style.opacity = '1';
+      } else {
+        tooltip.style.opacity = '0';
+      }
+    }
+  });
+  
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+  });
+  
+  canvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+    tooltip.style.opacity = '0';
+  });
+  
+  canvas.addEventListener('click', (e) => {
+    if (!isDragging) {
+      const tile = screenToTile(e.clientX, e.clientY);
+      const clicked = findTileAt(tile.col, tile.row);
+      if (clicked) {
+        state.selectedTile = clicked;
+        updateSelectedInfo();
+        updateBuildOptions();
+        render();
+      }
+    }
+  });
+  
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY > 0 ? 0.9 : 1.1;
+    zoom = Math.max(0.3, Math.min(3, zoom * factor));
+    render();
+  });
+  
+  function findTileAt(col, row) {
+    for (const tile of state.tiles.values()) {
+      if (tile.col === col && tile.row === row) return tile;
+    }
+    return null;
+  }
+  
+  function updateSelectedInfo() {
+    const info = document.getElementById('selectedTile');
+    if (state.selectedTile) {
+      const t = state.selectedTile;
+      const ownerName = t.owner === 'player1' ? 'Anda' : t.owner === 'enemy' ? 'Musuh' : 'Netral';
+      info.innerHTML = `${t.id} (${t.col}, ${t.row}) - ${getTileTypeName(t.type)} Lv.${t.level} | Pemilik: ${ownerName} | Garnisun: ${t.garrison}`;
+    } else {
+      info.textContent = 'Pilih tile di peta';
+    }
+  }
+  
+  function updateBuildOptions() {
+    const container = document.getElementById('buildOptions');
+    if (!state.selectedTile || state.selectedTile.owner !== 'neutral') {
+      container.innerHTML = '<div class="empty-state">Pilih tile netral yang berdekatan untuk menyerang</div>';
+      return;
+    }
+    
+    const canAttack = isAttackableTile(state.selectedTile);
+    if (!canAttack) {
+      container.innerHTML = '<div class="empty-state">Tile ini belum bisa diserang (jauh dari wilayah Anda)</div>';
+      return;
+    }
+    
+    const cost = getCaptureCost(state.selectedTile);
+    container.innerHTML = `
+      <div class="build-option">
+        <div class="build-option-info">
+          <span class="build-option-name">${state.selectedTile.id} - ${getTileTypeName(state.selectedTile.type)} Lv.${state.selectedTile.level}</span>
+          <span class="build-option-cost">Biaya: <span class="icon">🌾</span>${cost.crop} | Garnisun: ${state.selectedTile.garrison}</span>
+        </div>
+        <button class="btn-attack" onclick="captureTile('${state.selectedTile.id}')">Kirim Pasukan</button>
+      </div>
+    `;
+  }
+  
+  function getCaptureCost(tile) {
+    return { crop: 50 * tile.level };
+  }
+  
+  function captureTile(tileId) {
+    const tile = state.tiles.get(tileId);
+    if (!tile || tile.owner !== 'neutral') return;
+    
+    const cost = getCaptureCost(tile);
+    if (state.resources.crop < cost.crop) {
+      alert('Sumber daya tidak cukup!');
+      return;
+    }
+    
+    // Simulate battle (auto-resolve)
+    state.resources.crop -= cost.crop;
+    tile.owner = 'player1';
+    tile.garrison = 10;
+    state.ownedTiles.add(tileId);
+    state.selectedTile = tile;
+    
+    updateProduction();
+    updateResourcesUI();
+    updateSelectedInfo();
+    updateBuildOptions();
+    render();
+  }
+  
+  function updateProduction() {
+    // Reset production
+    state.production = { crop: 0, wood: 0, stone: 0 };
+    
+    // Capital base production
+    state.production.crop += 50;
+    state.production.wood += 30;
+    state.production.stone += 20;
+    
+    // Add production from owned plots
+    state.ownedTiles.forEach(id => {
+      const tile = state.tiles.get(id);
+      if (!tile || tile.type === 'capital') return;
+      const baseProd = tile.level * 10;
+      if (tile.type === 'crop') state.production.crop += baseProd;
+      else if (tile.type === 'wood') state.production.wood += baseProd;
+      else if (tile.type === 'stone') state.production.stone += baseProd;
+    });
+    
+    // Apply season bonus
+    const season = SEASONS[state.season];
+    for (const k of Object.keys(state.production)) {
+      state.production[k] = Math.floor(state.production[k] * (1 + (season.bonus[k] || 0) / 100));
+    }
+  }
+  
+  function updateResourcesUI() {
+    document.getElementById('resCrop').textContent = state.resources.crop;
+    document.getElementById('resWood').textContent = state.resources.wood;
+    document.getElementById('resStone').textContent = state.resources.stone;
+    document.getElementById('prodCrop').textContent = `+${state.production.crop}/s`;
+    document.getElementById('prodWood').textContent = `+${state.production.wood}/s`;
+    document.getElementById('prodStone').textContent = `+${state.production.stone}/s`;
+  }
+  
+  function updateSeasonUI() {
+    const season = SEASONS[state.season];
+    document.getElementById('seasonIcon').textContent = season.icon;
+    document.getElementById('seasonText').textContent = `${season.name} Day ${state.seasonDay + 1}`;
+  }
+  
+  // ===== REALTIME LOOP =====
+  function gameLoop(timestamp) {
+    const delta = (timestamp - state.lastUpdate) / 1000; // seconds
+    state.lastUpdate = timestamp;
+    
+    // Apply resource production per second
+    for (const k of Object.keys(state.resources)) {
+      state.resources[k] = Math.min(state.storage[k], state.resources[k] + state.production[k] * delta);
+    }
+    
+    // Season timer
+    state.seasonTimer += delta;
+    if (state.seasonTimer >= SEASON_SECONDS) {
+      state.seasonTimer = 0;
+      state.seasonDay++;
+      if (state.seasonDay >= 3) { // 3 days per season
+        state.seasonDay = 0;
+        state.season = (state.season + 1) % 4;
+        // Season change effects
+        updateProduction();
+      }
+      updateSeasonUI();
+    }
+    
+    updateResourcesUI();
+    render();
+    requestAnimationFrame(gameLoop);
+  }
+  
+  // ===== INIT =====
+  function init() {
+    console.log('=== NTA Realtime Demo ===');
+    console.log('DATA loaded:', !!window.DATA);
+    
+    initTiles();
+    updateProduction();
+    updateResourcesUI();
+    updateSeasonUI();
+    
+    resize();
+    window.addEventListener('resize', resize);
+    
+    // Initial render
+    render();
+    
+    // Start realtime loop
+    state.lastUpdate = performance.now();
+    requestAnimationFrame(gameLoop);
+    
+    console.log('Tiles loaded:', state.tiles.size);
+    console.log('=== Demo Ready ===');
+  }
+  
+  // Expose for debugging
+  window.NTA = { state, captureTile: captureTile };
+  
+  init();
+})();
+  </script>
+</body>
+</html>

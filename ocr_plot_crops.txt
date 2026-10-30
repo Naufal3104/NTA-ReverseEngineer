@@ -1,0 +1,666 @@
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-07-909_twgame.global.acers.jpg
+================================================================================
+Wolf
+Beast
+Level2
+ATK SPD:8
+60/60
+6/6
+Tile*4
+17
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-10-195_twgame.global.acers.jpg
+================================================================================
+Wolf
+Beast
+Level2
+ATK SPD:8
+Wolf Howl
+ActiveSkill
+Roars to inspire all allies within
+5tiles,increasing theirATKby3
+and DMGReductionby20%for
+3rounds.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-12-899_twgame.global.acers.jpg
+================================================================================
+Leopard
+Beast
+Level2
+ATK SPD:7
+88/88
+0/0
+Tile*4
+20
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-15-396_twgame.global.acers.jpg
+================================================================================
+Leopard
+Beast
+Level2
+ATK SPD:7
+Evade
+Passive Skill
+Agile and nimble. Every 2 times
+this unit is hit, gains 100%
+Dodge against the next
+incomingDMG.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-45-123_twgame.global.acers.jpg
+================================================================================
+Porcupine
+Beast
+Level2
+ATKSPD:7
+91/91
+4/8
+Tile*3
+16
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-47-181_twgame.global.acers.jpg
+================================================================================
+Porcupine
+Beast
+Level2
+ATK SPD:7
+Spine Burst
+3
+Active Skill
+Raises its spikes and bursts out
+violently,dealing DMG equal to
+75% ATK to enemieswithin 1
+tile.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-01-224_twgame.global.acers.jpg
+================================================================================
+Viper
+Beast
+Level2
+ATKSPD:6
+72/72
+4/8
+Tile*3
+17
+Tile*2
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-03-205_twgame.global.acers.jpg
+================================================================================
+Viper
+Beast
+Level2
+ATK SPD:6
+Venom Spit
+B
+Active Skill
+Randomlydeals70%ATKDMG
+to 1 target and inflicts Poison
+on them for 3 rounds: dealing
+additional TrueDMG equal to
+10%of the target's currentHP
+eachround.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-49-411_twgame.global.acers.jpg
+================================================================================
+Lion
+Beast
+Level3
+ATK SPD:7
+394/394
+5/10
+Tile*4
+20
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-51-325_twgame.global.acers.jpg
+================================================================================
+Lion
+Beast
+Level3
+ATK SPD:7
+Tear
+4
+Active Skill
+Deals（120%*ATK)DMG tothe
+target and bleeds them, dealing
+(50%*ATK)TrueDMGand
+reducingHPRestorationby 60%
+eachroundfor3rounds.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-02-277_twgame.global.acers.jpg
+================================================================================
+Elephant
+Beast
+Level3
+ATKSPD:9
+473/473
+5/10
+Tile*3
+Tile*1
+31
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-03-896_twgame.global.acers.jpg
+================================================================================
+Elephant
+Beast
+Level3
+ATK SPD:9
+sling
+Active Skill
+Hurls stones at the target with
+the highest HP within 5 tiles,
+dealing (200%*ATK) DMG.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-13-995_twgame.global.acers.jpg
+================================================================================
+Bear
+Beast
+Level3
+ATKSPD:9
+368/368
+6/12
+Tile*3
+25
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-15-585_twgame.global.acers.jpg
+================================================================================
+Bear
+Beast
+Level3
+ATK SPD:9
+Smash
+Active Skill
+Uses the bear paw to smash the
+target, dealing extra(5%*
+target's Max HP) DMG and
+stunning the target for 1 round.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-23-530_twgame.global.acers.jpg
+================================================================================
+Buffalo
+Beast
+Level5
+ATKSPD:9
+725/725
+6/12
+工
+Tile*3
+33
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-28-752_twgame.global.acers.jpg
+================================================================================
+Buffalo
+Beast
+Level5
+ATK SPD:9
+Wild Collision
+Active Skill
+Collides by 2 tiles in the target
+direction and knocks up
+encountered enemies, dealing(
+50%*ATK)DMG.Canbreak
+shields and shield stance.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-35-406_twgame.global.acers.jpg
+================================================================================
+Tiger
+Beast
+Level5
+ATKSPD:7
+648/648
+4/8
+Tile*3
+35
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-36-997_twgame.global.acers.jpg
+================================================================================
+Tiger
+Beast
+Level5
+ATK SPD:7
+Gash
+Active Skill
+Dealsextra(35%*ATK)DMGto
+up to20 enemieswithin1 tile
+around the target.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-56-890_twgame.global.acers.jpg
+================================================================================
+Rhino
+Beast
+Level5
+ATKSPD:9
+671/671
+4/8
+Tile*3
+28
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-58-570_twgame.global.acers.jpg
+================================================================================
+Rhino
+Beast
+Level5
+ATK SPD:9
+Trample
+Active Skill
+Tramples nearby targets,
+dealing75%ATK DMG toup to 8
+units within 1 tile and stunning
+them for 1 round.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-15-730_twgame.global.acers.jpg
+================================================================================
+Minion
+Bandit
+Level6
+ATKSPD:8
+611/611
+0/0
+Tile*3
+29
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-17-991_twgame.global.acers.jpg
+================================================================================
+Assassin
+Bandit
+Level6
+ATK SPD:6
+533/533
+0/0
+Tile*3
+37
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-21-466_twgame.global.acers.jpg
+================================================================================
+Assassin
+Bandit
+Level6
+ATK SPD:6
+533/533
+0/0
+Tile*3
+Crit
+Passive Skill
+Attackshavea99%chanceto
+deal150%DMG.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-40-927_twgame.global.acers.jpg
+================================================================================
+Hedgehog
+Beast
+Level4
+ATKSPD:9
+622/622
+0/0
+Tile*3
+26
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-42-317_twgame.global.acers.jpg
+================================================================================
+Hedgehog
+Beast
+Level4
+ATK SPD:9
+622/622
+0/0
+TTile*3
+DMG Reflection
+Passive Skill
+Reflects35%DMG taken tothe
+attacker upon taking DMG.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-51-435_twgame.global.acers.jpg
+================================================================================
+Lizard
+Beast
+Level3
+ATKSPD:9
+221/221
+0/0
+Tile*3
+23
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-52-896_twgame.global.acers.jpg
+================================================================================
+Lizard
+Beast
+Level3
+ATK SPD:9
+221/221
+0/0
+J Tile*3
+Scale Armor
+Passive Skill
+ReducingDMG takenby40%.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-01-049_twgame.global.acers.jpg
+================================================================================
+6
+Minion
+Bandit
+Level6
+ATKSPD:8
+611/611
+0/0
+Tile*3
+29
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-03-003_twgame.global.acers.jpg
+================================================================================
+Bandit Saberman
+Bandit
+Level6
+ATK SPD:9
+625/625
+0/0
+Tile*3
+31
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-06-016_twgame.global.acers.jpg
+================================================================================
+Bandit Bowman
+Bandit
+Level6
+ATK SPD:6
+0/4
+247/247
+Tile*2
+20
+Tile*4
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-08-252_twgame.global.acers.jpg
+================================================================================
+Boar Knight
+Bandit
+Level6
+ATKSPD:7
+737/737
+0/0
+Tile*4
+70
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-17-842_twgame.global.acers.jpg
+================================================================================
+Boar Knight
+Bandit
+Level7
+ATKSPD:7
+827/827
+0/0
+Tile*4
+85
+Tile*1
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-20-824_twgame.global.acers.jpg
+================================================================================
+Boar Knight
+Bandit
+Level7
+ATKSPD:7
+CounterShield Soldier
+Passive Skill
+When attacking Shieldman,ATK
++40%,and ignores 20%DMG
+Reduction.
+When being attacked by
+Shieldman,theattacker'sATK-
+40%.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-22-922_twgame.global.acers.jpg
+================================================================================
+Boar Knight
+Bandit
+Level7
+ATK SPD:7
+827/827
+0/0
+JTile*4
+Fortitude
+Passive Skill
+RangedDMG taken-60%.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-25-666_twgame.global.acers.jpg
+================================================================================
+Soulreaper
+Bandit
+Level10
+ATKSPD:6
+1074/1074
+4/6
+Tile*0
+125
+Tile*6
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-27-782_twgame.global.acers.jpg
+================================================================================
+Soulreaper
+Bandit
+Level10
+ATK SPD:6
+1074/1074
+4/6
+工
+Tile*o
+Iron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces theattacker'sDMG
+dealt by 70% upon being
+attacked.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-32-900_twgame.global.acers.jpg
+================================================================================
+Soulreaper
+Bandit
+Level10
+ATK SPD:6
+Frenzy Claw
+Active Skill
+Randomly gashes thenearest
+targetand up to8enemies
+within 2 tiles around the target
+3 times,each ofwhich deals
+20% DMG.After gashing each
+time,DMG dealtby the next
+gash +5%,stackable without
+limit.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-45-128_twgame.global.acers.jpg
+================================================================================
+Goat
+Beast
+Level8
+ATKSPD:9
+1213/1213
+4/8
+Tile*o
+80
+力
+Tile*6
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-47-070_twgame.global.acers.jpg
+================================================================================
+Goat
+Beast
+Level8
+ATK SPD:9
+1213/1213
+4/8
+J Tile*o
+Iron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces theattacker'sDMG
+dealt by 70% upon being
+attacked.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-48-881_twgame.global.acers.jpg
+================================================================================
+Goat
+Beast
+Level8
+ATK SPD:9
+1213/1213
+4/8
+T Tile*O
+Rampant Charge
+Active Skill
+Knocks the target to theplace
+with themostenemies within 6
+tiles, dealing (15%*Max HP)
+additional TrueDMG toup to8
+targets within 2 tiles and
+stunning them for 1 round.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-00-738_twgame.global.acers.jpg
+================================================================================
+Rat
+Beast
+Level8
+ATK SPD:9
+1206/1206
+0/0
+Tile*o
+Tile*6
+71
+团
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-02-402_twgame.global.acers.jpg
+================================================================================
+Rat
+Beast
+Level8
+ATK SPD:9
+1206/1206
+0/0
+J Tile*O
+lron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealt by 70% upon being
+attacked.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-04-140_twgame.global.acers.jpg
+================================================================================
+Rat
+Beast
+Level8
+ATK SPD:9
+Pestilence Infection
+Passive Skill
+Upon being attacked,if the
+attacker iswithin2tilesaround
+self, infects the attacker with 1
+layer ofPestilence,each of
+which deals(5%*Max HP) True
+DMG to theownereachround;
+stackable without limit.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-14-405_twgame.global.acers.jpg
+================================================================================
+Ape
+Beast
+Level8
+ATKSPD:9
+1052/1052
+4/6
+Tile*o
+88
+Tile*6
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-16-017_twgame.global.acers.jpg
+================================================================================
+Ape
+Beast
+Level8
+ATK SPD:9
+1052/1052
+4/6
+J Tile*o
+Iron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealtby70%uponbeing
+attacked.
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-17-855_twgame.global.acers.jpg
+================================================================================
+Ape
+Beast
+Level8
+ATK SPD:9
+Fury
+Active Skill
+Removes all debuffs,each of
+the following 2 attacks deals (
+300%*ATK)DMG to the nearest
+targetrandomly and(50%*the
+DMG dealt)additional True DMG
+to up to 8 enemieswithin 2
+tiles around the target.

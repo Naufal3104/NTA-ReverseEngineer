@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head><title>NTA Canvas Debug</title>
+<style>
+body { margin: 0; background: #111; color: #fff; font-family: sans-serif; }
+canvas { width: 800px; height: 600px; border: 2px solid #0f0; background: #000; }
+.info { padding: 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="info">NTA Canvas Debug - Check console for logs</div>
+<canvas id="mapCanvas" width="800" height="600"></canvas>
+<script>
+const canvas = document.getElementById('mapCanvas');
+const ctx = canvas.getContext('2d');
+
+console.log('=== CANVAS DEBUG ===');
+console.log('Canvas element:', canvas);
+console.log('Canvas width (attr):', canvas.width);
+console.log('Canvas height (attr):', canvas.height);
+console.log('Canvas clientWidth:', canvas.clientWidth);
+console.log('Canvas clientHeight:', canvas.clientHeight);
+console.log('Canvas offsetWidth:', canvas.offsetWidth);
+console.log('Canvas offsetHeight:', canvas.offsetHeight);
+console.log('Canvas style width:', canvas.style.width);
+console.log('Canvas style height:', canvas.style.height);
+console.log('devicePixelRatio:', window.devicePixelRatio);
+
+// Test: Draw a simple diamond shape
+const centerX = 400;
+const centerY = 300;
+const halfSize = 50;
+
+console.log('Drawing test shapes...');
+
+// Green square
+ctx.fillStyle = '#0f0';
+ctx.fillRect(50, 50, 100, 100);
+console.log('Drawn green square at 50,50');
+
+// Red circle
+ctx.fillStyle = '#f00';
+ctx.beginPath();
+ctx.arc(200, 150, 50, 0, Math.PI*2);
+ctx.fill();
+console.log('Drawn red circle at 200,150');
+
+// Isometric diamond
+ctx.fillStyle = '#ff0';
+ctx.beginPath();
+ctx.moveTo(centerX, centerY - halfSize);
+ctx.lineTo(centerX + halfSize, centerY);
+ctx.lineTo(centerX, centerY + halfSize);
+ctx.lineTo(centerX - halfSize, centerY);
+ctx.closePath();
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2;
+ctx.stroke();
+console.log('Drawn yellow diamond at', centerX, centerY);
+
+// Test isometric projection
+const tiles = [
+  {id: 'p1', x: 4, y: 3, type: 'wood'},
+  {id: 'capital', x: 2, y: 6, type: 'capital'}
+];
+
+tiles.forEach(tile => {
+  const isoX = (tile.x - tile.y) * 20;
+  const isoY = (tile.x + tile.y) * 10;
+  const screenX = centerX + isoX;
+  const screenY = centerY + isoY;
+  
+  ctx.fillStyle = tile.type === 'capital' ? '#8B4513' : '#2d5a2d';
+  ctx.beginPath();
+  ctx.moveTo(screenX, screenY - 20);
+  ctx.lineTo(screenX + 20, screenY);
+  ctx.lineTo(screenX, screenY + 20);
+  ctx.lineTo(screenX - 20, screenY);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  
+  console.log(`Tile ${tile.id} at (${tile.x},${tile.y}) -> screen (${screenX},${screenY})`);
+});
+
+console.log('=== END DEBUG ===');
+</script>
+</body>
+</html>

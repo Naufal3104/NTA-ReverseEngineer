@@ -1,0 +1,901 @@
+﻿GAME SUBSYSTEM DESCRIPTIONS
+Ninety Thousand Acres (ä¹è¬ç•) - Reverse Engineering Documentation
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1. POLICY SYSTEM
+2. SOLDIER TROOP SYSTEM
+3. EQUIPMENT & WEAPON SYSTEMS
+4. HERO SYSTEM
+5. COMBINED SYNERGIES
+
+================================================================================
+1. POLICY SYSTEM
+================================================================================
+
+Capital Policies (personal, VERIFIED structure):
+- Max 5 active policies, chosen at the Capital
+- Policy slots unlock at Capital level 1 / 5 / 10 / 15 / 20
+- Detailed policy list: from Policy screenshot folder (re-verification pending)
+
+Union Policies (union-wide, VERIFIED structure):
+- Chosen by the union leader; buffs the entire union
+- Unlock at union Embassy TOTAL member levels 1 / 200 / 400
+- Each member's Embassy level adds to the union's Embassy total
+- Embassy building: join unions at Embassy level 1, create unions at level 3
+- Union max 40 members
+
+NOTE: Previously listed policy names/effects here were unverified fabrications
+and have been removed. Policy details must be re-captured from the Policy
+screenshot folder.
+
+================================================================================
+2. SOLDIER TROOP SYSTEM
+================================================================================
+
+Troop Categories (4) and Counter Cycle (VERIFIED):
+- SPEARMAN counters CAVALRY  | countered by BOWMAN
+- BOWMAN counters SPEARMAN   | countered by SHIELDMAN
+- SHIELDMAN counters BOWMAN  | countered by CAVALRY
+- CAVALRY counters SHIELDMAN | countered by SPEARMAN
+
+Counter mechanics (VERIFIED):
+- Counter (attacker advantage): ATK +40% vs that troop type, and ignores 20%
+  of the target's DMG Reduction
+- Countered (attacker disadvantage): ATK -40% vs the countering type
+
+Troop Levels: 1 to 6 (6 = maximum)
+- Upgraded at Drill Ground: crop + exp scroll (timed), or scroll (instant, no cost)
+
+Troop Sub-Types (24 total = 6 per category, VERIFIED from hero possession data):
+- SPEARMAN:  Longspearman | Lancer | Dagger-axe Soldier | Modao Soldier |
+             Long Swordsman | Twin Spearman
+- SHIELDMAN: Saber & Shield | Heavy Shield | Spear & Shield | Hammer & Shield |
+             Sword & Shield | Axe & Shield
+- BOWMAN:    Longbowman | Crossbowman | Toxibowman | Hunter |
+             Improved Crossbowman | Fire Bowman
+- CAVALRY:   Sword Cavalry | Spear Cavalry | Broadsword Cavalry | Heavy Cavalry |
+             Bow Cavalry | Axe Cavalry
+
+Troop Selection (VERIFIED):
+- Session start: pick 1 of 3 offered troops (e.g. Longspearman, Saber & Shield,
+  Heavy Shield); options can be rerolled unlimited times before confirming
+- New troop picks unlock at Barracks level 1 / 2 / 4 / 8 / 12 (5 picks)
+- Summoning a hero auto-grants their possessed troop type; if already owned,
+  the player gets a free new troop pick at the Barracks
+
+Per-Soldier Stat Format (VERIFIED from Soldier screenshots):
+- HP, ATK
+- Rage initial/full (e.g. 4/6 = starts battle with 4 Rage; skill ready at 6)
+- Move range (tiles, shoe icon) and ATK range (tiles, sword icon)
+- Crop consumption per soldier
+- 4 soldiers per tile
+
+NOTE: The previous T1-T6 / INFANTRY / RANGED / SIEGE data here was fabricated
+and has been removed. Per-sub-type numeric stats (HP/ATK/Rage/ranges/crop for
+levels 1-6) must be re-captured from the Soldier and Soldier lv 6 folders.
+
+================================================================================
+3. EQUIPMENT & WEAPON SYSTEMS
+================================================================================
+
+Smithy (unlocks at Capital level 3, VERIFIED):
+- Equipment offers: choose 1 of 3 options; reroll unlimited times
+- New equipment choices unlock at Smithy level 1 / 3 / 5 / 7 / 12 / 14 / 16 / 20
+- Cast Craft: finish the equipment, costs wood + stone + iron
+- Recast: reset the equipment's random attributes
+
+Exclusive Equipment (VERIFIED):
+- Max 2 per session: 1st at Smithy level 10, 2nd at Smithy level 18
+- Chosen from troop types owned at the Barracks (free choice among owned types)
+- Structure: 2 random effects (from normal equipment pool) + 1 special effect
+  restricted to a single troop type
+- Smelt: add effects from normal equipment into the exclusive equipment,
+  costs 1 nail; unlocks at Smithy 14/20 (1st exclusive) and 18/20 (2nd)
+- Recast on exclusive: 1 random attribute can be locked with nails so the
+  recast preserves that attribute and its effect
+
+Related Resources (VERIFIED):
+- Nails: from Stone plots at level 5
+- Iron: from Crop plots (50%) and Stone plots
+- Exp Scroll: from Crop plots (50%) and Wood plots
+- Scroll (instant troop level-up): from Wood plots at level 5
+
+NOTE: The previous equipment slots/rarity colors/weapon types and named items
+(Lu Bu's Halberd etc.) here were unverified fabrications and have been removed.
+Equipment effect details must be re-captured from the Weapon screenshot folder.
+
+================================================================================
+4. HERO SYSTEM
+================================================================================
+
+HERO SYSTEM (VERIFIED - source: "Hero Skill and Expertise.md", authoritative)
+================================================================================
+
+TOTAL: 59 heroes in game. 56 documented below (3 unidentified - pending).
+
+HERO DATA FORMAT (per hero):
+- Name (courtesy name) | Skill title | Possession: troop sub-type
+- HP+ [x-y] and ATK+ [x-y]: random ranges rolled on acquisition/redraw
+- Skill: passive battle effect
+- Unique Hero Rare Expertise: exclusive to this hero only
+
+{Soldier} PARAMETER CONVENTION (VERIFIED from user):
+- "{Soldier}" = the hero's possessed troop sub-type ONLY
+- Named category (e.g. "Spearman", "Shieldman") = buff applies to ALL soldiers
+  of that category
+- "All allies" = every allied soldier regardless of type
+
+EXPERTISE SYSTEM (VERIFIED):
+- Slots: 1 Common + 1 Uncommon + 1 Rare (available from hero level 1)
+- Chosen level (max tier, reached after 100 redraws): +1 extra expertise slot
+- Stacking: Common up to 3x, Uncommon up to 2x, Rare not stackable
+- A hero's expertise pool = category Common/Uncommon/Rare lists
+  + sub-type Unique Rare list + the hero's own Unique Hero Rare
+- Redraw: reroll expertise using Hero Fragments (from General Muster Terrace)
+
+HERO PROGRESSION & DEATH (VERIFIED):
+- 7 level tiers: Level 1 (base) to Chosen (max)
+- 100 redraws -> Chosen level
+- Summon heroes at Hall of Heroes level 1/5/10/15 (4 heroes per session)
+- Summoning a hero auto-grants their possessed troop; if already owned,
+  free Barracks re-pick
+- Death vs enemy: hero imprisoned in enemy Iron Prison (duration scales with
+  Iron Prison building level; unlocks at Hall of Heroes level 5)
+- Death on unowned monster plot: 4-hour cooldown, then re-summonable
+
+================================================================================
+CATEGORY: SPEARMAN (16 heroes)
+================================================================================
+
+COMMON EXPERTISE ({Soldier}=own troop, stack 3x):
+1. {Soldier} has 40% chance to retain 1 Rage after using a skill
+2. {Soldier} ATK +[2/4/6]
+3. {Soldier} HP +[20/40/60]
+4. {Soldier} ATK +[5/10/15]%
+5. {Soldier} HP +[5/10/15]%
+6. DMG dealt by {Soldier} +[5/10/15]%
+7. DMG taken by {Soldier} -[5/10/15]%
+8. {Soldier} restores [2/4/6] HP each round
+
+UNCOMMON EXPERTISE (stack 2x where marked):
+1. {Soldier} gains [8/16]% Leech (lifesteal)
+2. {Soldier} gains [8/16]% Dodge
+3. {Soldier} ignores [8/16]% Dodge
+4. Spearman's Max Rage -1
+5. After Spearman kills a target, ATK +1
+6. For every 10% HP lost by Spearman, DMG dealt +[10/20]%
+7. Spearman's HP Restoration +[15/30]%
+
+RARE EXPERTISE (not stackable):
+1. Hero's DMG dealt +30%, DMG taken -30%
+2. When {Soldier} attacks, 30% chance to deal (30%*ATK) additional True DMG
+3. Spearman restores (5*own level) HP when attacking
+4. Spearman's ATK Range +1
+5. When Spearman attacks, grants 1 extra Rage
+
+--------------------------------------------------------------------------------
+Sub-type: LONGSPEARMAN (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- Changes HP restored by Longspearman's stabs to 50% of the HP lost
+- Longspearman restores HP equal to 2% of Max HP after a successful dodge
+
+1. CHEN DAO (Shuzhi) - "Common Hope"
+   HP+[100-200], ATK+[8-16]
+   Skill: When attacking, also deals (10% * all allied Soldiers' ATK) additional
+   DMG. Meanwhile, transfers (40-80)% of ATK DMG taken by self to the Soldier
+   with the highest HP percentage.
+   Unique Hero Rare: Longspearman's Stab restores HP for the ally with the
+   lowest HP ratio by 20% of their lost HP.
+
+2. ZHAO YUN (Zilong) - "Valor of Loong"
+   HP+[150-250], ATK+[8-16]
+   Skill: Any Dodge +10%, +5% when taking ATK DMG, stackable without limit each
+   round. Increases next attack's DMG by [GAP: value missing in source] after
+   each successful dodge.
+   Unique Hero Rare: Spearman's Any Dodge +5%. After dodging, Rage +1.
+
+3. YANG MIAOZHEN - "True Sight"
+   HP+[100-200], ATK+[8-16]
+   Skill: The first target is marked for 2 rounds when stabbed. When self
+   attacks the marked target, deals additional True DMG equal to 15% of their
+   Max HP and restores HP equal to [20-50]% of the DMG.
+   Unique Hero Rare: When Longspearman attacks, deals (2%*target's Max HP)
+   additional True DMG.
+
+--------------------------------------------------------------------------------
+Sub-type: LANCER (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- The effect of Lancer's Exclusive Equipment is always calculated based on
+  40 soldiers
+- Lancer's Project Range +1
+
+1. ZHANG HE (Junyi) - "Intimidating Force"
+   HP+[100-200], ATK+[8-17]
+   Skill: Increases Project DMG by [10-30]%. If a target is killed by Project,
+   horrifies up to 4 enemies within 2 tiles around the target, making them
+   unable to move or attack for 1 round, except those in Shield Stance or
+   with weaponry.
+   Unique Hero Rare: Lancer's Project DMG +20%.
+
+2. QIN LIANGYU (Zhensu) - "Barb"
+   HP+[100-200], ATK+[8-16]
+   Skill: The Lance stays at the target position when projected. Takes the
+   Lance back instead of attacking next round. When taking the Lance back, if
+   no enemy is at the target position, increases Rage by 75%; otherwise deals
+   ([GAP]%*ATK) DMG to the target.
+   Unique Hero Rare: After Lancers kill the target by projecting, Rage +2.
+
+--------------------------------------------------------------------------------
+Sub-type: DAGGER-AXE SOLDIER (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- All allies' DMG dealt to the disarmed target +20%
+- Dagger-axe Soldier has full initial Rage
+
+1. BAI QI - "Merciless Siege"
+   HP+[100-200], ATK+[8-14]
+   Skill: When disarming the target, transfers [50-100]% of their ATK Reduction
+   to up to 12 allies within 4 tiles around the target for 3 rounds,
+   prioritizing allies with the highest ATK.
+   Unique Hero Rare: When an enemy dies, ATK +1 for up to 4 allies within 1 tile.
+
+2. ZHOU YU (Gongjin) - "Chains"
+   HP+[100-200], ATK+[8-14]
+   Skill: When disarming the target, connects the target with up to 8 enemies
+   (except Weaponry) within 2 tiles for 3 rounds. When any connected target
+   takes ATK DMG, other connected targets also take DMG.
+   Unique Hero Rare: When Dagger-axe Soldier attacks, deals (20%*ATK)
+   additional True DMG to up to 4 enemies within 1 tile around the target.
+
+3. LI MU - "Strength Gathering"
+   HP+[100-200], ATK+[8-14]
+   Skill: When releasing Disarm, up to 8 allies with the highest ATK within
+   self ATK Range gain 30% DMG Reduction for 1 round. Afterward, they deal
+   additional True DMG when attacking for 3 rounds.
+   Unique Hero Rare: All allies' DMG Reduction +15%.
+
+--------------------------------------------------------------------------------
+Sub-type: MODAO SOLDIER (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- When Spearman takes DMG, if the attacker has higher ATK, DMG -30%
+- Modao Soldier ignores 30% DMG Reduction
+
+1. LI SIYE - "Brave Spirit"
+   HP+[100-200], ATK+[8-20]
+   Skill: Deals ATK DMG equal to the random DMG dealt by Cavalry Suffer. Gains
+   2 ATK and 3% Dodge when any enemy dies within self ATK Range, stackable up
+   to [5-15] times.
+   Unique Hero Rare: Modifies Modao Soldier's counter effect on Cavalry to 60%.
+
+2. YU JIN (Wenze) - "Unwavering General"
+   HP+[100-200], ATK+[8-18]
+   Skill: When a battle starts, increases DMG dealt and taken by [GAP: value
+   missing in source] for all non-weaponry ally soldiers of the current army
+   and makes them immune to debuffs. Ends when Yu Jin is killed.
+   Unique Hero Rare: When Modao Soldier has full HP, DMG Dealt +15%.
+
+--------------------------------------------------------------------------------
+Sub-type: LONG SWORDSMAN (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- Changes Long Swordsman's exclusive equipment effect to: Restores
+  (60%*Bleed DMG) HP
+- Long Swordsman's Bleeding effect also reduces the target's HP Restoration
+  by 50%
+- All allies' DMG dealt to the Bleed target +20%
+
+1. JIANG WEI (Boyue) - "Wisdom & Bravery"
+   HP+[125-225], ATK+[8-14]
+   Skill: Each time Whirlwind is released, gains 4 ATK and 6% DMG Reduction,
+   stackable up to [5-10] times.
+   Unique Hero Rare: Long Swordsman's ATK +8 and they gain 15% DMG Reduction.
+
+2. LÜ MENG (Ziming) - "Self-denial"
+   HP+[125-225], ATK+[8-14]
+   Skill: Max Rage -50%. Stops releasing Whirlwind for the first 3 times and
+   gains 40 Shield instead. Afterward, increases DMG dealt by [20-50]%. For
+   every 1 target hit by Whirlwind, gains 40 Shield.
+   Unique Hero Rare: If the battle lasts more than 30 minutes, all allies' DMG
+   dealt +20%.
+
+3. XIN QIJI (Youan) - "Looking Back"
+   HP+[125-225], ATK+[8-14]
+   Skill: Gains Iron Weapon in the first 23 rounds upon entering battle, ATK
+   +[30-50]%, and reduces DMG taken by 30%. Gains Sorrowful Dream after the
+   23 rounds and gains Iron Weapon for 1 round for every 3 attacks released.
+   Unique Hero Rare: The DMG dealt by all allies' first 20 attacks [GAP:
+   effect value cut off in source].
+
+--------------------------------------------------------------------------------
+Sub-type: TWIN SPEARMAN (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- Twin Spearman's Parry Rate +10% after Unbridled Dance
+- Twin Spearman's Unbridled Dance DMG +10%
+- Twin Spearman's Unbridled Dance dash range +1
+
+1. WEN YANG (Ciqian) - "Brave Charge"
+   HP+[100-200], ATK+[8-16]
+   Skill: Unbridled Dance only deals 1 stage of DMG. After each Unbridled
+   Dance, chance of dashing again: first dash 100%, subsequent [40-70]%. Can
+   dash up to 7 times.
+   Unique Hero Rare: Twin Spearman's Parry Rate +5% after Unbridled Dance,
+   Rage +1 after Parry.
+
+2. DIAN WEI - "Courage"
+   HP+[125-225], ATK+[8-14]
+   Skill: When gaining 1 Rage, ATK +1, stackable up to [20-50] times. After
+   the effect is stacked to 20 times, Unbridled Dance Stages +1.
+   Unique Hero Rare: Twin Spearman's Stage of Unbridled Dance +1.
+
+3. QIN QIONG (Shubao) - "Surmount Difficulties"
+   HP+[100-200], ATK+[8-16]
+   Skill: Unbridled Dance only dashes to the enemy hero or the target with the
+   highest ATK, dealing 1 stage of (200%*ATK) DMG and Parry Rate +20%. The
+   following 2 basic attacks deal ([15-30]%*target's Max HP) additional DMG.
+   Unique Hero Rare: DMG dealt by Spearman to Heroes +30%.
+
+================================================================================
+CATEGORY: SHIELDMAN (11 heroes)
+================================================================================
+
+COMMON EXPERTISE (stack 3x; NOTE: Shieldman has NO Rage-retain common):
+1. {Soldier} ATK +[2/4/6]
+2. {Soldier} HP +[20/40/60]
+3. {Soldier} ATK +[5/10/15]%
+4. {Soldier} HP +[5/10/15]%
+5. DMG dealt by {Soldier} +[5/10/15]%
+6. DMG taken by {Soldier} -[5/10/15]%
+7. {Soldier} restores [2/4/6] HP each round
+
+UNCOMMON EXPERTISE (stack 2x where marked):
+1. {Soldier} gains [8/16]% Leech
+2. {Soldier} gains [8/16]% Dodge
+3. {Soldier} ignores [8/16]% Dodge
+4. Shieldman's Max Rage -1
+5. When inflicted with debuffs, Shieldman has [10/20]% chance of immunity
+6. Shieldman's HP Restoration +[15/30]%
+7. Shieldman's DMG taken -[3/6]
+
+RARE EXPERTISE:
+1. Hero's DMG dealt +30%, DMG taken -30%
+2. When {Soldier} attacks, 30% chance to deal (30%*ATK) additional True DMG
+3. Shieldman restores (5*own level) HP when attacking
+4. Shieldman restores ([2/4]%*current HP) HP each round (stack 2x)
+5. When Shieldman attacks, grants 1 extra Rage
+6. Shieldman has 30% chance to deal additional True DMG by 2% of self Max HP
+   to up to 4 enemies within 1 tile each round
+
+--------------------------------------------------------------------------------
+Sub-type: SABER & SHIELD (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Shield Effect on all allies +30%
+- When Shield Soldier has a Shield, their DMG taken -20%
+
+1. XU SHENG (Wenxiang) - "Safe Shelter"
+   HP+[250-500], ATK+[2-5]
+   Skill: When releasing Shield, also grants Safe Shelter to up to 10 allies,
+   making them immune to debuffs and gain Leech for 5 rounds. When allies
+   within 5 tiles are inflicted with debuffs, self Rage +1.
+   Unique Hero Rare: Saber & Shield Soldier grants shield on 2 more allies.
+
+2. YUE JIN (Wenqian) - "First to Arrive"
+   HP+[250-500], ATK+[2-5]
+   Skill: When a battle starts, attracts enemy buildings to attack self, with
+   80% chance of dodging the buildings' attacks. Deals [GAP: formula cut off
+   in source] additional DMG when attacking non-building targets the next time.
+   Unique Hero Rare: All allies have a 20% chance of dodging buildings' attacks.
+
+--------------------------------------------------------------------------------
+Sub-type: HEAVY SHIELD (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Rounds of Heavy Shield Soldier's Shield Stance Duration +1
+- When Heavy Shield Soldier's HP drops to 50% for the first time, restores HP
+  by 20% of Max HP
+
+1. CAO REN (Zixiao) - "Strong Will"
+   HP+[300-600], ATK+[1-4]
+   Skill: Each time DMG is taken, Max HP +8, stackable up to [20-50] times.
+   After the effect is stacked to 20 times, restores HP by 1% of Max HP each
+   round.
+   Unique Hero Rare: Heavy Shield Soldier's Max HP +20%.
+
+2. ZHOU TAI (Youping) - "Support"
+   HP+[300-600], ATK+[1-4]
+   Skill: Takes ATK DMG for allies within 5 tiles and has a [10/30]% chance to
+   restore 20% of Max HP when dying. The chance is reduced by 10% after each
+   trigger, down to 50%.
+   Unique Hero Rare: When Heavy Shield Soldier's HP is below 50%, restores 1%
+   of Max HP each round.
+
+--------------------------------------------------------------------------------
+Sub-type: SPEAR & SHIELD (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Charge DMG dealt by Spear & Shield Soldier +20%
+- Block Times of Spear & Shield Soldier +[1/2] (stack 2x)
+
+1. ZHANG FEI (Yide) - "Furious Roar"
+   HP+[150-350], ATK+[8-14]
+   Skill: Roars after a Charge. Deals additional True DMG equal to [40-70]% of
+   the effective DMG from this Charge to up to 8 enemies within 2 tiles and
+   terrifies them, making them unable to move for 3 rounds.
+   Unique Hero Rare: Shield Soldier's DMG taken -20% when there are no allies
+   around.
+
+2. GAO SHUN - "Onslaught"
+   HP+[150-350], ATK+[8-14]
+   Skill: When a battle starts, increases Max HP by 10% and ATK by [GAP: value
+   missing in source] for all non-weaponry ally soldiers of the current army;
+   for every 1% HP lost, DMG dealt +1%. Ends when Gao Shun is killed.
+   Unique Hero Rare: When Spear & Shield Soldier has no allies around, DMG
+   dealt +20%.
+
+--------------------------------------------------------------------------------
+Sub-type: HAMMER & SHIELD (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Rounds of Silence inflicted by Hammer & Shield Soldier +1
+- Hammer & Shield Soldier's Earthshaker also reduces the target's current Rage
+  by 50% when silencing them
+
+1. HUANG GAI (Gongfu) - "Deliberate Sacrifice"
+   HP+[200-400], ATK+[4-8]
+   Skill: At the start of the first round, deducts self HP by 20% of Max HP,
+   grants the 30 closest allies and self a shield equal to [20-50]% [of Max
+   HP], and increases their ATK by 10% till the end of the battle.
+   Unique Hero Rare: When an ally dies, Max HP +10 for up to 4 allies within
+   1 tile, stackable up to 20 times.
+
+2. LIAN PO - "Utmost Protection"
+   HP+[200-400], ATK+[4-8]
+   Skill: If HP is above 50%, increases DMG dealt by 25% for self and up to 12
+   allies within 3 tiles; if HP is below 50%, reduces DMG taken by 25% for self
+   and up to 12 allies within 3 tiles. Additionally increases self effect by
+   [50-100]%.
+   Unique Hero Rare: All allies' DMG dealt +10%, DMG taken -10%.
+
+--------------------------------------------------------------------------------
+Sub-type: SWORD & SHIELD (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- After Sword & Shield Soldier's Leap is stacked to the max limit, HP +15%,
+  ATK +15%
+- Changes DMG Increase effect of Sword & Shield Soldier's exclusive equipment
+  to 5%
+
+1. CAO CAO (Mengde) - "Ambitious Spirit"
+   HP+[150-350], ATK+[4-8]
+   Skill: Each attack grants 1 layer of Morale to up to 20 allies within 3
+   tiles. Each layer of Morale increases Max HP by 10 and ATK by 1, stackable
+   up to [10-20] layers. All layers removed after Cao Cao's death.
+   Unique Hero Rare: All allies' Max HP +40, ATK +4.
+
+2. DENG AI (Shizai) - "Garrison Field"
+   HP+[150-350], ATK+[4-8]
+   Skill: At the start of the first round, sends Garrison Order to the 30
+   closest allies: reducing their DMG dealt by 20% for 5 rounds, then
+   increasing their DMG dealt by 10% and restoring [10-30] HP each round.
+   Unique Hero Rare: Restores 10 HP for all allies at the start of each round.
+
+--------------------------------------------------------------------------------
+Sub-type: AXE & SHIELD (1 hero)
+Unique Rare Expertise (sub-type pool):
+- Axe & Shield Soldier's Bounce Time of Whirling Axe +1. Shield Bash's Chance
+  of Stunning the Target +10%
+- Axe & Shield Soldier's ATK Range +1
+- Axe & Shield Soldier's Whirling Axe selection range +1, and Whirling Axe
+  DMG +15%
+
+1. MENG HUO - "Resurgence"
+   HP+[150-350], ATK+[8-16]
+   Skill: After being attacked each time, DMG dealt +[GAP: value missing in
+   source]. Restores 10% of lost HP after the effect is stacked to 7 layers,
+   then restacks from the beginning.
+   Unique Hero Rare: If all allies are on the attacking side, ATK +15%.
+
+================================================================================
+CATEGORY: BOWMAN (15 heroes)
+================================================================================
+
+COMMON EXPERTISE (stack 3x; same 8 items as Spearman):
+1. {Soldier} has 40% chance to retain 1 Rage after using a skill
+2. {Soldier} ATK +[2/4/6]
+3. {Soldier} HP +[20/40/60]
+4. {Soldier} ATK +[5/10/15]%
+5. {Soldier} HP +[5/10/15]%
+6. DMG dealt by {Soldier} +[5/10/15]%
+7. DMG taken by {Soldier} -[5/10/15]%
+8. {Soldier} restores [2/4/6] HP each round
+
+UNCOMMON EXPERTISE (stack 2x where marked):
+1. {Soldier} gains [8/16]% Leech
+2. {Soldier} gains [8/16]% Dodge
+3. {Soldier} ignores [8/16]% Dodge
+4. Bowman's Max Rage -1
+5. After Bowman kills a target, ATK +1
+6. For every 1 tile between Bowman and the target, DMG Dealt +[2/4]%
+
+RARE EXPERTISE (not stackable):
+1. Hero's DMG dealt +30%, DMG taken -30%
+2. When {Soldier} attacks, 30% chance to deal (30%*ATK) additional True DMG
+3. Bowman's ATK Range +1
+4. When Bowman attacks, grants 1 extra Rage
+
+--------------------------------------------------------------------------------
+Sub-type: LONGBOWMAN (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Longbowman's Scatter has [50/100]% chance of attacking 1 more target (stack 2x)
+- Longbowman's ATK +20%
+
+1. HUANG ZHONG (Hansheng) - "Excellent Shot"
+   HP+[50-100], ATK+[4-12]
+   Skill: When the target's HP is below 60%, [15-30]% chance of killing them
+   directly. Chance doubled when target's HP is below 30%. Prioritizes
+   attacking the target with the lowest HP ratio.
+   Unique Hero Rare: Bowman's DMG dealt +20% to the target with HP over 50%.
+
+2. HAN DANG (Yigong) - "Ape Arm"
+   HP+[50-100], ATK+[4-12]
+   Skill: Basic attack deals [GAP: formula cut off in source] additional True
+   DMG and 1 Rage is reserved after Scatter.
+   Unique Hero Rare: Longbowman's Max Rage +1, DMG Dealt +20%.
+
+--------------------------------------------------------------------------------
+Sub-type: CROSSBOWMAN (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- Crossbowman's Rapid Fire has a chance of firing 1 more time
+- Every 5th shooting of Crossbowman deals extra (3%*target's Max HP) DMG
+
+1. LIU BEI (Xuande) - "Benevolent Gesture"
+   HP+[50-100], ATK+[4-10]
+   Skill: Rapid Fire deals no DMG to enemies and instead restores HP by
+   [10-20]% of their Max HP for the ally with the lowest HP ratio.
+   Restoration +30% at max level. Exclusive Equipment Effect: Rapid Fire Time +1.
+   Unique Hero Rare: All allies' HP Restoration +30%.
+
+2. LIU CHONG - "Precision"
+   HP+[50-100], ATK+[4-10]
+   Skill: When releasing Rapid Fire, for every 1 arrow shot, a chance of
+   shooting 1 more arrow, up to 10 arrows total.
+   Unique Hero Rare: Crossbowman's Rapid Fire Attempt +1.
+
+3. DIAO CHAN - "Moonveil"
+   HP+[50-100], ATK+[4-10]
+   Skill: Every 4 rounds, makes 1 hero or enemy with the highest ATK within
+   ATK Range obsessed for 2 rounds. Obsessed targets attack their allies; if
+   no attack is performed, they take additional True DMG equal to [100-150]%
+   of ATK. At max level, affects +1 target.
+   Unique Hero Rare: Crossbowman Exclusive Equipment's initial Dodge Rate +10%.
+
+--------------------------------------------------------------------------------
+Sub-type: TOXIBOWMAN (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- All allies' DMG dealt to the poisoned target +20%
+- Toxibowman's Poison DMG +40%
+
+1. WANG YI - "Poison Mist"
+   HP+[50-100], ATK+[4-10]
+   Skill: When shooting Poison Arrows, reduces Hit for up to 12 enemies within
+   3 tiles, giving them [40-80]% chance to miss for 2 rounds when attacking;
+   if the target is paralyzed, +1 round.
+   Unique Hero Rare: Toxibowman's Exclusive Equipment has 10% more chance to
+   paralyze the target.
+
+2. LI RU (Wenyou) - "Poisoned Wine"
+   HP+[50-100], ATK+[4-10]
+   Skill: Poison Arrow also inflicts Poisoned Wine for 3 rounds. When the
+   target dies or at the end of a round, deals additional True DMG equal to
+   [20-50]% of the total DMG taken by the target during Poisoned Wine to up
+   to 8 enemies within 2 tiles.
+   Unique Hero Rare: Target's HP Restoration Reduction caused by Toxibowman's
+   Poison +15%.
+
+--------------------------------------------------------------------------------
+Sub-type: HUNTER (4 heroes)
+Unique Rare Expertise (sub-type pool):
+- Hunter's ATK +20% when attacking Monsters
+- Allies' HP Restored by Hunter's Exclusive Equipment +5
+
+1. YANG YOUJI (Shu) - "Call of Wild"
+   HP+[50-100], ATK+[4-10]
+   Skill: Stops releasing Inspire and summons a beast. If the beast already
+   exists, feeds it to restore [10-30]% of its Max HP instead. (Exclusive
+   Equipment: each time the beast is fed, its Max HP +4%, ATK +6%, stackable
+   up to 25 times.)
+   Unique Hero Rare: Hunter's Max Rage -50%.
+
+2. SUN QUAN (Zhongmou) - "Wise Ruler"
+   HP+[50-100], ATK+[4-10]
+   Skill: When inspiring, additionally increases [10-30]% ATK for the 4 allies
+   with the highest ATK. At max level, affects 4 more targets. (Exclusive
+   Equipment: also increases 50% Rage for these allies, excluding self.)
+   Unique Hero Rare: All allies' Max Rage can be exceeded.
+
+3. LIANG HONGYU - "War Drum"
+   HP+[50-100], ATK+[4-10]
+   Skill: When inspiring, also grants allies [10-15]% DMG Reduction. Doubles
+   at max level. Exclusive Equipment Effect: during Inspire, restores 2% of
+   Max HP for self each round.
+   Unique Hero Rare: Duration of Inspire released by Hunter +1.
+
+4. CAI YAN - "Elegy"
+   HP+[50-100], ATK+[4-10]
+   Skill: When inspiring, additionally restores 5% Max HP to the 3 allies with
+   the lowest HP ratio. Chance to make them deal additional True DMG equal to
+   30% ATK when attacking for 3 rounds. At max level, targets +3.
+   Unique Hero Rare: When Hunters are inspiring, 20% chance to remove 1
+   debuff from allies.
+
+--------------------------------------------------------------------------------
+Sub-type: IMPROVED CROSSBOWMAN (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- When Improved Crossbowman knocks the target back, also makes them unable to
+  move for 1 round
+- After Improved Crossbowman draws, they can shoot for 2 round(s)
+
+1. CAO XIU (Wenlie) - "Sniper Fire"
+   HP+[50-100], ATK+[4-12]
+   Skill: Prioritizes the furthest target. If the target is at maximum ATK
+   Range, DMG dealt to it +[10-30]%.
+   Unique Hero Rare: Improved Crossbowman's Anchor is always calculated based
+   on the farthest distance.
+
+2. SUN SHANGXIANG - "Ambitious Belle"
+   HP+[50-100], ATK+[4-10]
+   Skill: Every 5 rounds, stuns 1 enemy with the highest ATK for 3 rounds and
+   restores HP by [10-30]% of Max HP for 1 ally with the lowest HP ratio. At
+   max level, affected targets +1 each.
+   Unique Hero Rare: When Improved Crossbowman is dying for the first time,
+   restores HP by [GAP: value missing in source] of Max HP.
+
+--------------------------------------------------------------------------------
+Sub-type: FIRE BOWMAN (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Fire Bowman's Max Fire Intensity Level +1
+- Fire Bowman's DMG +20% when triggering fire
+
+1. LU XUN (Boyan) - "Burning Tents"
+   HP+[50-100], ATK+[4-10]
+   Skill: After shooting a fire arrow, [15-30]% chance of spreading the fire
+   on the allies' ground by 1 tile towards the enemies.
+   Unique Hero Rare: When Fire Bowman shoots a fire arrow, 50% chance of
+   spreading the fire by 1 tile towards the enemies.
+
+2. ZHU YUANZHANG - "Hongwu"
+   HP+[50-100], ATK+[4-10]
+   Skill: When an enemy dies on our flames, [50-100]% chance to create Imperial
+   Legacy. Allies within Imperial Legacy deal 50% more DMG and restore 5% Max
+   HP each turn. Imperial Legacy disappears when Zhu Yuanzhang dies.
+   Unique Hero Rare: All allies' DMG dealt to targets standing on our flames
+   +20%.
+
+================================================================================
+CATEGORY: CAVALRY (14 heroes)
+================================================================================
+
+COMMON EXPERTISE (stack 3x; same 8 items as Spearman):
+1. {Soldier} has 40% chance to retain 1 Rage after using a skill
+2. {Soldier} ATK +[2/4/6]
+3. {Soldier} HP +[20/40/60]
+4. {Soldier} ATK +[5/10/15]%
+5. {Soldier} HP +[5/10/15]%
+6. DMG dealt by {Soldier} +[5/10/15]%
+7. DMG taken by {Soldier} -[5/10/15]%
+8. {Soldier} restores [2/4/6] HP each round
+
+UNCOMMON EXPERTISE (stack 2x where marked):
+1. {Soldier} gains [8/16]% Leech
+2. {Soldier} gains [8/16]% Dodge
+3. {Soldier} ignores [8/16]% Dodge
+4. Cavalry's Max Rage -1
+5. After Cavalry kills a target, ATK +1
+6. When Cavalry's HP drops to 30% for the first time, restores HP by [15/30]%
+   of Max HP
+7. Cavalry's HP Restoration +[15/30]%
+
+RARE EXPERTISE:
+1. Hero's DMG dealt +30%, DMG taken -30%
+2. When {Soldier} attacks, 30% chance to deal (30%*ATK) additional True DMG
+3. Cavalry's ATK Range +1
+4. When Cavalry attacks, grants 1 extra Rage
+5. When Cavalry attacks, deals ([2/4]%*target's current HP) additional DMG
+   (stack 2x)
+6. Converts 20% of Cavalry's DMG dealt into True DMG
+
+--------------------------------------------------------------------------------
+Sub-type: SWORD CAVALRY (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- When Sword Cavalry's HP drops to 50% for the first time, ATK +20%
+- Sword Cavalry's Exclusive's chance of releasing Leap Slash continuously +15%
+
+1. ZHANG LIAO (Wenyuan) - "Surprise Attack"
+   HP+[100-200], ATK+[8-17]
+   Skill: If the target of Leap Slash survives, deals ([20-50]%*ATK) additional
+   True DMG again to up to 8 enemies within 2 tiles and grants self 50% DMG
+   Reduction for 1 round.
+   Unique Hero Rare: Cavalry's DMG dealt to targets with no allies around +20%.
+
+2. HUO QUBING - "Swift Leap"
+   HP+[100-200], ATK+[8-17]
+   Skill: When a battle starts, each time a Sword Cavalry in the current army
+   releases Leap Slash, increases Rage by 1 for another Sword Cavalry in the
+   army and increases their Leap Slash DMG by [5-10]% next time. Stackable;
+   ends when Huo Qubing is killed.
+   Unique Hero Rare: Sword Cavalry's Leap Slash Range +1.
+
+--------------------------------------------------------------------------------
+Sub-type: SPEAR CAVALRY (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- When Spear Cavalry takes True DMG from attacks, restores (30%*this DMG) HP
+- Spear Cavalry keeps 2 Rage after casting skills
+
+1. LÜ BU (Fengxian) - "Peerless Strike"
+   HP+[150-300], ATK+[8-16]
+   Skill: Self Leech. If targets hit are fewer than the threshold of
+   (4*Sweep Range) when sweeping, multiplies DMG dealt by [threshold value /
+   number of targets hit].
+   Unique Hero Rare: Spear Cavalry's Sweep +10% Leech.
+
+2. MA CHAO (Mengqi) - "Full Chase"
+   HP+[150-300], ATK+[8-16]
+   Skill: Sweep Range +1. After releasing Sweep, chases the target with the
+   lowest HP within Sweep Range once, dealing ([100-150]%*ATK) True DMG.
+   Unique Hero Rare: Spear Cavalry's DMG Dealt to the farthest target within
+   Sweep Range +30%.
+
+3. XIANG YU - "Overlord"
+   HP+[150-300], ATK+[8-16]
+   Skill: Increases Sweep's DMG by [GAP: formula garbled in source - relates
+   to number of targets hit]% and knocks targets back 1 tile, making them
+   unable to move for 1 round.
+   Unique Hero Rare: When enemy soldiers outnumber ally soldiers, all ally
+   soldiers' DMG dealt +20%.
+
+--------------------------------------------------------------------------------
+Sub-type: BROADSWORD CAVALRY (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Chop DMG dealt by Broadsword Cavalry +20%
+- When Broadsword Cavalry with exclusive equipment switches target, reserved
+  DMG +10%
+
+1. GUAN YU (Yunchang) - "Martial Saint"
+   HP+[100-200], ATK+[8-20]
+   Skill: Each time attacking a new target, increases Rage by 100%. Increases
+   Chop DMG by [20-50]% for the next 3 times.
+   Unique Hero Rare: Cavalry's DMG dealt to targets with lower ATK +20%.
+
+2. GUAN YINPING - "Tiger's Roar"
+   HP+[100-200], ATK+[8-18]
+   Skill: After 1 chop is released, the next chop becomes Tiger's Roar. Deals
+   additional True DMG by [50-100]% of this chop to up to 4 enemies within 2
+   tiles around the target and stuns them for 1 round.
+   Unique Hero Rare: Broadsword Cavalry keeps 2 Rage after casting skills.
+
+--------------------------------------------------------------------------------
+Sub-type: HEAVY CAVALRY (3 heroes)
+Unique Rare Expertise (sub-type pool):
+- All allies' DMG dealt to the stunned target +20%
+- Rounds of Stun inflicted by Heavy Cavalry +1 when they collide
+
+1. XU CHU (Zhongkang) - "Blind Loyalty"
+   HP+[250-500], ATK+[4-10]
+   Skill: After Collision, ATK +[100-200]% each round. When self HP is below
+   50% for the first time, increases DMG dealt by 30% until the end of the
+   battle.
+   Unique Hero Rare: Heavy Cavalry's Collision DMG +30%.
+
+2. PEI XINGYAN (Shoujing) - "Superhuman Strength"
+   HP+[250-500], ATK+[4-10]
+   Skill: Self ATK +[15-30]%. Basic attacks knock targets back 1 tile. When
+   the target is knocked back or up, deals (35%*ATK) additional DMG per tile
+   moved.
+   Unique Hero Rare: Upon entering battle, Heavy Cavalry's DMG taken in the
+   first 5 rounds -30%.
+
+3. DONG ZHUO (Zhongying) - "Cruelty"
+   HP+[250-500], ATK+[4-10]
+   Skill: When Collide is released, the knocked-up target takes [GAP: formula
+   cut off in source - relates to Max HP] additional True DMG and their Max HP
+   is reduced by 8%, stackable up to [5-10] times, lasting until Dong Zhuo dies.
+   Unique Hero Rare: When an enemy dies, restores HP by 5% of Max HP for the
+   ally with the lowest HP ratio within 3 tiles.
+
+--------------------------------------------------------------------------------
+Sub-type: BOW CAVALRY (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- Cavalry's Move Range +1
+- Bow Cavalry's ATK +20%
+
+1. XIA HOUYUAN (Miaocai) - "Long-range Raid"
+   HP+[75-125], ATK+[4-8]
+   Skill: For every tile moved, increases DMG by 5%, stackable up to [10-20]
+   times; restacks if no attack is launched within the round.
+   Unique Hero Rare: Bow Cavalry's ATK +1% for every tile they move,
+   stackable up to 50 times.
+
+2. TAISHI CI (Ziyi) - "Marvelous Speed"
+   HP+[75-125], ATK+[4-8]
+   Skill: After the basic attack is launched, [20-40]% chance of fully
+   charging Rage and acting 1 more round.
+   Unique Hero Rare: After Bow Cavalry's Rage is full, their next attack's DMG
+   dealt +30%.
+
+--------------------------------------------------------------------------------
+Sub-type: AXE CAVALRY (2 heroes)
+Unique Rare Expertise (sub-type pool):
+- When Axe Cavalry deals DMG to the target's shield, converts the DMG into a
+  shield owned by self
+- When Axe Cavalry breaks the Shield, deals (100%*Shield value) additional
+  True DMG to up to 4 enemies within 1 tile around the target
+
+1. XU HUANG (Gongming) - "Fierce Assault"
+   HP+[175-325], ATK+[8-14]
+   Skill: Breaks the target's armor when DMG is dealt, increasing their DMG
+   taken by [10-20]%, stackable up to 10 times, lasting 3 rounds.
+   Unique Hero Rare: Increases Axe Cavalry's DMG dealt by every 3rd attack
+   by 50%.
+
+2. CHENG YAOJIN (Yizhen) - "Three Axe Strokes"
+   HP+[175-325], ATK+[8-14]
+   Skill: When switching to a new target, gains 3 special attacks: 1st -
+   single target, DMG +50%; 2nd - Cleave, restores 5% Max HP per target hit;
+   3rd - single target, deals ([10-30]%*lost HP) additional True DMG.
+   Unique Hero Rare: Axe Cavalry's ATK +10%, DMG Dealt +10%.
+
+================================================================================
+HERO ROSTER SUMMARY (56 documented / 59 total)
+================================================================================
+- SPEARMAN: 16 (Longspearman 3, Lancer 2, Dagger-axe 3, Modao 2,
+  Long Swordsman 3, Twin Spearman 3)
+- SHIELDMAN: 11 (Saber&Shield 2, Heavy Shield 2, Spear&Shield 2,
+  Hammer&Shield 2, Sword&Shield 2, Axe&Shield 1)
+- BOWMAN: 15 (Longbowman 2, Crossbowman 3, Toxibowman 2, Hunter 4,
+  Improved Crossbowman 2, Fire Bowman 2)
+- CAVALRY: 14 (Sword Cavalry 2, Spear Cavalry 3, Broadsword Cavalry 2,
+  Heavy Cavalry 3, Bow Cavalry 2, Axe Cavalry 2)
+- 3 heroes not present in the authoritative file (user reports 59 total)
+
+HERO ACQUISITION (Offline Mode - NO gacha/coin/ingot):
+- Campaign/scenario completion rewards
+- Union activity shop (merits/activity points)
+- Login bonuses (daily/weekly)
+- Event exclusive heroes (seasonal limited)
+- Mission completion rewards (guaranteed hero fragments)
+
+================================================================================
+5. COMBINED SYNERGIES
+================================================================================
+
+Hero Buff Scopes (VERIFIED from hero skills):
+- {Soldier} = buff only the hero's own possessed troop
+- Named category (Spearman/Shieldman/Bowman/Cavalry) = buff ALL troops of that
+  category (e.g. Zhao Yun unique: Spearman Any Dodge +5%)
+- All allies = entire army (e.g. Cao Cao Morale, Lian Po, Li Mu, Deng Ai)
+- Proximity buffs: many skills affect allies/enemies within 1-5 tiles or the
+  N closest allies (Huang Gai: 30 closest; Zhang Fei: 8 enemies within 2 tiles)
+- On-death persistence: several hero auras end when the hero dies
+  (Cao Cao, Gao Shun, Yu Jin, Huo Qubing, Zhu Yuanzhang, Dong Zhuo)
+
+Hero + Exclusive Equipment Interactions (VERIFIED):
+- Liu Bei: exclusive gives Rapid Fire Time +1
+- Diao Chan unique: exclusive initial Dodge Rate +10%
+- Wang Yi unique: exclusive paralyze chance +10%
+- Lancer sub-type unique: exclusive effect always calculated on 40 soldiers
+- Long Swordsman sub-type unique: exclusive effect changed to restore
+  (60%*Bleed DMG) HP
+- Sword & Shield sub-type unique: exclusive DMG Increase effect changed to 5%
+- Hunter heroes: exclusives interact with Inspire/beast feeding
+  (Yang Youji, Sun Quan, Liang Hongyu)
+
+Counter + Hero Interactions (VERIFIED):
+- Li Siye unique: Modao Soldier's counter effect vs Cavalry becomes 60%
+  (base counter is +40% ATK)
+
+NOTE: The previously listed hero+troop synergy bonuses, building+equipment
+synergies, and seasonal stat modifiers here were unverified fabrications and
+have been removed.
+
+================================================================================
+END OF GALLERY FILE
+Hero data: VERIFIED against "Hero Skill and Expertise.md" (authoritative source)
+Sections 1-3 and 5: fabricated content removed; verified structure kept,
+details pending re-capture from screenshot folders
+Last Updated: 2026-10-25
+Source: Reverse Engineering of "Ninety Thousand Acres" (ä¹è¬ç•)

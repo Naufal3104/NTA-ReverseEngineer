@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>Canvas Debug</title>
+<style>
+body { margin: 0; background: #111; }
+#testCanvas { width: 400px; height: 300px; border: 2px solid #0f0; background: #000; }
+.info { color: #fff; font-size: 12px; padding: 10px; }
+</style>
+</head>
+<body>
+<div class="info">Canvas test page</div>
+<canvas id="testCanvas" width="400" height="300"></canvas>
+<script>
+const canvas = document.getElementById('testCanvas');
+const ctx = canvas.getContext('2d');
+
+// Draw a bright green square
+ctx.fillStyle = '#0f0';
+ctx.fillRect(50, 50, 100, 100);
+
+// Draw a red circle
+ctx.fillStyle = '#f00';
+ctx.beginPath();
+ctx.arc(250, 150, 50, 0, Math.PI*2);
+ctx.fill();
+
+console.log('Canvas info:', canvas.width, 'x', canvas.height);
+console.log('Display size:', canvas.clientWidth, 'x', canvas.clientHeight);
+console.log('DPR:', window.devicePixelRatio);
+console.log('Offset:', canvas.offsetLeft, canvas.offsetTop);
+</script>
+</body>
+</html>

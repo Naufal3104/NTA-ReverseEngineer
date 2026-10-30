@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head><title>Debug Page for Actual Game</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111; color: #fff; font-family: sans-serif; }
+</style>
+</head>
+<body>
+<div id="log" style="padding:10px;font-size:11px"></div>
+<script>
+function log(msg) { 
+  document.getElementById('log').innerHTML += msg + '<br>'; 
+  console.log(msg); 
+}
+
+// Wait for DOM
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const container = document.getElementById('mapContainer');
+    const canvas = document.getElementById('mapCanvas');
+    const panel = document.getElementById('mapPanel');
+    const content = document.querySelector('.main-content');
+    const screen = document.getElementById('gameScreen');
+    
+    log('=== ELEMENTS ===');
+    log('container: ' + !!container);
+    log('canvas: ' + !!canvas);
+    log('panel: ' + !!panel);
+    log('content: ' + !!content);
+    log('screen: ' + !!screen);
+    
+    log('=== CONTAINER ===');
+    if(container) {
+      log('container rect: ' + JSON.stringify(container.getBoundingClientRect()));
+      log('clientWidth: ' + container.clientWidth + ' clientHeight: ' + container.clientHeight);
+      log('offsetWidth: ' + container.offsetWidth + ' offsetHeight: ' + container.offsetHeight);
+      log('scrollWidth: ' + container.scrollWidth + ' scrollHeight: ' + container.scrollHeight);
+      log('style: ' + container.style.cssText);
+      log('computed: ' + JSON.stringify({
+        width: getComputedStyle(container).width,
+        height: getComputedStyle(container).height,
+        display: getComputedStyle(container).display,
+        flex: getComputedStyle(container).flex
+      }));
+    }
+    
+    log('=== CANVAS ===');
+    if(canvas) {
+      log('canvas rect: ' + JSON.stringify(canvas.getBoundingClientRect()));
+      log('attributes: ' + canvas.width + 'x' + canvas.height);
+      log('client: ' + canvas.clientWidth + 'x' + canvas.clientHeight);
+      log('style: ' + canvas.style.cssText);
+    }
+    
+    log('=== PANEL ===');
+    if(panel) {
+      log('panel rect: ' + JSON.stringify(panel.getBoundingClientRect()));
+      log('computed: ' + JSON.stringify({
+        width: getComputedStyle(panel).width,
+        height: getComputedStyle(panel).height,
+        display: getComputedStyle(panel).display,
+        flex: getComputedStyle(panel).flex
+      }));
+    }
+    
+    log('=== CONTENT ===');
+    if(content) {
+      log('content rect: ' + JSON.stringify(content.getBoundingClientRect()));
+      log('computed: ' + JSON.stringify({
+        width: getComputedStyle(content).width,
+        height: getComputedStyle(content).height,
+        display: getComputedStyle(content).display,
+        flex: getComputedStyle(content).flex
+      }));
+    }
+    
+    log('=== SCREEN ===');
+    if(screen) {
+      log('screen rect: ' + JSON.stringify(screen.getBoundingClientRect()));
+      log('computed: ' + JSON.stringify({
+        width: getComputedStyle(screen).width,
+        height: getComputedStyle(screen).height,
+        display: getComputedStyle(screen).display
+      }));
+    }
+    
+    // Try to draw
+    if(canvas && container) {
+      const ctx = canvas.getContext('2d');
+      if(ctx) {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        log('Drawing test rect...');
+        ctx.fillStyle = '#2d5a2d';
+        ctx.fillRect(10, 10, canvas.width-20, canvas.height-20);
+        log('Drawn at: ' + canvas.width + 'x' + canvas.height);
+      } else {
+        log('NO CONTEXT!');
+      }
+    }
+  }, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Ninety Thousand Acres - Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading" class="screen active">
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Memuat data game...</p>
+      <div class="progress-bar"><div class="progress-fill" id="loadProgress"></div></div>
+    </div>
+  </div>
+
+  <!-- Main Game Screen -->
+  <div id="gameScreen" class="screen">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="season-info">
+        <span class="season-icon" id="seasonIcon">🌱</span>
+        <span id="seasonText">Spring Day 1</span>
+      </div>
+      <div class="resources" id="resourcesBar">
+        <div class="resource"><span class="icon">🌾</span><span id="resCrop">500</span></div>
+        <div class="resource"><span class="icon">🪵</span><span id="resWood">300</span></div>
+        <div class="resource"><span class="icon">🪨</span><span id="resStone">200</span></div>
+      </div>
+      <div class="turn-info">
+        <span>Turn: <span id="turnNum">1</span></span>
+        <button id="nextTurnBtn" class="btn-primary">Next Turn</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Left Panel: Map -->
+      <section class="panel map-panel" id="mapPanel">
+        <div class="panel-header">
+          <h3>Peta</h3>
+          <div class="map-controls">
+            <button class="btn-small" id="zoomIn">+</button>
+            <button class="btn-small" id="zoomOut">-</button>
+            <button class="btn-small" id="resetView">⌂</button>
+          </div>
+        </div>
+        <div class="map-container" id="mapContainer">
+          <canvas id="mapCanvas"></canvas>
+          <div class="map-tooltip" id="mapTooltip"></div>
+        </div>
+        <div class="map-legend" id="mapLegend"></div>
+      </section>
+
+      <!-- Right Panel: Tabs -->
+      <aside class="panel side-panel">
+        <div class="tab-bar" id="tabBar">
+          <button class="tab-btn active" data-tab="city">🏙️ Kota</button>
+          <button class="tab-btn" data-tab="troops">⚔️ Pasukan</button>
+          <button class="tab-btn" data-tab="heroes">👤 Pahlawan</button>
+          <button class="tab-btn" data-tab="union">🤝 Union</button>
+          <button class="tab-btn" data-tab="log">📜 Log</button>
+        </div>
+        <div class="tab-content">
+          <!-- City Tab -->
+          <div class="tab-pane active" id="tabCity">
+            <div class="section">
+              <h4>Produksi</h4>
+              <div class="production-list" id="productionList"></div>
+            </div>
+            <div class="section">
+              <h4>Bangunan</h4>
+              <div class="building-list" id="buildingList"></div>
+            </div>
+            <div class="section">
+              <h4>Bangun Baru</h4>
+              <div class="build-options" id="buildOptions"></div>
+            </div>
+          </div>
+
+          <!-- Troops Tab -->
+          <div class="tab-pane" id="tabTroops">
+            <div class="section">
+              <h4>Pasukan Anda</h4>
+              <div class="troop-list" id="troopList"></div>
+            </div>
+            <div class="section">
+              <h4>Rekrut Baru</h4>
+              <div class="recruit-options" id="recruitOptions"></div>
+            </div>
+          </div>
+
+          <!-- Heroes Tab -->
+          <div class="tab-pane" id="tabHeroes">
+            <div class="section">
+              <h4>Pahlawan Tersedia</h4>
+              <div class="hero-grid" id="heroGrid"></div>
+            </div>
+          </div>
+
+          <!-- Union Tab -->
+          <div class="tab-pane" id="tabUnion">
+            <div class="section">
+              <h4>Union</h4>
+              <div id="unionInfo">Belum bergabung union</div>
+              <button class="btn-secondary" id="createUnionBtn">Buat Union</button>
+            </div>
+          </div>
+
+          <!-- Log Tab -->
+          <div class="tab-pane" id="tabLog">
+            <div class="section">
+              <h4>Log Permainan</h4>
+              <div class="log-container" id="logContainer"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Bottom Bar: Battle / Actions -->
+    <footer class="bottom-bar" id="bottomBar">
+      <div class="selected-tile-info" id="selectedTileInfo">Pilih tile di peta</div>
+      <div class="action-buttons" id="actionButtons"></div>
+    </footer>
+  </div>
+
+  <!-- Battle Modal -->
+  <div id="battleModal" class="modal hidden">
+    <div class="modal-content battle-modal">
+      <div class="modal-header">
+        <h3>⚔️ Pertempuran</h3>
+        <button class="close-btn" id="closeBattleModal">×</button>
+      </div>
+      <div class="battle-setup">
+        <div class="battle-side attacker">
+          <h4>Penyerang</h4>
+          <div class="battle-units" id="attackerUnits"></div>
+          <button class="btn-primary" id="addAttackerBtn">+ Tambah Pasukan</button>
+        </div>
+        <div class="vs">VS</div>
+        <div class="battle-side defender">
+          <h4>Pertahanan</h4>
+          <div class="battle-units" id="defenderUnits"></div>
+        </div>
+      </div>
+      <div class="battle-result hidden" id="battleResult">
+        <h4>Hasil: <span id="battleOutcome"></span></h4>
+        <div class="battle-log" id="battleLog"></div>
+        <div class="battle-rewards" id="battleRewards"></div>
+        <button class="btn-primary" id="closeBattleResult">Tutup</button>
+      </div>
+      <button class="btn-primary" id="startBattleBtn">Mulai Pertempuran</button>
+    </div>
+  </div>
+
+  <!-- Recruit Modal -->
+  <div id="recruitModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Rekrut Pasukan</h3>
+        <button class="close-btn" id="closeRecruitModal">×</button>
+      </div>
+      <div class="recruit-form">
+        <div class="form-group">
+          <label>Jenis Pasukan</label>
+          <select id="recruitSoldierType"></select>
+        </div>
+        <div class="form-group">
+          <label>Jumlah</label>
+          <input type="number" id="recruitCount" value="10" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>Pahlawan</label>
+          <select id="recruitHero"><option value="">Tanpa Pahlawan</option></select>
+        </div>
+        <div class="form-group">
+          <label>Equipment</label>
+          <select id="recruitEquip" multiple></select>
+        </div>
+        <div class="form-group">
+          <label>Expertise</label>
+          <select id="recruitExpertise" multiple></select>
+        </div>
+        <div class="recruit-cost" id="recruitCost"></div>
+        <button class="btn-primary" id="confirmRecruitBtn">Rekrut</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="battle.js"></script>
+  <script src="game.js"></script>
+  <script src="ui_debug.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const gs = new Game.GameState();
+      UI.init(gs);
+    });
+  </script>
+</body>
+</html>

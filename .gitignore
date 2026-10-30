@@ -1,0 +1,47 @@
+# ── Large binaries & captures (excluded from curated push) ──
+*.apk
+*.xapk
+*.mp4
+*.exe
+frida-server
+frida-server.xz
+*.zip
+game_logcat.txt
+
+# ── Bulk raw screenshot dumps (OCR sudah diekstrak ke ocr_*.txt) ──
+Hero-20261024T130155Z-1-001/
+Weapon-20261024T114708Z-1-001/
+Soldier-20261024T114215Z-1-001/
+Soldier lv 6-20261024T130158Z-1-001/
+Policy-20261024T113120Z-1-001/
+Rules -20261024T130204Z-1-001/
+Building-20261024T130202Z-1-001/
+Plot/
+Battle Guide/
+screenshots/
+sdcard_files/
+
+# ── RE extraction dirs ──
+apk_extracted/
+apk_out/
+arm64_extracted/
+arm64_libs/
+
+# ── Build outputs ──
+NTAGame/build/
+NTAGame/.gradle/
+NTAGame/gradle-6.9/
+NTAGame/gradle-8.1.1/
+NTAGame/app/build/
+NTAGame/local.properties
+NTAGame/*.log
+nta_demo/build/
+nta_demo/.dart_tool/
+nta_demo/.idea/
+*.iml
+
+# ── Logs & OS junk ──
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini

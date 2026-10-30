@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTA - Map Only Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #0f0f23; 
+      color: #fff; 
+      font-family: sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #status { 
+      padding: 10px; 
+      background: #16213e; 
+      border-bottom: 1px solid #2a2a4a;
+      font-size: 12px;
+    }
+    #mapContainer {
+      flex: 1;
+      position: relative;
+      background: #0f0f23;
+    }
+    #mapCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="status">Loading...</div>
+  <div id="mapContainer"><canvas id="mapCanvas"></canvas></div>
+
+  <script src="data.js"></script>
+  <script>
+(function() {
+  const canvas = document.getElementById('mapCanvas');
+  const ctx = canvas.getContext('2d');
+  const container = document.getElementById('mapContainer');
+  const status = document.getElementById('status');
+  
+  const TILE_SIZE = 40;
+  let zoom = 1;
+  let offset = { x: 0, y: 0 };
+  let isDragging = false;
+  let lastMouse = { x: 0, y: 0 };
+  
+  function resize() {
+    const rect = container.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    render();
+  }
+  
+  function tileToScreen(col, row) {
+    const cx = canvas.clientWidth / 2;
+    const cy = canvas.clientHeight / 2;
+    const isoX = (col - row) * (TILE_SIZE / 2) * zoom;
+    const isoY = (col + row) * (TILE_SIZE / 4) * zoom;
+    return { x: cx + isoX + offset.x, y: cy + isoY + offset.y };
+  }
+  
+  function drawTile(col, row, type, id, isCapital) {
+    const pos = tileToScreen(col, row);
+    const hs = TILE_SIZE * zoom;
+    
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y - hs);
+    ctx.lineTo(pos.x + hs, pos.y);
+    ctx.lineTo(pos.x, pos.y + hs);
+    ctx.lineTo(pos.x - hs, pos.y);
+    ctx.closePath();
+    
+    let color;
+    if (isCapital) color = '#8B4513';
+    else if (type === 'crop') color = '#2d5a2d';
+    else if (type === 'wood') color = '#4a3728';
+    else if (type === 'stone') color = '#3d3d3d';
+    else color = '#2a2a2a';
+    
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#4ade80';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(id, pos.x, pos.y);
+  }
+  
+  function render() {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    ctx.clearRect(0, 0, w, h);
+    
+    if (!window.DATA || !window.DATA.map) return;
+    
+    // Draw neutral plots
+    window.DATA.map.plots.forEach(p => {
+      drawTile(p.col, p.row, p.res, p.id, false);
+    });
+    
+    // Draw capitals
+    const pc = window.DATA.map.playerCapital;
+    drawTile(pc.col, pc.row, 'capital', 'PC', true);
+    
+    const ec = window.DATA.map.enemyCapital;
+    drawTile(ec.col, ec.row, 'capital', 'EC', true);
+  }
+  
+  // Events
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+  });
+  
+  canvas.addEventListener('mousemove', e => {
+    if (isDragging) {
+      const dx = e.clientX - lastMouse.x;
+      const dy = e.clientY - lastMouse.y;
+      offset.x += dx;
+      offset.y += dy;
+      lastMouse = { x: e.clientX, y: e.clientY };
+      render();
+    }
+  });
+  
+  canvas.addEventListener('mouseup', () => { isDragging = false; });
+  canvas.addEventListener('mouseleave', () => { isDragging = false; });
+  
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom = Math.max(0.3, Math.min(3, zoom * (e.deltaY > 0 ? 0.9 : 1.1)));
+    render();
+  });
+  
+  // Init
+  function init() {
+    status.textContent = 'DATA loaded: ' + (!!window.DATA) + ' | Plots: ' + (window.DATA?.map?.plots?.length || 0);
+    resize();
+    window.addEventListener('resize', resize);
+    render();
+    status.textContent += ' | Canvas: ' + canvas.width + 'x' + canvas.height + ' | Client: ' + canvas.clientWidth + 'x' + canvas.clientHeight;
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+  </script>
+</body>
+</html>

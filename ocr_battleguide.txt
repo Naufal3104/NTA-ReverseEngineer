@@ -1,0 +1,201 @@
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-21-015_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+16
+153
+5700
+Fortune's Favorite yurair
+Battlefield Guide
+Practical Tips
+Select suitable troops.
+1. Deploy melee soldiers and ranged
+soldiers appropriately to maximize the
+damage output.
+2. When there are too many melee soldiers,
+the efficiency is reduced.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-24-172_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+ne's Favorite yurains: Obtaine(
+Practical Tips
+Wear suitable equipment.
+1. Different equipment are suitable for
+different troops.
+The DMG Reduction and Restoration types
+ofequipment can enhance soldiers'ability
+to survive.
+Shield + DMG Reduction ATK + HP Restoration
+2.Select suitable equipment when
+attackingdifferentenemies.
+Iron Shield reduces enemies' Melee DMG
+dealt;Rattan Shield reduces enemies
+Ranged DMG dealt.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-27-669_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+yurains: Obtained [Meng Huo
+Battlefield Guide
+Battlefield
+How to Get
+Practical Tips
+Stronger
+Instruction
+Practical Tips
+How to AdjustArmy
+1.Soldier Editing Guide
+Open the operation interface of a single
+soldier to change the soldier's team.
+Team15
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-32-046_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+led [Meng Huo] Fragment*27 :
+Practical Tips
+Land Level
+1. The Lands are divided into 5 levels.
+The higher the land level,the more the
+Reward Points consumed,the higher the
+resource output,and the richer the chest
+rewards.
+2.There are 6 difficulty levels of land
+conquest: Easy, Entry, Common,Advanced,
+Hard, and Hell.
+1.The more difficult it is to conquer the
+lands, the richer the chest rewards.
+2.The longer the distance from the Capital,
+the more difficult it is to conquer the lands.
+When the distance is the same,the higher
+the land level,the more difficult it is to
+conquer the lands.
+Easy
+Hell
+DDDDD
+口
+DDDD
+Upgrade'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-35-522_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700J
+Jo] Fragment*27 at General M
+Practical Tips
+Land Conquering Tips
+1. Multiple armies can conquer 1 land at
+the same time.
+When the difficulty level is too high,
+sending multiple armies to conquer the
+land at the same time with appropriate
+attack & defense strategies can significantly
+increase the survival rate ofsoldiers.
+Hell
+2. Multiple armies can conquer multiple
+lands separately.
+Send different armies to conquer multiple
+lands at the same time to increase the
+conquest efficiency.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-38-680_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+nt*27atGeneral Muster Terrar
+Practical Tips
+Notes on Special Resources
+1.Different resource lands can increase the
+outputofthe correspondingresources.
+There is a chance to get ExP Scrolls from
+chests obtained on Wood Plots.
+There is a chance to get lron from chests
+obtained on Stone Plots.
+There is a chance to getmore crops from
+chests obtained in Crop Plots.
+2. Obtain special resources.
+There is a chance to get extra chests with
+special resources when conquering lands
+with higher difficulty level.You can check
+drop chances on the chest details interface.
+10/10
+Hell 1
++14/h
+Y-3
++10 Points
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-44-331_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+ster Terrace.
+Practical Tips
+Soldier's ATK SPD and Rage
+1. The one who has a higher speed will
+move first and is more likely to be attacked.
+Tap to check soldier details and adjust their ATK SPD.
+ATKSPD
+5D
+2. Soldier Rage
+Rage can be obtained byboth launching
+and receiving attacks.Special equipment
+and expertise effects can speed up Rage
+Restoration.
+Skills can be cast after Rage accumulation is completed.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-08-47-024_twgame.global.acers.jpg
+================================================================================
+2955
+142
+5700+165
+153
+5700
+ce.
+Rattlefield Guide
+Practical Tips
+Barrack Recruitment Settings
+You can adjust default recruitment settings
+in the Barrack.
+Tap Barrack to check soldier details.
+ATKSPD
+Change Soldier Skin
+Change Initial SPD
+Add Equipment
+Upgrade'Smithy' to Lv.10(7/10)

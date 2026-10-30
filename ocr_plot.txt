@@ -1,0 +1,1201 @@
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-04-501_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700+177
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-07-909_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700+177
+国
+Wolf
+Beast
+Level2
+ATKSPD:8
+60/60
+6/6
+Tile*4
+17
+ Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-10-195_twgame.global.acers.jpg
+================================================================================
+2956
+142
+5700
+153
+5700
+Wolf
+Beast
+Level2
+ATK SPD:8
+Wolf Howl
+Active Skill
+Roars toinspire all allieswithin
+5 tiles, increasing their ATK by 3
+and DMG Reduction by 20% for
+3 rounds.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-12-899_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700+177
+Leopard
+Beast
+Level2
+ATKSPD:7
+88/88
+0/0
+Tile*4
+ 20
+ Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-15-396_twgame.global.acers.jpg
+================================================================================
+2956
+142
+5700+
+153
+5700
+Leopard
+Beast
+Level2
+ATK SPD:7
+Evade
+Passive Skill
+Agile and nimble. Every 2 times
+this unit is hit, gains 100%
+Dodge against the next
+incoming DMG.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-33-173_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700
+estows Great Blessings to肥
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-41-924_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700
+Obtained[xu Huang] Fragmel
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-45-123_twgame.global.acers.jpg
+================================================================================
+2956+66
+142
+5700+165
+153
+5700
+Xu Huang] Fragment*81 at Ge
+Porcupine
+Beast
+Level2
+ATKSPD:7
+91/91
+4/8
+Tile*3
+16
+D Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-47-181_twgame.global.acers.jpg
+================================================================================
+2957
+142
+5700+165
+153
+5700
+ng] Fragment*81 at General M
+Porcupine
+Beast
+Level2
+ATKSPD:7
+Spine Burst
+Active Skill
+Raises its spikes and bursts out
+violently, dealing DMG equal to
+75% ATK to enemies within 1
+tile.
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-09-58-492_twgame.global.acers.jpg
+================================================================================
+2957+66
+142
+5700+165
+153
+5700
+ace.
+国
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-01-224_twgame.global.acers.jpg
+================================================================================
+2957+66
+142
+5700+165
+153
+5700
+For
+国
+Viper
+Beast
+Level2
+ATKSPD:6
+72/72
+4/8
+Tile*3
+17
+ Tile*2
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-03-205_twgame.global.acers.jpg
+================================================================================
+2957
+142
+5700
+153
+5700
+Fortune's I
+Viper
+Beast
+Level2
+ATK SPD:6
+Venom Spit
+Active Skill
+Randomlydeals70%ATKDMG
+to 1 target and inflicts Poison
+on them for 3 rounds: dealing
+additional TrueDMGequal to
+10% of the target's current HP
+eachround.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-46-659_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+WaAug: Obtained [Xia Houyu:
+国
+Upgrade'Smithy'to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-49-411_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+)btained [Xia Houyuan] Fragm
+Lion
+Beast
+Level3
+ATKSPD:7
+394/394
+5/10
+Tile*4
+20
+Tile*1
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-51-325_twgame.global.acers.jpg
+================================================================================
+2958
+142
+5700+16
+153
+5700
+d [Xia Houyuan] Fragment*27
+国
+Lion
+Beast
+Level3
+ATK SPD:7
+Tear
+Active Skill
+Deals (120%*ATK) DMG to the
+target and bleeds them, dealing
+(50%*ATK)TrueDMGand
+reducing HP Restoration by 60%
+eachroundfor3rounds.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-10-59-873_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+市
+5700+165
+153
+5700
+at General Muster Terrace.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-02-277_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+al Muster Terrace.
+国
+Elephant
+Beast
+Level3
+ATKSPD:9
+473/473
+5/10
+Tile*3
+31
+Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-03-896_twgame.global.acers.jpg
+================================================================================
+2958
+142
+5700
+153
+5700
+ster Terrace.
+Elephant
+Beast
+Level3
+ATK SPD:9
+sling
+Active Skill
+Hurls stones at the target with
+the highest HP within 5 tiles,
+dealing (200%*ATK) DMG.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-11-775_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+Fortune'sFav
+h
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-13-995_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+Fortune'sFavorite肥
+Bear
+Beast
+Level3
+ATKSPD:9
+368/368
+6/12
+Tile*3
+25
+Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-15-585_twgame.global.acers.jpg
+================================================================================
+2958
+142
+5700+165
+153
+5700
+Fortune'sFavorite肥猫:Ot
+Bear
+Beast
+Level3
+ATK SPD:9
+Smash
+Active Skill
+Usesthebearpawtosmash the
+target, dealing extra (5%*
+target's Max HP) DMG and
+stunning the target for 1 round.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-21-721_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+市
+5700+165
+153
+5700
+肥猫:Obtained [Zhu Yuanzhar
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-23-530_twgame.global.acers.jpg
+================================================================================
+2958+66
+142
+5700+165
+153
+5700
+)btained [Zhu Yuanzhang] Fra
+Buffalo
+Beast
+Level5
+ATKSPD:9
+725/725
+6/12
+Tile*3
+33
+Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-28-752_twgame.global.acers.jpg
+================================================================================
+2958
+142
+5700
+153
+5700
+izhang] Fragment*27 at Gener
+国
+Buffalo
+Beast
+Level5
+ATK SPD:9
+Wild Collision
+Active Skill
+Collides by 2 tiles in the target
+direction and knocks up
+encountered enemies, dealing (
+50%*ATK)DMG.Canbreak
+shields and shield stance.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-33-582_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700 *27 at General Muster Terract
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-35-406_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700
+General Muster Terrace.
+国
+Tiger
+Beast
+Level5
+ATKSPD:7
+648/648
+4/8
+Tile*3
+35
+D Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-36-997_twgame.global.acers.jpg
+================================================================================
+2959
+142
+5700+16
+153
+5700
+ral Muster Terrace.
+Tiger
+Beast
+Level5
+ATK SPD:7
+Gash
+Active Skill
+Deals extra(35%*ATK)DMG to
+up to 20 enemies within 1 tile
+around the target.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-54-414_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700 =avorite 肥猫: Obtained [Fan K
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-56-890_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700
+疤猫: Obtained [Fan Kuai] Frag
+国
+Rhino
+Beast
+Level5
+ATKSPD:9
+671/671
+4/8
+Tile*3
+28
+Tile*1
+Upgrade Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-11-58-570_twgame.global.acers.jpg
+================================================================================
+2959
+142
+5700
+153
+5700
+)btained [Fan Kuai] Fragment*
+国
+Rhino
+Beast
+Level5
+ATK SPD:9
+Trample
+Active Skill
+Tramples nearby targets,
+dealing75%ATK DMG toupto 8
+units within 1 tile and stunning
+them for 1 round.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-11-471_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700
+MusterTerrace.
+国
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-15-730_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700
+国
+Minion
+Bandit
+Level6
+ATKSPD:8
+611/611
+0/0
+Tile*3
+29
+ Tile*1
+6
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-17-991_twgame.global.acers.jpg
+================================================================================
+2959+66
+142
+5700+165
+153
+5700
+Fortun
+国
+Assassin
+Bandit
+Level6
+ATKSPD:6
+533/533
+0/0
+Tile*3
+37
+DTile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-21-466_twgame.global.acers.jpg
+================================================================================
+2959
+142
+5700
+153
+5700
+Fortune's Favorite
+Assassin
+Bandit
+Level6
+ATK SPD:6
+533/533
+0/0
+TTile*3
+Crit
+Passive Skill
+Attacks have a 99% chance to
+deal 150% DMG.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-36-756_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+ao Shun] Fragment*27 at Gent
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-40-927_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+nent*27 at General Muster Ter
+Hedgehog
+Beast
+Level4
+ATKSPD:9
+622/622
+0/0
+Tile*3
+26
+D Tile*1
+Upgrade 'Smithy' to Lv.10（7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-42-317_twgame.global.acers.jpg
+================================================================================
+2960
+142
+5700+
+153
+5700
+:27 at General Muster Terrace.
+Hedgehog
+Beast
+Level4
+ATK SPD:9
+622/622
+0/0
+TTile*3
+DMG Reflection
+Passive Skill
+Reflects35%DMGtaken to the
+attacker upon taking DMG.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-48-780_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+errace.
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-51-435_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+国
+Lizard
+Beast
+Level3
+ATKSPD:9
+221/221
+0/0
+Tile*3
+23
+ Tile*1
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-52-896_twgame.global.acers.jpg
+================================================================================
+2960
+142
+5700+
+153
+5700
+Heav
+Lizard
+Beast
+Level3
+ATK SPD:9
+221/221
+0/0
+Tile*3
+Scale Armor
+Passive Skill
+Reducing DMG taken by 40%.
+Upgrade 'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-12-58-921_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+HeavenBestowsGreatBle
+Upgrade'Smithy'toLv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-01-049_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+ven Bestows Great Blessings
+Minion
+Bandit
+Level6
+ATKSPD:8
+611/611
+0/0
+Tile*3
+29
+ Tile*1
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-03-003_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+stows Great Blessings to 肥猫
+Bandit Saberman
+Bandit
+Level6
+ATKSPD:9
+625/625
+0/0
+Tile*3
+31
+ Tile*1
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-06-016_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+it Blessings to 肥猫: Obtained
+Bandit Bowman
+Bandit
+Level6
+ATKSPD:6
+247/247
+0/4
+Tile*2
+20
+Tile*4
+Upgrade 'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-08-252_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+ngs to 肥猫: Obtained [Zhou T
+Boar Knight
+Bandit
+Level6
+ATKSPD:7
+737/737
+0/0
+Tile*4
+70
+D Tile*1
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-15-240_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+0u Tail Fragment*81 at Genel
+Upgrade'Smithy'to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-17-842_twgame.global.acers.jpg
+================================================================================
+2960+66
+142
+5700+165
+153
+5700
+ragment*81 at General Muste
+Boar Knight
+Bandit
+Level7
+ATKSPD:7
+827/827
+0/0
+Tile*4
+85
+D Tile*1
+Upgrade'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-20-824_twgame.global.acers.jpg
+================================================================================
+2960
+142
+5700+
+153
+5700
+1 at General Muster Terrace.
+Boar Knight
+Bandit
+Level7
+ATK SPD:7
+Counter Shield Soldier
+Passive Skill
+When attacking Shieldman, ATK
++40%, and ignores 20% DMG
+Reduction.
+When being attacked by
+Shieldman, the attacker's ATK -
+40%.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-22-922_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+
+153
+5700
+neral Muster Terrace.
+Boar Knight
+Bandit
+Level7
+ATK SPD:7
+827/827
+0/0
+Tile*4
+Fortitude
+Passive Skill
+Ranged DMG taken -60%.
+Upgrade Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-25-666_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+ter Terrace.
+国
+Soulreaper
+Bandit
+Level10
+ATKSPD:6
+Tile*0
+1074/1074
+4/6
+125
+ Tile*6
+Upgrade'Smithy' to Lv.10(7/10）
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-27-782_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+165
+153
+5700
+ace.
+Soulreaper
+Bandit
+Level10
+ATK SPD:6
+1074/1074
+4/6
+J Tile*O
+lron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealt by 70% upon being
+attacked.
+Upgrade'Smithy' to Lv.10 (7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-30-026_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+Upgrade'Smithy'to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-32-900_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+16
+153
+5700
+Congratulat
+国
+Soulreaper
+Bandit
+Level10
+ATK SPD:6
+Frenzy Claw
+Active Skill
+Randomly gashes the nearest
+targetandupto8enemies
+within 2 tiles around the target
+3 times, each of which deals
+20% DMG. After gashing each
+time,DMG dealt by the next
+gash +5%, stackable without
+limit.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-43-331_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+Call爸爸, who is crowned by (
+Upgrade'Smithy'to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-45-128_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+爸, who is crowned by destiny
+Goat
+Beast
+Level8
+ATKSPD:9
+Tile*0
+1213/1213
+4/8
+80
+ Tile*6
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-47-070_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+16
+153
+5700
+5 is crowned by destiny and ay
+国
+Goat
+Beast
+Level8
+ATK SPD:9
+1213/1213
+4/8
+J Tile*O
+Iron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealt by 70% upon being
+attacked.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-48-881_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+16
+153
+5700
+)wned by destiny and awarder
+Goat
+Beast
+Level8
+ATK SPD:9
+TTile*o
+213/1213
+4/8
+Rampant Charge
+Active Skill
+Knocks the target to the place
+with themostenemieswithin 6
+tiles, dealing (15%*Max HP)
+additional True DMG to up to8
+targets within 2 tiles and
+stunning them for 1 round.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-13-59-171_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+hosen Portrait [Zhu Yuanzhan
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-00-738_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+ 5700, Portrait [Zhu Yuanzhang]!
+Rat
+Beast
+Level8
+ATKSPD:9
+0/0
+Tile*0
+1206/1206
+71
+ Tile*6
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-02-402_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700+
+153
+5700
+'ait [Zhu Yuanzhang]!
+Rat
+Beast
+Level8
+ATK SPD:9
+1206/1206
+0/0
+J Tile*O
+lron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealt by 70% upon being
+attacked.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-04-140_twgame.global.acers.jpg
+================================================================================
+2961
+142
+5700
+153
+5700
+lu Yuanzhang]!
+Rat
+Beast
+Level8
+ATK SPD:9
+Pestilence Infection
+Passive Skill
+Upon being attacked, if the
+attacker is within 2 tiles around
+self, infects the attacker with 1
+layer of Pestilence,each of
+which deals (5%*Max HP) True
+DMGtotheownereachround;
+stackable without limit.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-12-283_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+Fortune'sFe
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-14-405_twgame.global.acers.jpg
+================================================================================
+2961+66
+142
+5700+165
+153
+5700
+Fortune'sFavorite[
+国
+Ape
+Beast
+Level8
+ATKSPD:9
+Tile*0
+1052/1052
+4/6
+88
+ Tile*6
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-16-017_twgame.global.acers.jpg
+================================================================================
+2962
+142
+5700+165
+153
+5700
+Fortune's Favorite Dragot
+Ape
+Beast
+Level8
+ATK SPD:9
+1052/1052
+4/6
+J Tile*O
+lron Mountain Stance
+Passive Skill
+Unable to move. Ignores 70%
+DMG Reduction upon attacking.
+Reduces the attacker's DMG
+dealt by 70% upon being
+attacked.
+Upgrade 'Smithy' to Lv.10(7/10)
+
+================================================================================
+IMAGE: Screenshot_2026-10-26-11-14-17-855_twgame.global.acers.jpg
+================================================================================
+2962
+142
+5700+165
+153
+5700
+ortune's Favorite Dragoby: Obt
+国
+Ape
+Beast
+Level8
+ATK SPD:9
+Fury
+Active Skill
+Removes all debuffs, each of
+the following 2 attacks deals (
+300%*ATK)DMGtothenearest
+target randomly and (50%*the
+DMGdealt)additional TrueDMG
+to up to 8 enemies within 2
+tiles around the target.
+Upgrade 'Smithy' to Lv.10(7/10)

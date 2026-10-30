@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NTA - Browser Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #1a1a2e; 
+      color: #e8e8f0; 
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+    }
+    #container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    #topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #16213e;
+      border-bottom: 1px solid #2a2a4a;
+    }
+    .resources {
+      display: flex;
+      gap: 20px;
+    }
+    .resource {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+    #mapContainer {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      background: #0f0f23;
+    }
+    #mapCanvas {
+      display: block;
+      cursor: grab;
+    }
+    #mapCanvas:active {
+      cursor: grabbing;
+    }
+    #bottombar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #16213e;
+      border-top: 1px solid #2a2a4a;
+      min-height: 50px;
+    }
+    #selectedTile {
+      font-size: 14px;
+      color: #ffd700;
+    }
+    #mapInfo {
+      font-size: 12px;
+      color: #a0a0b8;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      padding: 8px 16px;
+      background: #0f0f23;
+      border-top: 1px solid #2a2a4a;
+      font-size: 11px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="topbar">
+      <div class="resources">
+        <div class="resource"><span>🌾</span><span id="crop">500</span></div>
+        <div class="resource"><span>🪵</span><span id="wood">300</span></div>
+        <div class="resource"><span>🪨</span><span id="stone">200</span></div>
+      </div>
+      <div id="mapInfo">Drag untuk geser • Scroll untuk zoom</div>
+    </div>
+    
+    <div id="mapContainer">
+      <canvas id="mapCanvas"></canvas>
+    </div>
+    
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#2d5a2d"></div>Sawah</div>
+      <div class="legend-item"><div class="legend-color" style="background:#4a3728"></div>Hutan</div>
+      <div class="legend-item"><div class="legend-color" style="background:#3d3d3d"></div>Tambang</div>
+      <div class="legend-item"><div class="legend-color" style="background:#5a2d2d;border-color:#ffd700"></div>Ibukota</div>
+    </div>
+    
+    <div id="bottombar">
+      <div id="selectedTile">Pilih tile di peta</div>
+      <div id="turnInfo" style="display:none;">Turn: <span id="turnNum">1</span></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+(function() {
+  'use strict';
+  
+  const canvas = document.getElementById('mapCanvas');
+  const ctx = canvas.getContext('2d');
+  const container = document.getElementById('mapContainer');
+  
+  // Map configuration
+  const TILE_SIZE = 40;
+  let zoom = 1;
+  let offset = { x: 0, y: 0 };
+  let selectedTile = null;
+  
+  // Drag state
+  let isDragging = false;
+  let lastMouse = { x: 0, y: 0 };
+  
+  // Initialize canvas size
+  function resize() {
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  }
+  
+  // Convert tile coordinates to screen position
+  function tileToScreen(x, y) {
+    const centerX = canvas.clientWidth / 2;
+    const centerY = canvas.clientHeight / 2;
+    const isoX = (x - y) * (TILE_SIZE / 2) * zoom;
+    const isoY = (x + y) * (TILE_SIZE / 4) * zoom;
+    return {
+      x: centerX + isoX + offset.x,
+      y: centerY + isoY + offset.y
+    };
+  }
+  
+  // Convert screen position to tile coordinates
+  function screenToTile(sx, sy) {
+    const centerX = canvas.clientWidth / 2;
+    const centerY = canvas.clientHeight / 2;
+    const relX = sx - offset.x - centerX;
+    const relY = sy - offset.y - centerY;
+    
+    // Inverse isometric transform
+    const tileX = (relX / (TILE_SIZE * zoom) + relY / (TILE_SIZE * zoom * 0.5)) / 2;
+    const tileY = (relY / (TILE_SIZE * zoom * 0.5) - relX / (TILE_SIZE * zoom)) / 2;
+    
+    return { x: Math.round(tileX), y: Math.round(tileY) };
+  }
+  
+  // Draw a single tile
+  function drawTile(tile) {
+      const pos = tileToScreen(tile.col, tile.row);
+    const halfSize = TILE_SIZE * zoom;
+    
+    // Select color based on tile type
+    let fillColor = '#2d5a2d'; // crop
+    if (tile.type === 'wood') fillColor = '#4a3728';
+    else if (tile.type === 'stone') fillColor = '#3d3d3d';
+    else if (tile.type === 'capital') fillColor = '#5a2d2d';
+    
+    // Draw diamond shape
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y - halfSize);
+    ctx.lineTo(pos.x + halfSize, pos.y);
+    ctx.lineTo(pos.x, pos.y + halfSize);
+    ctx.lineTo(pos.x - halfSize, pos.y);
+    ctx.closePath();
+    
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+    
+    // Border
+    ctx.strokeStyle = selectedTile && selectedTile.id === tile.id ? '#ffd700' : '#4ade80';
+    ctx.lineWidth = selectedTile && selectedTile.id === tile.id ? 3 : 1;
+    ctx.stroke();
+    
+    // Tile ID
+    ctx.fillStyle = '#fff';
+    ctx.font = `${Math.max(10, 12 * zoom)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tile.id.toUpperCase(), pos.x, pos.y);
+  }
+  
+  // Main render function
+  function render() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    // Draw all tiles
+    if (window.DATA && window.DATA.map && window.DATA.map.plots) {
+      const tiles = window.DATA.map.plots;
+      tiles.forEach(tile => drawTile(tile));
+      
+      // Draw player capital
+      if (window.DATA.map.playerCapital) {
+        const pc = window.DATA.map.playerCapital;
+              const capital = { id: 'PC', col: pc.col, row: pc.row, type: 'capital' };
+        drawTile(capital);
+      }
+      
+      // Draw enemy capital
+      if (window.DATA.map.enemyCapital) {
+        const ec = window.DATA.map.enemyCapital;
+              const capital = { id: 'EC', col: ec.col, row: ec.row, type: 'capital' };
+        drawTile(capital);
+      }
+    }
+  }
+  
+  // Event listeners
+  canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+  });
+  
+  canvas.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      const dx = e.clientX - lastMouse.x;
+      const dy = e.clientY - lastMouse.y;
+      offset.x += dx;
+      offset.y += dy;
+      lastMouse = { x: e.clientX, y: e.clientY };
+      render();
+    } else {
+      // Hover effect
+      const tile = screenToTile(e.clientX, e.clientY);
+      const hovered = findTileAt(tile.x, tile.y);
+      canvas.style.cursor = hovered ? 'pointer' : 'grab';
+    }
+  });
+  
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+  
+  canvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+  });
+  
+  canvas.addEventListener('click', (e) => {
+    if (!isDragging) {
+      const tile = screenToTile(e.clientX, e.clientY);
+      selectedTile = findTileAt(tile.x, tile.y);
+      updateSelectedInfo();
+      render();
+    }
+  });
+  
+  canvas.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY > 0 ? 0.9 : 1.1;
+    zoom = Math.max(0.3, Math.min(3, zoom * factor));
+    render();
+  });
+  
+  // Helper: find tile at coordinates
+  function findTileAt(x, y) {
+    if (!window.DATA || !window.DATA.map || !window.DATA.map.plots) return null;
+      return window.DATA.map.plots.find(t => t.col === x && t.row === y);
+  }
+  
+  // Update info panel
+  function updateSelectedInfo() {
+    const info = document.getElementById('selectedTile');
+    if (selectedTile) {
+      info.textContent = `Tile ${selectedTile.id} (${selectedTile.x}, ${selectedTile.y}) - ${selectedTile.type}`;
+    } else {
+      info.textContent = 'Pilih tile di peta';
+    }
+  }
+  
+  // Initialize
+  function init() {
+    console.log('=== NTA Simple Demo ===');
+    console.log('DATA loaded:', !!window.DATA);
+    console.log('Map plots:', window.DATA && window.DATA.map && window.DATA.map.plots ? window.DATA.map.plots.length : 0);
+    
+    resize();
+    window.addEventListener('resize', resize);
+    render();
+    
+    console.log('Canvas initialized:', canvas.width, canvas.height);
+    console.log('=== Done ===');
+  }
+  
+  // Start immediately
+  init();
+})();
+  </script>
+</body>
+</html>

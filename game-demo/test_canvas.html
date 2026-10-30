@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><title>Canvas Test</title></head>
+<body>
+<canvas id="c" width="800" height="600" style="border:1px solid #fff"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+console.log('Canvas size:', canvas.width, canvas.height);
+console.log('Canvas display size:', canvas.clientWidth, canvas.clientHeight);
+console.log('DPR:', window.devicePixelRatio);
+
+// Draw some debug shapes
+ctx.fillStyle = 'red';
+ctx.fillRect(10, 10, 100, 100);
+ctx.fillStyle = 'blue';
+ctx.beginPath();
+ctx.arc(100, 200, 50, 0, Math.PI*2);
+ctx.fill();
+
+// Test isometric projection
+const centerX = 400;
+const centerY = 300;
+const tileX = 2, tileY = 6;
+const tileSize = 40, mapZoom = 1;
+const isoX = (tileX - tileY) * (tileSize / 2) * mapZoom;
+const isoY = (tileX + tileY) * (tileSize / 4) * mapZoom;
+const screenX = centerX + isoX;
+const screenY = centerY + isoY;
+console.log('Isometric tile:', tileX, tileY, 'screen:', screenX, screenY);
+
+ctx.fillStyle = 'yellow';
+ctx.beginPath();
+ctx.moveTo(screenX, screenY - 20);
+ctx.lineTo(screenX + 20, screenY);
+ctx.lineTo(screenX, screenY + 20);
+ctx.lineTo(screenX - 20, screenY);
+ctx.closePath();
+ctx.fill();
+</script>
+</body>
+</html>

@@ -1,0 +1,567 @@
+===== FILE 00: Screenshot_2026-10-24-19-10-11-515_twgame.global.acers.jpg =====
+320+66
+142
+537+165
+53
+574
+Fortune'sFavoriteBahar
+Building Info
+Ting System
+Level 1
+Enhances Watchtower's durability and ATK.
+Level 1
+Level 2
+Watchtower'sDurability:40
+45
+Watchtower's ATK: 12
+14
+Upgrade Costs
+226
+185
+0:07:10
+Upgrade
+Upgrade'Smithy' to Lv.10（7/10)
+
+===== FILE 01: Screenshot_2026-10-24-19-10-17-892_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+:Bahari Kabay: Obtained [Qin
+Building Info
+Market
+Exchange
+Union Market
+Level 1
+You can trade resourceswith other union members in
+the Union Market. Each level upgraded grants you 1
+moremerchant to transportresources.
+Level 1
+Level 2
+Merchant Quantity:1
+2
+Upgrade Costs
+205
+167
+00:07:10
+Upgrade
+Upgrade'Smithy'toLv.10(7/10)
+
+===== FILE 02: Screenshot_2026-10-24-19-10-26-205_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Liangyu] Fragment*27 at Gen
+BuildingInfo
+Union
+Embassy
+Level 1
+You can join a union at Lv.1 and create one at Lv.3.
+UpgradeCosts
+185
+185
+00:05:00
+Upgrade
+Upgrade'Smithy' to Lv.10(7/10)
+
+===== FILE 03: Screenshot_2026-10-24-19-10-35-942_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Muster Terrace.
+Building Info
+Worship
+Hall of Heroes
+Level 1
+The hero portraits hung in the Hall of Heroes are not
+only a tribute to the past heroes,but also the cradle
+where futureheroes areborn.
+Level 1
+Level 10
+PortraittobeWorshipped:1
+2
+Worship new portrait at Lv.10.
+Upgrade Costs
+185
+226
+00:07:30
+Upgrade
+Upgrade'Smithy'to Lv.10(7/10)
+
+===== FILE 04: Screenshot_2026-10-24-19-10-38-921_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+race.
+Building Info
+Worship
+CaoRen
+Possessing
+Unlockedat
+Unlocked at
+Unlockedat
+LV.10
+LV.15
+LV.20
+Expertise Effect
+After hero portraits are worshiped, their Expertise effects are
+shown here.
+Upgrade'Smithy'to Lv.10(7/10)
+
+===== FILE 05: Screenshot_2026-10-24-19-10-42-763_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Fortun
+Building Info
+Warehouse
+Level 3
+A place to store wood and stones.A higher level grants
+higher resource capacity.
+Level 3
+Level 4
+WoodCapacity:5700
+7400
+StoneCapacity:5700
+7400
+Upgrade Costs
+180
+219
+0:05:40
+Upgrade
+Upgrade'Smithy'to Lv.10（7/10)
+
+===== FILE 06: Screenshot_2026-10-24-19-10-46-260_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Fortune'sFavoritel
+Building Info
+Barn
+Level3
+A place to store crops.A higher level grants higher
+crop capacity.
+Level 3
+Level 4
+Crop Capacity:5700
+7400
+Upgrade Costs
+219
+180
+00:05:00
+Upgrade
+Upgrade'Smithy' to Lv.10(7/10)
+
+===== FILE 07: Screenshot_2026-10-24-19-10-52-109_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Favorite Echo007: Obtained [S
+Building Info
+Equipment
+Exclusive
+Smithy
+Level 7
+You can craft equipment for soldiers and enhance their
+ATK and survivability at the Smithy.A higher level
+grants faster craft SPD and more equipment options.
+Level 7
+Level8
+CraftTime-21%
+24%
+New Exclusive unlocks at Lv.10.
+Upgrade Costs
+527
+645
+0:22:50
+Upgrade
+Upgrade'Smithy' to Lv.10(7/10)
+
+===== FILE 08: Screenshot_2026-10-24-19-10-57-694_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+btained [Sun Quan] Fragment
+Building Info
+Equipment
+Exclusive
+ChooseEquipment
+Crit Blade
+ +6[2-10]
+There is a 21[20-40]% chance to deal 168[150-180]
+% Crit DMG.
+Recast Costs
+OwnO7
+357
+357
+0:04:35 (-21%)
+Revert
+Recast
+Upgrade'Smithy' to Lv.10(7/10)
+
+===== FILE 09: Screenshot_2026-10-24-19-11-01-697_twgame.global.acers.jpg =====
+321+66
+142
+540+165
+53
+577
+Quan] Fragment*27 at General
+Building Info
+Equipment
+Exclusive
+Select Exclusive Equipment
+Soldier exclusive equipment unlocks at Lv.10.
+CheckExclusiveEquipment'sRandomAttributesofthisbattle.
+Upgrade'Smithy' to Lv.10（7/10)
+
+===== FILE 10: Screenshot_2026-10-24-19-11-09-937_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+IMusterTerrace.
+Building Info
+Heal Soldier
+Clinic
+Level 1
+Soldiers have a certain chance to go back to the Clinic
+after they are defeated and they can fight again after
+being healed.The higher the Clinic level, the shorter
+the healing time.
+Level 1
+Level 2
+HealingTime-0%
+4%
+ReturningChancesafterDefeat
+Upgrade Costs
+189
+155
+00:01:25
+Upgrade
+Upgrade'Smithy'to Lv.10(7/10)
+
+===== FILE 11: Screenshot_2026-10-24-19-11-13-504_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+ace.
+Building Info
+HealSoldier
+Choose Army
+4/7
+Team3
+Team1
+Team
+6
+Go Out
+09
+Choose Wounded Soldier (0/200)
+SortbySoldierLevel
+No wounded soldier yet
+Heal Costs
+Heal
+Heal Queue(0/6)
+Upgrade 'Smithy' to Lv.10（7/10)
+
+===== FILE 12: Screenshot_2026-10-24-19-11-27-575_twgame.global.acers.jpg =====
+322
+142
+542
+53
+580
+avorite Bear HTF: Obtained [W
+Building Info
+Heal Soldier
+Clinic
+Soldiers' Returning
+Chances
+SevereWound
+Level
+Minor Injury Chance
+Chance
+Lv.1
+40%
+0%
+Lv.2
+50%
+30%
+Lv.3
+50%
+30%
+Lv.4
+50%
+30%
+Lv.5
+50%
+30%
+Lv.6
+50%
+30%
+Severelywoundedsoldierslose1 level after
+returning to the Clinic.
+00:01:25
+Upgrade
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 13: Screenshot_2026-10-24-19-11-32-294_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+Obtained [Wang Yi] Fragment*:
+Building Info
+Recruit Soldier
+Barrack
+Level 8
+The Barrack is where you recruit infantry,including the
+strongones.A higher Barrack level grants faster
+recruitment SPD and more troop types.
+Level 8
+Level9
+Recruitment Time -20%
+22%
+Soldier Level Cap:3
+3
+New Soldier unlocks at Lv.12.
+Upgrade Costs
+796
+652
+0:24:20
+Upgrade
+Upgrade'Smithy' to Lv.10（7/10)
+
+===== FILE 14: Screenshot_2026-10-24-19-11-35-655_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+ang Yi] Fragment*27 at Genere
+Building Info
+Recruit Soldier
+Choose Army
+4/7
+Team3
+Team1
+Team
+6
+Go Out
+Choose Soldier
+Recruit Costs
+Recruit
+Recruit Queue(0/6)
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 15: Screenshot_2026-10-24-19-11-40-663_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+27 at General Muster Terrace.
+Building Info
+Train Soldier
+Drill Ground
+Level 1
+A place to train soldiers. Can improve soldier level and
+Marching SPD.
+Level 1
+Level 2
+MarchTime-0%
+3%
+Upgrade Costs
+198
+162
+00:07:00
+Upgrade
+Upgrade'Smithy'to Lv.10(7/10)
+
+===== FILE 16: Screenshot_2026-10-24-19-11-44-425_twgame.global.acers.jpg =====
+322+66
+142
+542+165
+53
+580
+Muster Terrace.
+Building Info
+Train Soldier
+Choose Army
+Team3
+Team1
+Team2
+Team
+6
+19
+Go Out
+Go Out
+9
+Upgrade Effect
+76+8
+5+1
+Lv.1 +1
+Training Costs
+Own口
+326
+口1
+Training
+0:05:46 (-30%)
+Training Queue (0/6)
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 17: Screenshot_2026-10-24-19-12-09-771_twgame.global.acers.jpg =====
+323+66
+142
+545+165
+53
+582
+iangyu] Fragment*27 at Gener
+Building List
+Fortress
+Enhances army's Marching SPD (x3)
+between one Fortress and another or
+Capital.Can heal injured soldiers.
+Construction Costs:
+Quantity built:0/20
+1550
+1550
+Build
+00:33:20
+Sawmill
+Enhances wood output.
++35/h
+Construction Costs:
+Quantity built:0/5
+650
+650
+Build
+0:31:40
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 18: Screenshot_2026-10-24-19-12-14-313_twgame.global.acers.jpg =====
+323+66
+142
+545+165
+53
+582
+it*27 at General Muster Terrac
+Building List
+Fortress
+Enhances army's Marching SPD (x3)
+between one Fortress and another or
+Capital.Can heal injured soldiers.
+Construction Costs:
+Quantity built:0/20
+1550
+1550
+Build
+00:33:20
+Farm
+Enhances crop output.
++35/h
+Construction Costs:
+Quantity built:0/5
+650
+650
+Build
+0:31:40
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 19: Screenshot_2026-10-24-19-12-19-487_twgame.global.acers.jpg =====
+323+66
+142
+545+165
+53
+582
+uster Terrace.
+Building List
+Fortress
+Enhances army's Marching SPD (x3)
+between one Fortress and another or
+Capital. Can heal injured soldiers.
+Construction Costs:
+Quantity built:0/20
+1550
+1550
+Build
+0:33:20
+Quarry
+Enhances stone output.
++35/h
+Construction Costs:
+Quantity built:0/5
+650
+650
+Build
+0:31:40
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 20: Screenshot_2026-10-24-19-21-58-113_twgame.global.acers.jpg =====
+333+66
+142
+571+165
+53
+611
+Fragment*27 at General Must
+Building Info
+Admin Duty
+Select Policy
+Policy Effect
+Industrial Revolution
+Construction time -[20/40/60]%.
+Shield Soldier Mastery
+All Shield Soldiers' DMG taken -[
+15/25/35]%
+Perseverance
+Training time -[30/45/60]%.
+Beastbane
+Allsoldiers'DMGdealtto the
+Neutral Unit+[20/30/50]%
+Upgrade 'Smithy' to Lv.10(7/10)
+
+===== FILE 21: Screenshot_2026-10-24-19-22-01-529_twgame.global.acers.jpg =====
+333+66
+142
+571+165
+53
+611
+ent*27 at General Muster Terr:
+Building Info
+Admin Duty
+Capital
+Level 10
+Territory: 51
+Enhance Capital level to raise the level cap of all
+buildings,maintain more armies,and unlock more
+policy slots.
+Level 10
+Level 12
+Army Cap:7
+8
+Army Capacity: 9
+9
+New Policy unlocks at Lv.15.
+Upgrade Costs
+1184
+1184
+0:43:40
+Upgrade
+Upgrade 'Smithy' to Lv.10(7/10)
