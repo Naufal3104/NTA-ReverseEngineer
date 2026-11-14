@@ -1,0 +1,95 @@
+/* Ninety Thousand Acres — design tokens (measured from original screenshots).
+   Source of truth: tokens.json. Flutter mirror: nta_demo/lib/game/ui/design_tokens.dart */
+
+:root {
+  /* Backgrounds */
+  --color-bg: #d6df84;
+  --color-bg-alt: #c5d77b;
+  --color-surface: #f6efdf;
+  --color-surface-raised: #fffbef;
+  --color-surface-card: #e8ddc7;
+  --color-surface-sunk: #ede6ce;
+
+  /* Borders */
+  --color-border: #4e4037;
+  --color-border-soft: #ddd3ba;
+  --color-border-input: #947d6b;
+
+  /* Text */
+  --color-text: #3a3026;
+  --color-text-muted: #5b544c;
+  --color-text-on-dark: #fff7ef;
+
+  /* Accent (primary action) */
+  --color-accent: #ffda6b;
+  --color-accent-top: #ffe288;
+  --color-accent-bottom: #fdd866;
+  --color-accent-border: #6d5249;
+  --color-accent-soft: #feebb0;
+  --color-on-accent: #282723;
+
+  /* Status */
+  --color-success: #356f24;
+  --color-danger: #ad4d3a;
+  --color-warning: #e6df8c;
+  --color-disabled: #ded7cd;
+
+  /* HUD (world map overlay) */
+  --color-hud-surface: #fff7ef;
+  --color-hud-border: #947d6b;
+  --color-hud-text: #5f4e3e;
+  --color-hud-rate: #3a7325;
+  --color-hud-progress: #63b6ff;
+  --color-hud-track: #fff3e6;
+
+  /* Rail + hero */
+  --color-rail: #7b814a;
+  --color-rail-icon: #f7f7e6;
+  --color-hero-teal: #59aa97;
+  --color-hero-name-pill: #39716e;
+  --color-button-plus: #defb7b;
+  --color-button-plus-edge: #73aa4a;
+
+  /* Type */
+  --font-sans: Roboto, system-ui, sans-serif;
+  --font-mono: monospace;
+  --text-xs: 10px;   --text-xs-line: 14px;
+  --text-sm: 12px;   --text-sm-line: 16px;
+  --text-base: 14px; --text-base-line: 20px;
+  --text-lg: 16px;   --text-lg-line: 22px;
+  --text-xl: 20px;   --text-xl-line: 26px;
+  --text-display: 28px; --text-display-line: 34px;
+
+  /* Space (2px base) */
+  --space-0: 0px;
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-8: 16px;
+  --space-12: 24px;
+
+  /* Radius */
+  --radius-pill: 8px;
+  --radius-button: 12px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+  --radius-round: 999px;
+
+  /* Border widths */
+  --bw-panel: 3px;
+  --bw-button: 2.5px;
+  --bw-card: 1.5px;
+  --bw-hairline: 1px;
+
+  /* Shadow */
+  --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-button: 0 3px 4px rgba(0, 0, 0, 0.4);
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-ease: cubic-bezier(0.33, 1, 0.68, 1);
+}

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/game_state.dart';
 import 'game_map.dart';
 import 'capital_interior_view.dart';
+import 'lobby_view.dart';
 import 'plot_interior_view.dart';
 
 class GameViewport extends StatelessWidget {
@@ -16,7 +17,9 @@ class GameViewport extends StatelessWidget {
     return Stack(
       children: [
         // Main content area
-        if (view == 'map')
+        if (view == 'lobby')
+          const LobbyView()
+        else if (view == 'map')
           GameMap()
         else if (view == 'capital')
           CapitalInteriorView()

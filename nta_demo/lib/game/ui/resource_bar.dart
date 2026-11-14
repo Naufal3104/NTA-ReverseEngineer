@@ -1,6 +1,8 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/game_state.dart';
+import 'asset_manager.dart';
+import 'design_tokens.dart';
 
 class ResourceBar extends StatelessWidget {
   const ResourceBar({super.key});
@@ -13,79 +15,73 @@ class ResourceBar extends StatelessWidget {
     final hours = (state.elapsedSeconds ~/ 3600).toString().padLeft(2, '0');
     final minutes = ((state.elapsedSeconds % 3600) ~/ 60).toString().padLeft(2, '0');
     final seconds = (state.elapsedSeconds % 60).toString().padLeft(2, '0');
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF131722),
-        border: Border(bottom: BorderSide(color: Colors.amber.withValues(alpha: 0.3))),
-      ),
+      color: NtaColors.bgAlt,
       child: Row(
         children: [
-          _buildResourceWidget('🌾', '${state.crop}', '+${rates['crop']!.round()}/h', Colors.orange),
-          const SizedBox(width: 14),
-          _buildResourceWidget('🪵', '${state.wood}', '+${rates['wood']!.round()}/h', Colors.brown[300]!),
-          const SizedBox(width: 14),
-          _buildResourceWidget('🪨', '${state.stone}', '+${rates['stone']!.round()}/h', Colors.grey[300]!),
-          const SizedBox(width: 14),
-          _buildResourceWidget('⚙️', '${state.iron}', '+${rates['iron']!.round()}/h', Colors.blueGrey[200]!),
-          const SizedBox(width: 14),
-          _buildResourceWidget('💰', '${state.gold}', '+${rates['gold']!.round()}/h', Colors.yellow),
+          NtaResourcePill(
+            icon: NtaResIcon('crop', size: 16),
+            value: '${state.crop}',
+            rate: '+${rates['crop']!.round()}/h',
+          ),
+          const SizedBox(width: NtaSpace.itemGap),
+          NtaResourcePill(
+            icon: NtaResIcon('wood', size: 16),
+            value: '${state.wood}',
+            rate: '+${rates['wood']!.round()}/h',
+          ),
+          const SizedBox(width: NtaSpace.itemGap),
+          NtaResourcePill(
+            icon: NtaResIcon('stone', size: 16),
+            value: '${state.stone}',
+            rate: '+${rates['stone']!.round()}/h',
+          ),
+          const SizedBox(width: NtaSpace.itemGap),
+          NtaResourcePill(
+            icon: NtaResIcon('iron', size: 16),
+            value: '${state.iron}',
+            rate: 'chest',
+          ),
+          const SizedBox(width: NtaSpace.itemGap),
+          NtaResourcePill(
+            icon: NtaResIcon('exp_scroll', size: 16),
+            value: '${state.expScroll}',
+            rate: 'chest',
+          ),
           const Spacer(),
-          // Real-time ticking indicators
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            height: 34,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.black38,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.white12),
+              color: NtaColors.hudSurface,
+              border: Border.all(color: NtaColors.hudBorder, width: 2),
+              borderRadius: BorderRadius.circular(NtaRadius.pill),
             ),
             child: Row(
               children: [
-                const Icon(Icons.timer_outlined, size: 16, color: Colors.amberAccent),
+                const Icon(Icons.timer_outlined, size: 16, color: NtaColors.hudText),
                 const SizedBox(width: 6),
                 Text(
                   '$hours:$minutes:$seconds',
                   style: const TextStyle(
                     fontFamily: 'monospace',
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     fontSize: 13,
-                    color: Colors.white,
+                    color: NtaColors.hudText,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  '${state.season} · Day ${state.dayInSeason}',
-                  style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  '${state.season} · D${state.dayInSeason}',
+                  style: NtaText.xs.copyWith(color: NtaColors.hudText),
                 ),
               ],
             ),
           ),
         ],
       ),
-    );
-  }
-  
-  Widget _buildResourceWidget(String icon, String value, String rate, Color color) {
-    return Row(
-      children: [
-        Text(icon, style: const TextStyle(fontSize: 18)),
-        const SizedBox(width: 5),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              value,
-              style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              rate,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 10),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
@@ -96,45 +92,44 @@ class SeasonIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<GameState>();
-    
+
     final seasonColors = {
-      'Spring': Colors.green,
-      'Summer': Colors.orange,
-      'Autumn': Colors.brown,
-      'Winter': Colors.blue,
+      'Spring': NtaColors.success,
+      'Summer': const Color(0xFFC98B1E),
+      'Autumn': const Color(0xFF9A6A3A),
+      'Winter': const Color(0xFF2F6E77),
     };
-    final seasonIcons = {
-      'Spring': '🌱',
-      'Summer': '☀️',
-      'Autumn': '🍂',
-      'Winter': '❄️',
+    final seasonIndex = {
+      'Spring': 0,
+      'Summer': 1,
+      'Autumn': 2,
+      'Winter': 3,
     };
-    
-    final color = seasonColors[state.season] ?? Colors.grey;
+
+    final color = seasonColors[state.season] ?? NtaColors.textMuted;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: NtaSpace.x5, vertical: NtaSpace.x3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        border: Border.all(color: color.withValues(alpha: 0.6)),
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
+        color: NtaColors.surfaceCard,
+        border: Border.all(color: color, width: 2),
+        borderRadius: BorderRadius.circular(NtaRadius.card),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(seasonIcons[state.season] ?? '🌱', style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 8),
+          Image.asset(
+            NtaAssets.season(seasonIndex[state.season] ?? 0),
+            width: 22,
+            height: 22,
+            filterQuality: FilterQuality.none,
+          ),
+          const SizedBox(width: NtaSpace.itemGap),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                state.season,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              ),
-              Text(
-                'Day ${state.dayInSeason}/3 (Real-time)',
-                style: const TextStyle(fontSize: 10, color: Colors.white60),
-              ),
+              Text(state.season, style: NtaText.bodyBold),
+              Text('Day ${state.dayInSeason}/3', style: NtaText.caption),
             ],
           ),
         ],

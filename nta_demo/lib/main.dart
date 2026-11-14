@@ -2,6 +2,8 @@
 import 'package:provider/provider.dart';
 import 'game/models/game_state.dart';
 import 'game/components/viewport.dart' show GameViewport;
+import 'game/ui/asset_manager.dart';
+import 'game/ui/design_tokens.dart';
 import 'data/game_data.dart';
 
 void main() {
@@ -14,18 +16,32 @@ class NTAdemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => GameState()..generateMap(),
+      create: (_) => GameState(),
       child: MaterialApp(
         title: 'Ninety Thousand Acres - Reconstructed Demo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          brightness: Brightness.dark,
-          primaryColor: Colors.amber,
-          scaffoldBackgroundColor: const Color(0xFF0F141C),
-          colorScheme: const ColorScheme.dark(
-            primary: Colors.amber,
-            secondary: Colors.blueAccent,
-            surface: Color(0xFF1B2132),
+          brightness: Brightness.light,
+          primaryColor: NtaColors.accent,
+          scaffoldBackgroundColor: NtaColors.surface,
+          dialogTheme: const DialogThemeData(backgroundColor: NtaColors.surface),
+          colorScheme: const ColorScheme.light(
+            primary: NtaColors.accent,
+            onPrimary: NtaColors.onAccent,
+            secondary: NtaColors.heroTeal,
+            onSecondary: NtaColors.textOnDark,
+            surface: NtaColors.surface,
+            onSurface: NtaColors.text,
+            error: NtaColors.danger,
+          ),
+          textTheme: const TextTheme(
+            bodyMedium: TextStyle(color: NtaColors.text),
+            bodySmall: TextStyle(color: NtaColors.textMuted),
+          ),
+          snackBarTheme: const SnackBarThemeData(
+            backgroundColor: NtaColors.toastBg,
+            contentTextStyle: TextStyle(color: NtaColors.toastText),
+            behavior: SnackBarBehavior.floating,
           ),
         ),
         home: const GameScreen(),
@@ -51,42 +67,6 @@ class BuildingListModal extends StatelessWidget {
     return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:00';
   }
 
-  String _resIcon(String res) {
-    switch (res) {
-      case 'crop':
-        return '🌾';
-      case 'wood':
-        return '🪵';
-      case 'stone':
-        return '🪨';
-      case 'iron':
-        return '⚙️';
-      case 'exp_scroll':
-        return '📜';
-      case 'scroll':
-        return '🧾';
-      case 'nail':
-        return '🔩';
-      default:
-        return '📦'; // specials keep own icons in resIconExt
-    }
-  }
-
-  // Chest-only special icons (unused alias, kept for dialog lookups).
-  // ignore: unused_element
-  String _resIconExt(String res) {
-    switch (res) {
-      case 'crop': return '🌾';
-      case 'wood': return '🪵';
-      case 'stone': return '🪨';
-      case 'iron': return '⚙️';
-      case 'exp_scroll': return '📜';
-      case 'scroll': return '🧾';
-      case 'nail': return '🔩';
-      default: return '📦';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final buildings = GameData.CAPITAL_BUILDINGS;
@@ -96,9 +76,8 @@ class BuildingListModal extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(maxHeight: 520),
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: const BoxDecoration(
-          color: Color(0xFFF5E9D2),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        decoration: ntaPanel().copyWith(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -107,50 +86,34 @@ class BuildingListModal extends StatelessWidget {
               width: 60,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.brown.shade300,
+                color: NtaColors.panelBorder,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Building List',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF4A2F1D)),
-            ),
+            Text('Building List', style: NtaText.title),
             const SizedBox(height: 8),
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: buildings.length,
-                separatorBuilder: (_, __) => const Divider(height: 12),
+                separatorBuilder: (_, separatorIndex) => const Divider(height: 12),
                 itemBuilder: (ctx, i) {
                   final b = buildings[i];
                   final id = b['id'] as String;
                   final level = levels[id] ?? 0;
                   final built = level > 0;
                   final cost = GameData.upgradeCost(id, 1);
-                  final time = b['buildTime'] as int? ?? 0;
-                  final req = state.capitalBuildRequirement(id);
-                  String? reqName;
-                  int reqLvl = 1;
-                  if (req != null) {
-                    reqLvl = req['level'] as int? ?? 1;
-                    final reqId = req['id'] as String;
-                    reqName = (GameData.CAPITAL_BUILDINGS.firstWhere(
-                      (e) => e['id'] == reqId,
-                      orElse: () => {'name': reqId},
-                    )['name']) as String;
-                  }
+                  final time = GameData.upgradeTime(id, 1);
+                  final reqText = state.capitalRequirementText(id);
+                  final hasReq = reqText.isNotEmpty;
                   final reqMet = state.capitalRequirementMet(id);
                   final afford = state.hasResources(cost);
                   final canBuild = !built && reqMet && afford;
 
                   return Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFF8EC),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.brown.shade200),
-                    ),
+                    decoration: ntaCard(),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -159,10 +122,14 @@ class BuildingListModal extends StatelessWidget {
                           height: 52,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.brown.shade100,
+                            color: NtaColors.surfaceSunk,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Text(b['icon'] as String, style: const TextStyle(fontSize: 30)),
+                          child: Icon(
+                            ntaBuildingIcon(b['id'] as String),
+                            size: 26,
+                            color: NtaColors.text,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -171,83 +138,83 @@ class BuildingListModal extends StatelessWidget {
                             children: [
                               Text(
                                 b['name'] as String,
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF4A2F1D)),
+                                style: NtaText.body.copyWith(fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 b['desc'] as String? ?? '',
-                                style: const TextStyle(fontSize: 11, color: Color(0xFF6B4A2F)),
+                                style: NtaText.caption,
                               ),
                               const SizedBox(height: 6),
-                              const Text(
-                                'Construction Costs:',
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4A2F1D)),
-                              ),
+                              Text('Construction Costs:', style: NtaText.body.copyWith(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 2),
                               Wrap(
                                 spacing: 10,
                                 runSpacing: 2,
                                 children: [
                                   for (var e in cost.entries)
-                                    Text(
-                                      '${_resIcon(e.key)} ${e.value}',
-                                      style: const TextStyle(fontSize: 12, color: Color(0xFF4A2F1D)),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        NtaResIcon(e.key, size: 13),
+                                        const SizedBox(width: 3),
+                                        Text('${e.value}', style: NtaText.body),
+                                      ],
                                     ),
-                                  Text('⏱ ${_formatBuildTime(time)}',
-                                      style: const TextStyle(fontSize: 12, color: Color(0xFF4A2F1D))),
+                                  Text('⏱ ${_formatBuildTime(time)}', style: NtaText.body),
                                 ],
                               ),
-                              if (reqName != null) ...[
+                              if (hasReq) ...[
                                 const SizedBox(height: 4),
-                                const Text(
-                                  'Construction Requirement:',
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4A2F1D)),
-                                ),
+                                Text('Construction Requirement:', style: NtaText.body.copyWith(fontWeight: FontWeight.bold)),
                                 Text(
-                                  '$reqName Lv.$reqLvl',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: reqMet ? const Color(0xFF4A2F1D) : Colors.red,
+                                  reqText,
+                                  style: NtaText.body.copyWith(
+                                    color: reqMet ? NtaColors.text : NtaColors.danger,
                                     fontWeight: reqMet ? FontWeight.normal : FontWeight.bold,
                                   ),
                                 ),
                               ],
                               if (built)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 4),
-                                  child: Text('Already built', style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text('Already built', style: NtaText.body.copyWith(color: NtaColors.success, fontWeight: FontWeight.bold)),
                                 )
                               else if (!reqMet)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
-                                  child: Text('Requires $reqName Lv.$reqLvl',
-                                      style: const TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold)),
+                                  child: Text('Requires $reqText', style: NtaText.body.copyWith(color: NtaColors.danger, fontWeight: FontWeight.bold)),
                                 )
                               else if (!afford)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 4),
-                                  child: Text('Insufficient resources', style: TextStyle(fontSize: 12, color: Colors.red)),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text('Insufficient resources', style: NtaText.body.copyWith(color: NtaColors.danger)),
                                 ),
                             ],
                           ),
                         ),
                         const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: canBuild
-                              ? () {
-                                  final ok = state.constructCapitalBuilding(id);
-                                  if (ok && context.mounted) Navigator.pop(context);
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFF1E4C8),
-                            foregroundColor: Colors.black87,
-                            disabledBackgroundColor: Colors.grey.shade300,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        if (canBuild)
+                          ntaGoldButton(
+                            'Build',
+                            onTap: () {
+                              final ok = state.constructCapitalBuilding(id);
+                              if (ok && context.mounted) Navigator.pop(context);
+                            },
+                            fontSize: 14,
+                          )
+                        else
+                          Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: NtaColors.disabled,
+                              borderRadius: BorderRadius.circular(NtaRadius.button),
+                            ),
+                            child: Text(
+                              built ? 'Built' : 'Build',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: NtaColors.textMuted, fontSize: 14),
+                            ),
                           ),
-                          child: Text(built ? 'Built' : 'Build', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
                       ],
                     ),
                   );
@@ -278,18 +245,16 @@ class FacilityAccessModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
+      decoration: ntaPanel(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Citadel Facilities',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.amber),
-              ),
+              Text('Citadel Facilities', style: NtaText.title),
               IconButton(
-                icon: const Icon(Icons.close, color: Colors.white70),
+                icon: Icon(Icons.close, color: NtaColors.textMuted),
                 onPressed: onClose,
               ),
             ],
@@ -300,14 +265,12 @@ class FacilityAccessModal extends StatelessWidget {
             final level = capitalBuildings[id] ?? 0;
             return ListTile(
               dense: true,
-              leading: Text(building['icon'] as String, style: const TextStyle(fontSize: 24)),
-              title: Text('${building['name']} (Lv. $level)', style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Text(building['desc'] as String? ?? '', style: const TextStyle(fontSize: 11, color: Colors.white70)),
+              leading: Icon(ntaBuildingIcon(building['id'] as String), size: 22, color: NtaColors.text),
+              title: Text('${building['name']} (Lv. $level)', style: NtaText.body.copyWith(fontWeight: FontWeight.bold)),
+              subtitle: Text(building['desc'] as String? ?? '', style: NtaText.caption),
               onTap: () {
                 Navigator.pop(context);
-                // Navigate to the facility popup in capital interior view
                 state.switchView('capital');
-                // The capital interior view will show the facility popup
               },
             );
           }),
@@ -317,54 +280,182 @@ class FacilityAccessModal extends StatelessWidget {
   }
 }
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
+
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
+  GameState? _state;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _state = context.read<GameState>();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    // Season clock counts active playtime only: freeze it when the app is
+    // backgrounded/closed and pick up exactly where it stopped.
+    final state = _state;
+    if (state == null) return;
+    switch (lifecycleState) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        state.pauseClock();
+      case AppLifecycleState.resumed:
+        state.resumeClock();
+      case AppLifecycleState.inactive:
+        break;
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<GameState>();
-    final isMap = state.currentView == 'map';
+    final view = state.currentView;
+    final inPlot = view == 'plot';
+    final inLobby = view == 'lobby';
 
     return Scaffold(
       body: Stack(
         children: [
-          // Main game map viewport
           const GameViewport(),
 
-          // Top-left resource panel
-          Positioned(
-            top: 8,
-            left: 8,
-            child: _ResourcePanel(),
-          ),
+          // Plot interior is a full-screen scene with its own header + actions.
+          if (!inPlot && !inLobby) ...[
+            // Top-left resource panel
+            Positioned(
+              top: 8,
+              left: 8,
+              child: _ResourcePanel(),
+            ),
 
-          // Top-right coins & time panel
-          Positioned(
-            top: 8,
-            right: 8,
-            child: _TopRightPanel(),
-          ),
+            // Top-right coins & time panel
+            Positioned(
+              top: 8,
+              right: 8,
+              child: _TopRightPanel(),
+            ),
 
-          // Bottom-left action buttons
-          Positioned(
-            bottom: 16,
-            left: 16,
-            child: _BottomLeftPanel(),
-          ),
+            // Bottom-left action buttons
+            Positioned(
+              bottom: 16,
+              left: 16,
+              child: _BottomLeftPanel(),
+            ),
 
-          // Bottom-right action buttons
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: _BottomRightPanel(),
-          ),
+            // Bottom-right action buttons
+            Positioned(
+              bottom: 16,
+              right: 16,
+              child: _BottomRightPanel(),
+            ),
+          ],
+
+          if (state.gameOver) _VictoryOverlay(state: state),
         ],
       ),
     );
   }
 }
 
-// Top-left vertical resource panel
+/// Settlement overlay: shown when a victory condition fires (Construct
+/// Remains or Final Conquest) or the season settles as a defeat.
+class _VictoryOverlay extends StatelessWidget {
+  const _VictoryOverlay({required this.state});
+
+  final GameState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final won = state.gameWon;
+    final accent = won ? NtaColors.success : NtaColors.danger;
+
+    return Positioned.fill(
+      child: ColoredBox(
+        color: const Color(0xCC0E0B09),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 460),
+            margin: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: NtaColors.surface,
+              borderRadius: BorderRadius.circular(NtaRadius.panel),
+              border: Border.all(color: accent, width: NtaBorder.panel),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Icon(
+                  won ? Icons.military_tech : Icons.dangerous,
+                  size: 48,
+                  color: accent,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  state.victoryTitle,
+                  textAlign: TextAlign.center,
+                  style: NtaText.title.copyWith(color: accent),
+                ),
+                const SizedBox(height: 12),
+                for (final line in state.victoryLines)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Text(line, style: NtaText.body),
+                  ),
+                const SizedBox(height: 8),
+                Text(
+                  'Division: ${state.divisionName}',
+                  style: NtaText.caption,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                NtaGoldButton(
+                  'Start New Session',
+                  onTap: () {
+                    state.startNewSession();
+                    state.switchView('map');
+                  },
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: state.closeVictory,
+                  child: Text(
+                    'Keep Viewing World',
+                    style: NtaText.body.copyWith(color: NtaColors.textMuted),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Top-left: tiga pill resource dasar (crop/wood/stone) + baris resource khusus.
+// Layout mengikuti HUD game asli (S4): ikon menonjol di kiri pill, nilai + rate hijau,
+// bar progress biru tipis di bawah nilai.
 class _ResourcePanel extends StatelessWidget {
   const _ResourcePanel();
 
@@ -373,61 +464,58 @@ class _ResourcePanel extends StatelessWidget {
     final state = context.watch<GameState>();
     final rates = state.getHourlyProduction();
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: const Color(0xCC0A0E14),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0x44FFFFFF), width: 1),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _resourceRow('🌾 Crop', state.crop, rates['crop'] ?? 0, Colors.orange),
-          const SizedBox(height: 4),
-          _resourceRow('🪵 Wood', state.wood, rates['wood'] ?? 0, const Color(0xFF8B6914)),
-          const SizedBox(height: 4),
-          _resourceRow('🪨 Stone', state.stone, rates['stone'] ?? 0, Colors.grey),
-          const Divider(height: 10, color: Color(0x33FFFFFF)),
-          // Specials (chest-only, no hourly production)
-          _resourceRow('⚙️ Iron', state.iron, 0, Colors.blueGrey, showRate: false),
-          const SizedBox(height: 4),
-          _resourceRow('📜 EXP Scroll', state.expScroll, 0, Colors.purpleAccent, showRate: false),
-          const SizedBox(height: 4),
-          _resourceRow('🧾 Scroll', state.scroll, 0, Colors.tealAccent, showRate: false),
-          const SizedBox(height: 4),
-          _resourceRow('🔩 Nail', state.nail, 0, Colors.redAccent, showRate: false),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _pill('crop', state.crop, rates['crop'] ?? 0, state.cropCapacity),
+        const SizedBox(height: 4),
+        _pill('wood', state.wood, rates['wood'] ?? 0, state.materialCapacity),
+        const SizedBox(height: 4),
+        _pill('stone', state.stone, rates['stone'] ?? 0, state.materialCapacity),
+        const SizedBox(height: 6),
+        // Resource khusus (chest-only) — ikon + angka, tanpa produksi.
+        Row(
+          children: [
+            _special('iron', state.iron),
+            const SizedBox(width: 6),
+            _special('exp_scroll', state.expScroll),
+            const SizedBox(width: 6),
+            _special('scroll', state.scroll),
+            const SizedBox(width: 6),
+            _special('nail', state.nail),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget _resourceRow(String label, int value, double rate, Color color, {bool showRate = true}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 11, color: Colors.white70)),
-        const SizedBox(width: 8),
-        SizedBox(
-          width: 120,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LinearProgressIndicator(
-                value: (value / 5000).clamp(0.0, 1.0),
-                minHeight: 4,
-                borderRadius: BorderRadius.circular(2),
-                valueColor: AlwaysStoppedAnimation<Color>(color),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                showRate ? '$value (+${rate.round()}/h)' : '$value (chest)',
-                style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      ],
+  Widget _pill(String resource, int value, double rate, int cap) {
+    final progress = cap <= 0 ? 0.0 : value / cap;
+    return NtaResourcePill(
+      icon: NtaResIcon(resource, size: 18),
+      value: '$value',
+      rate: '+${rate.round()}',
+      progress: progress,
+    );
+  }
+
+  Widget _special(String resource, int value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: NtaColors.surfaceCard,
+        border: Border.all(color: NtaColors.border, width: NtaBorder.hairline),
+        borderRadius: BorderRadius.circular(NtaRadius.pill),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NtaResIcon(resource, size: 13),
+          const SizedBox(width: 4),
+          Text('$value', style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
+        ],
+      ),
     );
   }
 }
@@ -440,91 +528,78 @@ class _TopRightPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<GameState>();
 
-    final seasonIcons = {
-      'Spring': '🌱',
-      'Summer': '☀️',
-      'Autumn': '🍂',
-      'Winter': '❄️',
+    final seasonIndex = switch (state.season) {
+      'Spring' => 0,
+      'Summer' => 1,
+      'Autumn' => 2,
+      _ => 3,
     };
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: const Color(0xCC0A0E14),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0x44FFFFFF), width: 1),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Coin & reward points
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _currencyItem('🪙 Coin', 180, Colors.amber),
-              const SizedBox(width: 12),
-              _currencyItem('🎁 Reward Pts', 250, Colors.purple),
-            ],
-          ),
-          const SizedBox(height: 8),
-          // Season & time
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(seasonIcons[state.season] ?? '🌱', style: const TextStyle(fontSize: 16)),
-              const SizedBox(width: 4),
-              Text(
-                '${state.season} Day ${state.dayInSeason}',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
-              ),
-              const SizedBox(width: 8),
-              _TimeDisplay(seconds: state.elapsedSeconds),
-            ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Reward Points (di game asli: coin dihapus, diganti tally/reward points).
+        NtaCounterPill(
+          icon: const Icon(Icons.redeem, size: 18, color: NtaColors.text),
+          value: '${state.rewardPoints}',
+        ),
+        // Ranked: Tier Win Points + current tier.
+        if (state.earnsTierWinPoints) ...[
+          const SizedBox(height: 4),
+          NtaCounterPill(
+            icon: const Icon(Icons.military_tech, size: 18, color: NtaColors.text),
+            value: '${state.tierWinPoints} ${state.rankTier}',
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _currencyItem(String label, int value, Color color) {
-    return Row(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.white70)),
-        const SizedBox(width: 4),
-        Text('$value', style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        // Victory-objective progress (Remains level or defeated rivals).
+        NtaCounterPill(
+          icon: Icon(
+            state.victoryCondition == 'Final Conquest'
+                ? Icons.gavel
+                : Icons.account_balance,
+            size: 18,
+            color: NtaColors.text,
+          ),
+          value: state.victoryProgressLabel,
+        ),
+        const SizedBox(height: 6),
+        // Musim + sisa waktu season (pause saat game ditutup).
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: NtaColors.surfaceRaised,
+            border: Border.all(color: NtaColors.hudBorder, width: 2),
+            borderRadius: BorderRadius.circular(NtaRadius.pill),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                NtaAssets.season(seasonIndex),
+                width: 16,
+                height: 16,
+                filterQuality: FilterQuality.none,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${state.season} D${state.dayInSeason}',
+                style: NtaText.xs.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                state.seasonTimeLeftLabel,
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  color: NtaColors.hudText,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
-    );
-  }
-}
-
-// Real-time clock display
-class _TimeDisplay extends StatefulWidget {
-  final int seconds;
-  const _TimeDisplay({required this.seconds});
-
-  @override
-  State<_TimeDisplay> createState() => _TimeDisplayState();
-}
-
-class _TimeDisplayState extends State<_TimeDisplay> {
-  int _displaySeconds = 0;
-
-  @override
-  void didUpdateWidget(covariant _TimeDisplay oldWidget) {
-    if (widget.seconds != _displaySeconds) {
-      setState(() => _displaySeconds = widget.seconds);
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final hours = (_displaySeconds ~/ 3600).toString().padLeft(2, '0');
-    final minutes = ((_displaySeconds % 3600) ~/ 60).toString().padLeft(2, '0');
-    final secs = (_displaySeconds % 60).toString().padLeft(2, '0');
-    return Text(
-      '$hours:$minutes:$secs',
-      style: const TextStyle(fontFamily: 'monospace', color: Colors.white70, fontSize: 11),
     );
   }
 }
@@ -547,7 +622,6 @@ class _BottomLeftPanel extends StatelessWidget {
         _ActionButton(
           icon: Icons.chat_bubble_outline,
           label: 'Message',
-          color: Colors.blue,
           onPressed: () {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -561,7 +635,6 @@ class _BottomLeftPanel extends StatelessWidget {
         _ActionButton(
           icon: isInCapitalOrPlot ? Icons.map : Icons.fort,
           label: isInCapitalOrPlot ? 'Back' : 'Capital',
-          color: isInCapitalOrPlot ? Colors.blue : Colors.amber,
           onPressed: isInCapitalOrPlot
               ? () => state.goToMap()
               : () => state.switchView('capital'),
@@ -591,8 +664,7 @@ class _BottomRightPanel extends StatelessWidget {
           _ActionButton(
             icon: Icons.assignment,
             label: 'Quest',
-            color: Colors.cyan,
-            onPressed: () {
+              onPressed: () {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Quest info coming soon!'), duration: Duration(seconds: 2)),
@@ -605,8 +677,7 @@ class _BottomRightPanel extends StatelessWidget {
           _ActionButton(
             icon: Icons.construction,
             label: 'Build',
-            color: Colors.orange,
-            onPressed: () {
+              onPressed: () {
               showModalBottomSheet(
                 context: context,
                 backgroundColor: Colors.transparent,
@@ -623,11 +694,10 @@ class _BottomRightPanel extends StatelessWidget {
           _ActionButton(
             icon: Icons.fort,
             label: 'Facility',
-            color: Colors.amber,
-            onPressed: () {
+              onPressed: () {
               showModalBottomSheet(
                 context: context,
-                backgroundColor: const Color(0xFF1A1F30),
+                backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (ctx) => FacilityAccessModal(
                   state: state,
@@ -642,8 +712,7 @@ class _BottomRightPanel extends StatelessWidget {
           _ActionButton(
             icon: Icons.person_outline,
             label: 'Troops',
-            color: Colors.red,
-            badge: _getGarrisonCount(state),
+              badge: _getGarrisonCount(state),
             onPressed: () {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -660,15 +729,20 @@ class _BottomRightPanel extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Lucky Spin (far left)
+        // General Muster Terrace (free spin → hero fragments).
         _ActionButton(
           icon: Icons.casino,
-          label: 'Spin',
-          color: Colors.orange,
+          label: 'Muster',
           onPressed: () {
+            final state = context.read<GameState>();
+            final id = state.musterFragments();
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Lucky Spin coming soon!'), duration: Duration(seconds: 2)),
+                SnackBar(
+                  content: Text('${GameState.heroName(id!)}: '
+                      '${state.fragmentsOf(id)} fragments'),
+                  duration: const Duration(seconds: 2),
+                ),
               );
             }
           },
@@ -678,7 +752,6 @@ class _BottomRightPanel extends StatelessWidget {
         _ActionButton(
           icon: Icons.store,
           label: 'Shop',
-          color: Colors.purple,
           onPressed: () {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -688,25 +761,17 @@ class _BottomRightPanel extends StatelessWidget {
           },
         ),
         const SizedBox(width: 8),
-        // Map zoom button
+        // Back to the lobby (division picker / session info).
         _ActionButton(
-          icon: Icons.map,
-          label: 'Map',
-          color: Colors.green,
-          onPressed: () {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('World map coming soon!'), duration: Duration(seconds: 2)),
-              );
-            }
-          },
+          icon: Icons.meeting_room,
+          label: 'Lobby',
+          onPressed: () => state.returnToLobby(),
         ),
         const SizedBox(width: 8),
         // Troop list button (far right - corner)
         _ActionButton(
           icon: Icons.person_outline,
           label: 'Troops',
-          color: Colors.red,
           badge: state.troops.values.fold<int>(0, (a, b) => a + b),
           onPressed: () {
             if (context.mounted) {
@@ -730,14 +795,12 @@ class _BottomRightPanel extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
-  final Color color;
   final VoidCallback? onPressed;
   final int? badge;
 
   const _ActionButton({
     required this.icon,
     required this.label,
-    required this.color,
     this.onPressed,
     this.badge,
   });
@@ -746,35 +809,41 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: const Color(0xDD1A1F2B),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.5), width: 2),
-            boxShadow: [BoxShadow(color: Colors.black54, blurRadius: 8)],
-          ),
-          child: IconButton(
-            icon: Icon(icon, color: color, size: 28),
-            onPressed: onPressed,
-            tooltip: label,
+        Semantics(
+          button: true,
+          label: label,
+          child: GestureDetector(
+            onTap: onPressed,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: NtaColors.surfaceRaised,
+                borderRadius: BorderRadius.circular(NtaRadius.button),
+                border: Border.all(color: NtaColors.hudBorder, width: 2),
+                boxShadow: const [
+                  BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2)),
+                ],
+              ),
+              child: Icon(icon, color: NtaColors.text, size: 28),
+            ),
           ),
         ),
         if (badge != null && badge! > 0)
           Positioned(
-            top: 4,
-            right: 4,
+            top: 2,
+            right: 2,
             child: Container(
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
               decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(8),
+                color: NtaColors.danger,
+                borderRadius: BorderRadius.circular(NtaRadius.round),
+                border: Border.all(color: NtaColors.surfaceRaised, width: 1),
               ),
               constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
               child: Text(
                 '$badge',
-                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: NtaColors.textOnDark, fontSize: 9, fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center,
               ),
             ),

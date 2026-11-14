@@ -27,6 +27,19 @@ apk_out/
 arm64_extracted/
 arm64_libs/
 
+# ── Generated RE catalogs (regenerate via *.py extract scripts) ──
+asset_catalog/
+asset_catalog_manifest.json
+contact_sheets/
+extracted_sprites/
+game_json/
+
+# ── Bulk audio (18 MB, regenerate via extract_demo_pack.py) ──
+nta_demo/assets/sounds/
+
+# ── Headless-browser test profiles ──
+_edgeprof*/
+
 # ── Build outputs ──
 NTAGame/build/
 NTAGame/.gradle/
