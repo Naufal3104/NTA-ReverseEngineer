@@ -304,6 +304,7 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   GameState? _state;
+  bool _precached = false;
 
   @override
   void initState() {
@@ -315,12 +316,25 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _state = context.read<GameState>();
+    if (!_precached) {
+      _precacheAssets(context);
+      _precached = true;
+    }
+  }
+
+  /// Precache frequently used images to avoid jank on first render.
+  void _precacheAssets(BuildContext context) {
+    precacheImage(AssetImage(NtaAssets.chrome('panel_cream')), context);
+    precacheImage(AssetImage(NtaAssets.chrome('panel_square')), context);
+    precacheImage(AssetImage(NtaAssets.chrome('btn_gold_round')), context);
+    precacheImage(AssetImage(NtaAssets.chrome('btn_gold_wide')), context);
+    for (var i = 0; i < 4; i++) {
+      precacheImage(AssetImage(NtaAssets.season(i)), context);
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
-    // Season clock counts active playtime only: freeze it when the app is
-    // backgrounded/closed and pick up exactly where it stopped.
     final state = _state;
     if (state == null) return;
     switch (lifecycleState) {
@@ -353,40 +367,38 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         children: [
           const GameViewport(),
 
-          // Plot interior is a full-screen scene with its own header + actions.
           if (!inPlot && !inLobby) ...[
-            // Top-left resource panel
+            // Top-left resource panel - wrapped in RepaintBoundary to isolate repaints
             Positioned(
               top: 8,
               left: 8,
-              child: _ResourcePanel(),
+              child: RepaintBoundary(child: _ResourcePanel()),
             ),
 
             // Top-right coins & time panel
             Positioned(
               top: 8,
               right: 8,
-              child: _TopRightPanel(),
+              child: RepaintBoundary(child: _TopRightPanel()),
             ),
 
             // Rail kanan vertikal + timer chips (construction, march).
-            // Dinaikkan lebih tinggi agar 5 button + timer chips tidak menabrak bottom UI.
             if (!inPlot)
               Positioned(
-                top: 100, // dinaikkan dari 180
+                top: 100,
                 right: 8,
-                child: MapHudRail(
-                  callbacks: MapHudCallbacks(
-                    onMapOverview: () => MapOverviewPanel.show(context),
-                    onHeroes: () => HeroesListPanel.show(context),
-                    onBattleRankings: () =>
-                        BattleRankingsPanel.show(context),
-                    onProfile: () => ProfilePanel.show(context),
-                    onGeneralMuster: () => GeneralMusterPanel.show(context),
-                    onConstructionQueue: () =>
-                        ConstructionQueuePanel.show(context),
-                    onMarchList: () => MarchListPanel.show(context),
-                    onArmies: () => ArmiesPanel.show(context),
+                child: RepaintBoundary(
+                  child: MapHudRail(
+                    callbacks: MapHudCallbacks(
+                      onMapOverview: () => MapOverviewPanel.show(context),
+                      onHeroes: () => HeroesListPanel.show(context),
+                      onBattleRankings: () => BattleRankingsPanel.show(context),
+                      onProfile: () => ProfilePanel.show(context),
+                      onGeneralMuster: () => GeneralMusterPanel.show(context),
+                      onConstructionQueue: () => ConstructionQueuePanel.show(context),
+                      onMarchList: () => MarchListPanel.show(context),
+                      onArmies: () => ArmiesPanel.show(context),
+                    ),
                   ),
                 ),
               ),

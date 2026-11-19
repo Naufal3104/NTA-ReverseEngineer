@@ -7,9 +7,8 @@ import '../ui/asset_manager.dart';
 
 /// HUD overlay tampilan dunia — meniru layout `Tampilan Utama.jpg`:
 ///
-///   - rail kanan vertikal: 4 ikon (map, hero, quest, gag) + trophy,
-///   - dua ikon event merah melayang (hadiah, tas),
-///   - dua chip timer (construction queue, scroll countdown),
+///   - rail kanan vertikal: 5 tombol (setting, profil, hero, muster, ranking)
+///   - dua chip timer (construction queue, march list)
 ///   - satu petak unit prajurit di pojok kanan-bawah.
 ///
 /// Semua tombol membuka modal masing-masing (lihat [MapHudCallbacks]).
@@ -24,114 +23,114 @@ class MapHudRail extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         // Rail positioned higher so all 5 buttons fit above bottom UI
-        Positioned(
-          top: 0,
-          right: 0,
-          child: _rail(context),
-        ),
+        Positioned(top: 0, right: 0, child: _buildRail(context)),
         // Timer chips positioned to the right of rail, aligned with buttons 2-3
-        // Rail: 6 padding + 44 btn + 4 gap + 44 btn = 98px from top for 2nd button center
         Positioned(
-          top: 50, // aligned with 2nd button (Profile)
-          right: 56, // to the right of rail (44 width + 6 padding + 6 margin)
-          child: _timerChip(context, 'ic_record', '13:05',
-              callbacks.onConstructionQueue),
+          top: 50,
+          right: 56,
+          child: _timerChip(context, 'ic_record', '13:05', callbacks.onConstructionQueue),
         ),
         Positioned(
-          top: 100, // aligned with 3rd button (Hero List)
+          top: 100,
           right: 56,
-          child: _timerChip(context, 'ic_popularity', '120:35',
-              callbacks.onMarchList),
+          child: _timerChip(context, 'ic_popularity', '120:35', callbacks.onMarchList),
         ),
       ],
     );
   }
 
-  Widget _rail(BuildContext context) {
+  Widget _buildRail(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: NtaColors.rail,
-        borderRadius: const BorderRadius.only(
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(NtaRadius.panel),
           bottomLeft: Radius.circular(NtaRadius.panel),
         ),
-        boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2))],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // 1. Setting (4 kubus)
-          _railBtn(NtaAssets.chromeImage('ic_max', width: 26, height: 26, fit: BoxFit.contain), null),
+          _RailBtn(icon: NtaAssets.chromeImage('ic_max', width: 26, height: 26, fit: BoxFit.contain), onTap: null),
           const SizedBox(height: 4),
           // 2. Profil
-          _railBtn(NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain), callbacks.onProfile),
+          _RailBtn(icon: NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onProfile),
           const SizedBox(height: 4),
-          // 3. List hero - gunakan ic_popularity (ikon orang/grup)
-          _railBtn(NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), callbacks.onHeroes),
+          // 3. List hero
+          _RailBtn(icon: NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onHeroes),
           const SizedBox(height: 4),
-          // 4. General Muster Terrace - gunakan ic_confirm (ikon gacha/gift)
-          _railBtn(NtaAssets.chromeImage('ic_confirm', width: 26, height: 26, fit: BoxFit.contain), callbacks.onGeneralMuster),
+          // 4. General Muster Terrace
+          _RailBtn(icon: NtaAssets.chromeImage('ic_confirm', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onGeneralMuster),
           const SizedBox(height: 4),
-          // 5. Ranking pemain - gunakan ic_popularity (ikon ranking/leaderboard)
-          _railBtn(NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), callbacks.onBattleRankings),
+          // 5. Ranking pemain
+          _RailBtn(icon: NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onBattleRankings),
         ],
       ),
     );
   }
+}
 
-  Widget _railBtn(Widget icon, VoidCallback? onTap) {
+/// Stateless rail button - avoids rebuild when parent rebuilds.
+class _RailBtn extends StatelessWidget {
+  final Widget icon;
+  final VoidCallback? onTap;
+
+  const _RailBtn({super.key, required this.icon, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 44,
         height: 44,
         margin: const EdgeInsets.symmetric(vertical: 2),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: NtaColors.rail,
-          borderRadius: BorderRadius.circular(NtaRadius.button),
+          borderRadius: BorderRadius.all(Radius.circular(NtaRadius.button)),
         ),
         child: Center(
           child: ColorFiltered(
-            colorFilter: ColorFilter.mode(NtaColors.railIcon, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(NtaColors.railIcon, BlendMode.srcIn),
             child: icon,
           ),
         ),
       ),
     );
   }
-
-  Widget _timerChip(
-    BuildContext context,
-    String chromeKey,
-    String label,
-    VoidCallback? onTap,
-  ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: NtaColors.surfaceRaised,
-          border: Border.all(color: NtaColors.hudBorder, width: 2),
-          borderRadius: BorderRadius.circular(NtaRadius.pill),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            NtaAssets.chromeImage(chromeKey, width: 16, height: 16, fit: BoxFit.contain),
-            const SizedBox(width: 4),
-            Text(label,
-                style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-/// Kumpulan callback yang dipakai [MapHudRail] + tombol bawah. Dibiarkan
-/// nullable supaya panel tetap bisa tampil walau fitur belum diimplementasi.
+Widget _timerChip(
+  BuildContext context,
+  String chromeKey,
+  String label,
+  VoidCallback? onTap,
+) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: NtaColors.surfaceRaised,
+        border: Border.all(color: NtaColors.hudBorder, width: 2),
+        borderRadius: BorderRadius.all(Radius.circular(NtaRadius.pill)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          NtaAssets.chromeImage(chromeKey, width: 16, height: 16, fit: BoxFit.contain),
+          const SizedBox(width: 4),
+          Text(label, style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Kumpulan callback yang dipakai [MapHudRail] + tombol bawah.
 class MapHudCallbacks {
   const MapHudCallbacks({
     this.onMapOverview,
@@ -175,16 +174,14 @@ class MapUnitThumb extends StatelessWidget {
         decoration: BoxDecoration(
           color: NtaColors.surfaceRaised,
           border: Border.all(color: NtaColors.hudBorder, width: 2),
-          borderRadius: BorderRadius.circular(NtaRadius.button),
-          boxShadow: const [
-            BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2)),
-          ],
+          borderRadius: BorderRadius.all(Radius.circular(NtaRadius.button)),
+          boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2))],
         ),
         child: Stack(
           children: [
             Center(
               child: ColorFiltered(
-                colorFilter: ColorFilter.mode(NtaColors.text, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(NtaColors.text, BlendMode.srcIn),
                 child: NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain),
               ),
             ),
@@ -193,14 +190,11 @@ class MapUnitThumb extends StatelessWidget {
               top: 2,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: NtaColors.accentTop,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
                 ),
-                child: Text('$n',
-                    style: NtaText.xs.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: NtaColors.onAccent)),
+                child: Text('$n', style: NtaText.xs.copyWith(fontWeight: FontWeight.w700, color: NtaColors.onAccent)),
               ),
             ),
           ],
@@ -210,8 +204,7 @@ class MapUnitThumb extends StatelessWidget {
   }
 }
 
-/// Placeholder modal kecil untuk fitur yang belum diimplementasi —
-/// sengaja generik supaya mudah diganti panel asli satu per satu.
+/// Placeholder modal kecil untuk fitur yang belum diimplementasi.
 void showStubPanel(BuildContext context, String title) {
   showDialog<void>(
     context: context,
@@ -228,13 +221,9 @@ void showStubPanel(BuildContext context, String title) {
           children: [
             Text(title, style: NtaText.title),
             const SizedBox(height: 10),
-            Text('Panel belum diimplementasikan.',
-                style: NtaText.sm.copyWith(color: NtaColors.textMuted)),
+            Text('Panel belum diimplementasikan.', style: NtaText.sm.copyWith(color: NtaColors.textMuted)),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close'),
-            ),
+            FilledButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Close')),
           ],
         ),
       ),
