@@ -67,14 +67,14 @@ class MapHudRail extends StatelessWidget {
           // 2. Profil
           _railBtn(NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain), callbacks.onProfile),
           const SizedBox(height: 4),
-          // 3. List hero
+          // 3. List hero - gunakan ic_popularity (ikon orang/grup)
           _railBtn(NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), callbacks.onHeroes),
           const SizedBox(height: 4),
-          // 4. General Muster Terrace
-          _railBtn(NtaAssets.chromeImage('ic_add_friend', width: 26, height: 26, fit: BoxFit.contain), callbacks.onGeneralMuster),
+          // 4. General Muster Terrace - gunakan ic_confirm (ikon gacha/gift)
+          _railBtn(NtaAssets.chromeImage('ic_confirm', width: 26, height: 26, fit: BoxFit.contain), callbacks.onGeneralMuster),
           const SizedBox(height: 4),
-          // 5. Ranking pemain
-          _railBtn(const Icon(Icons.emoji_events, size: 26, color: NtaColors.railIcon), callbacks.onBattleRankings),
+          // 5. Ranking pemain - gunakan ic_popularity (ikon ranking/leaderboard)
+          _railBtn(NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), callbacks.onBattleRankings),
         ],
       ),
     );
