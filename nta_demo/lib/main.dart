@@ -369,11 +369,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               child: _TopRightPanel(),
             ),
 
-            // Rail kanan vertikal + event + timer + petak unit (gaya asli).
-            // Posisi di bawah top-right panel agar tidak tumpang tindih.
+            // Rail kanan vertikal + timer chips (construction, march).
+            // Dinaikkan lebih tinggi agar 5 button + timer chips tidak menabrak bottom UI.
             if (!inPlot)
               Positioned(
-                top: 180,
+                top: 100, // dinaikkan dari 180
                 right: 8,
                 child: MapHudRail(
                   callbacks: MapHudCallbacks(

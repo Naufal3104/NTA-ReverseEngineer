@@ -23,17 +23,23 @@ class MapHudRail extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        _rail(context),
-        // Timer chips positioned alongside rail (not below all 5 buttons)
+        // Rail positioned higher so all 5 buttons fit above bottom UI
         Positioned(
-          top: 180, // aligned with ~4th button
-          right: -2,
+          top: 0,
+          right: 0,
+          child: _rail(context),
+        ),
+        // Timer chips positioned to the right of rail, aligned with buttons 2-3
+        // Rail: 6 padding + 44 btn + 4 gap + 44 btn = 98px from top for 2nd button center
+        Positioned(
+          top: 50, // aligned with 2nd button (Profile)
+          right: 56, // to the right of rail (44 width + 6 padding + 6 margin)
           child: _timerChip(context, 'ic_record', '13:05',
               callbacks.onConstructionQueue),
         ),
         Positioned(
-          top: 230, // aligned with ~5th button
-          right: -2,
+          top: 100, // aligned with 3rd button (Hero List)
+          right: 56,
           child: _timerChip(context, 'ic_popularity', '120:35',
               callbacks.onMarchList),
         ),
