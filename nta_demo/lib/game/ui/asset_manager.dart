@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 /// Helper akses asset ekstrak dari APK asli.
@@ -11,8 +12,107 @@ import 'package:flame_audio/flame_audio.dart';
 /// - `capital/`    skin capital per level (city_1001..city_1001122) + fortress/farm
 /// - `buildings/`  sprite bangunan capital (build_2001 = palace, 2004 barrack, ...)
 /// - `ui/`         ikon season/treasure/reward point
+/// - `ui_chrome/`  panel, tombol, ikon UI 9-slice dari atlas asli (51 frame)
 class NtaAssets {
   NtaAssets._();
+
+  // --- Chrome UI (9-slice & ikon) ----------------------------------------
+  /// Semua key chrome tersedia beserta metadata 9-slice (capInsets).
+  /// Data sumber: `_chrome_manifest.json` (dihasilkan `_extract_chrome.py`).
+  static const Map<String, _ChromeMeta> _chromeMeta = {
+    // Tombol gold
+    'btn_gold_round': _ChromeMeta('btn_gold_round.png', Rect.fromLTRB(16, 16, 16, 16)),
+    'btn_gold_round_diamond': _ChromeMeta('btn_gold_round_diamond.png', Rect.fromLTRB(20, 30, 20, 30)),
+    'btn_gold_wide': _ChromeMeta('btn_gold_wide.png', Rect.fromLTRB(54, 26, 0, 16)),
+    'btn_gold_wide2': _ChromeMeta('btn_gold_wide2.png', Rect.zero),
+    // Tombol putih
+    'btn_white_wide': _ChromeMeta('btn_white_wide.png', Rect.fromLTRB(50, 0, 50, 0)),
+    'btn_white_round': _ChromeMeta('btn_white_round.png', Rect.fromLTRB(25, 25, 25, 25)),
+    // Panah / plus
+    'btn_arrow': _ChromeMeta('btn_arrow.png', Rect.zero),
+    'frame_plus': _ChromeMeta('frame_plus.png', Rect.zero),
+    // Panel
+    'panel_wide': _ChromeMeta('panel_wide.png', Rect.fromLTRB(48, 0, 48, 0)),
+    'panel_ring': _ChromeMeta('panel_ring.png', Rect.fromLTRB(48, 0, 48, 0)),
+    'panel_cream': _ChromeMeta('panel_cream.png', Rect.fromLTRB(32, 32, 32, 32)),
+    'panel_square': _ChromeMeta('panel_square.png', Rect.fromLTRB(16, 16, 16, 16)),
+    'panel_dark': _ChromeMeta('panel_dark.png', Rect.fromLTRB(12, 12, 12, 12)),
+    'panel_inset': _ChromeMeta('panel_inset.png', Rect.fromLTRB(8, 8, 8, 8)),
+    // Frame
+    'frame_selected': _ChromeMeta('frame_selected.png', Rect.fromLTRB(16, 16, 16, 16)),
+    'box_frame_1': _ChromeMeta('box_frame_1.png', Rect.fromLTRB(11, 11, 11, 11)),
+    'box_frame_2': _ChromeMeta('box_frame_2.png', Rect.zero),
+    // Title quality
+    'title_q1': _ChromeMeta('title_q1.png', Rect.zero),
+    'title_q2': _ChromeMeta('title_q2.png', Rect.zero),
+    'title_q3': _ChromeMeta('title_q3.png', Rect.zero),
+    'title_q4': _ChromeMeta('title_q4.png', Rect.zero),
+    'title_q5': _ChromeMeta('title_q5.png', Rect.zero),
+    'title_q6': _ChromeMeta('title_q6.png', Rect.zero),
+    'title_q7': _ChromeMeta('title_q7.png', Rect.zero),
+    'title_empty': _ChromeMeta('title_empty.png', Rect.zero),
+    // Ikon UI
+    'ic_confirm': _ChromeMeta('ic_confirm.png', Rect.zero),
+    'ic_cancel': _ChromeMeta('ic_cancel.png', Rect.zero),
+    'ic_chat_send': _ChromeMeta('ic_chat_send.png', Rect.zero),
+    'ic_back': _ChromeMeta('ic_back.png', Rect.zero),
+    'ic_chat': _ChromeMeta('ic_chat.png', Rect.zero),
+    'ic_add_friend': _ChromeMeta('ic_add_friend.png', Rect.zero),
+    'ic_user': _ChromeMeta('ic_user.png', Rect.zero),
+    'ic_max': _ChromeMeta('ic_max.png', Rect.zero),
+    'ic_min': _ChromeMeta('ic_min.png', Rect.zero),
+    'ic_eye_on': _ChromeMeta('ic_eye_on.png', Rect.zero),
+    'ic_eye_off': _ChromeMeta('ic_eye_off.png', Rect.zero),
+    'ic_bgm_on': _ChromeMeta('ic_bgm_on.png', Rect.zero),
+    'ic_bgm_off': _ChromeMeta('ic_bgm_off.png', Rect.zero),
+    'ic_sfx_on': _ChromeMeta('ic_sfx_on.png', Rect.zero),
+    'ic_sfx_off': _ChromeMeta('ic_sfx_off.png', Rect.zero),
+    // Bar / flag / map
+    'bar_hp': _ChromeMeta('bar_hp.png', Rect.zero),
+    'flag_bg': _ChromeMeta('flag_bg.png', Rect.zero),
+    'map_mask': _ChromeMeta('map_mask.png', Rect.zero),
+    // Lainnya
+    'ic_popularity': _ChromeMeta('ic_popularity.png', Rect.zero),
+    'ic_record': _ChromeMeta('ic_record.png', Rect.zero),
+    'buff_bg_0': _ChromeMeta('buff_bg_0.png', Rect.fromLTRB(10, 10, 10, 10)),
+    'buff_bg_1': _ChromeMeta('buff_bg_1.png', Rect.fromLTRB(10, 10, 10, 10)),
+    // Season background
+    'season_bg_0': _ChromeMeta('season_bg_0.png', Rect.zero),
+    'season_bg_1': _ChromeMeta('season_bg_1.png', Rect.zero),
+    'season_bg_2': _ChromeMeta('season_bg_2.png', Rect.zero),
+    'season_bg_3': _ChromeMeta('season_bg_3.png', Rect.zero),
+  };
+
+  /// Path file PNG chrome (`assets/images/ui_chrome/<key>.png`).
+  static String chrome(String key) => 'assets/images/ui_chrome/$key.png';
+
+  /// Metadata 9-slice (capInsets) untuk key chrome. Null kalau bukan 9-slice.
+  static Rect? chromeSlice(String key) => _chromeMeta[key]?.capInsets;
+
+  /// Widget Image chrome. Flutter web (`CanvasKit`/`HTML`) tidak mendukung
+  /// `centerSlice` (9-slice) secara konsisten — citra sering tampil sebagai
+  /// kotak kecil di tengah container, bukan meregang. Karena itu kita drop
+  /// `centerSlice` sepenuhnya dan pakai `BoxFit.fill` biasa agar citra memenuhi
+  /// seluruh container.
+  static Widget chromeImage(String key,
+      {double? width, double? height, BoxFit fit = BoxFit.fill}) {
+    return Image.asset(chrome(key), width: width, height: height, fit: fit,
+        filterQuality: FilterQuality.none);
+  }
+
+  /// Container dengan background chrome. Tanpa `centerSlice`, citra di-stretch
+  /// memenuhi seluruh container melalui `BoxFit.fill`.
+  static BoxDecoration chromeDecoration(String key, {Color? color}) {
+    return BoxDecoration(
+      color: color,
+      image: DecorationImage(
+        image: AssetImage(chrome(key)),
+        fit: BoxFit.fill,
+      ),
+    );
+  }
+
+  // --- Original asset getters ----------------------------------------------
 
   /// Ikon plot per (tipe resource, level). Level 1 = wasteland (ikon kosong).
   /// Sumber: game_json/land.json — grain_101 = crop lv2, grain_104 = crop lv5.
@@ -48,6 +148,32 @@ class NtaAssets {
   static String grassTuft(int variant) =>
       'assets/images/terrain/grass_10${(variant % 4) + 1}.png';
 
+  /// Dekorasi plot liar (jerami / pohon kecil / batu) — atlas `decorate/`
+  /// asli. Dipakai sebagai taburan kecil di tile map (lihat
+  /// `Tampilan Utama.jpg`).
+  static String plotDecoration(int variant) {
+    const List<String> paths = [
+      'assets/images/terrain/grain_101.png',
+      'assets/images/terrain/grain_103.png',
+      'assets/images/terrain/tree_101.png',
+      'assets/images/terrain/tree_103.png',
+      'assets/images/terrain/stone_101.png',
+      'assets/images/terrain/stone_103.png',
+    ];
+    return paths[variant % paths.length];
+  }
+
+  /// Hiasan rumput liar di area capital (batu / semak) — beda atlas path.
+  static String capitalGardenDecoration(int variant) {
+    const List<String> paths = [
+      'assets/images/terrain/stone_102.png',
+      'assets/images/terrain/stone_104.png',
+      'assets/images/terrain/tree_102.png',
+      'assets/images/terrain/tree_104.png',
+    ];
+    return paths[variant % paths.length];
+  }
+
   /// Sprite bendera angka (0-9, x) untuk garrison count.
   static String flagNum(String c) => 'assets/images/flags/map_flag_$c.png';
 
@@ -63,6 +189,27 @@ class NtaAssets {
   /// Sprite bangunan capital, key = buildBase id (2001 palace, 2004 barrack, ...).
   static String building(String buildId) =>
       'assets/images/buildings/build_$buildId.png';
+
+  // --- Sprite tampilan DUNIA (map 80x80) -------------------------------
+  // Diambil langsung dari atlas Cocos `tmp/image/city/` — sprite yang
+  // dipakai game asli saat capital/plot tampil dari luar (bukan interior).
+
+  /// Capital pemain di map — pagoda biru bertingkat (152x180).
+  /// Sumber `city_1001` (skin lv.1). Level 10 memakai `city_10010`,
+  /// lv.>10 memakai `city_10011NN` — lihat [capitalSkin].
+  static String get mapCapital => 'assets/images/capital/city_1001.png';
+
+  /// Watchtower plot dikuasai — menara kayu A-frame (72x76, `city_2202`).
+  static String get mapWatchtower => 'assets/images/capital/city_2202.png';
+
+  /// Fortress di plot — gerbang kayu biru (72x76, `city_2203`).
+  static String get mapFortress => 'assets/images/capital/city_2203.png';
+
+  /// Farm / sawmill / quarry di plot — gubuk beratap jerami (72x76, `city_2201`).
+  static String get mapFarm => 'assets/images/capital/city_2201.png';
+
+  /// Remains (capital netral) — aula hijau beratap (152x180, `city_10010`).
+  static String get mapRemains => 'assets/images/capital/city_10010.png';
 
   /// Facility id → buildBase id (dari `common/json/buildBase.json`).
   static const Map<String, String> facilityBuildId = {
@@ -88,6 +235,38 @@ class NtaAssets {
   /// Ikon season 0-3 (spring/summer/autumn/winter).
   static String season(int i) => 'assets/images/ui/season_$i.png';
 
+  /// Ikon resource dasar dari atlas asli `common/image/` (40x40 px):
+  /// cereal=crop, timber=wood, stone, iron, exp_book=exp_scroll,
+  /// up_scroll=scroll, fixator=nail.
+  static String? resIcon(String resource) {
+    const map = {
+      'crop': 'assets/images/res/crop.png',
+      'wood': 'assets/images/res/wood.png',
+      'stone': 'assets/images/res/stone.png',
+      'iron': 'assets/images/res/iron.png',
+      'exp_scroll': 'assets/images/res/exp_scroll.png',
+      'scroll': 'assets/images/res/scroll.png',
+      'nail': 'assets/images/res/nail.png',
+    };
+    return map[resource];
+  }
+
+  /// Ikon mata uang / item khusus (`ui/`): ingot, gold, rank_coin, war_token,
+  /// voucher, stamina, win_point, shop_ingot_1..6.
+  static String currencyIcon(String key) => 'assets/images/ui/$key.png';
+
+  /// Ikon equipment dari atlas asli `tmp/image/equip/equip_<id>`.
+  /// Common: 6001–6044. Exclusive: 6101–6124.
+  /// Null kalau id di luar jangkauan ekstraksi.
+  static String? equipIcon(String equipId) {
+    final n = int.tryParse(equipId);
+    if (n == null) return null;
+    if ((n >= 6001 && n <= 6044) || (n >= 6101 && n <= 6124)) {
+      return 'assets/images/equip/equip_$equipId.png';
+    }
+    return null;
+  }
+
   /// Potret pasukan/monster 64x64 dari bundle `role/<id>` (pawnBase id).
   /// Dipakai untuk token unit di grid tempur dan roster barrack.
   static String unitSprite(String pawnId) =>
@@ -98,9 +277,11 @@ class NtaAssets {
   static String heroPortrait(int portrayalId) =>
       'assets/images/heroes/portrayal_$portrayalId.png';
 
-  /// Hero avatar di atas prajurit (`avatar_pawn_<portrayalId>_01.png`).
+  /// Hero avatar bulat — pakai `portrayal_<portrayalId>.png` (ilustrasi penuh
+  /// valid) di-crop `BoxFit.cover`. `avatar_pawn_*` hasil ekstrak korup
+  /// (bar kuning), jadi tidak dipakai lagi.
   static String heroAvatar(int portrayalId) =>
-      'assets/images/heroes/avatar_pawn_${portrayalId}_01.png';
+      'assets/images/heroes/portrayal_$portrayalId.png';
 
   /// Frame animasi `role_<pawnId>_walk` / `_drill` (Cocos AnimationClip).
   static String unitAnimFrame(String pawnId, String clip, int i) =>
@@ -195,4 +376,10 @@ class NtaAssets {
     final n = (idx % 152) + 1;
     FlameAudio.play('sounds/unit/sound_${n.toString().padLeft(3, '0')}.mp3', volume: 0.4);
   }
+}
+
+class _ChromeMeta {
+  final String fileName;
+  final Rect capInsets;
+  const _ChromeMeta(this.fileName, this.capInsets);
 }

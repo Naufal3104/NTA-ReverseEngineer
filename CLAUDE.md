@@ -267,6 +267,68 @@ Semua bangunan max level **mengikuti level capital** (capital 5 → bangunan men
 - **Khusus** (chest-only, tidak diproduksi): `iron`, `exp_scroll`, `scroll`, `nail` — hanya dari Award Chest tiap conquest menang atau merebut capital musuh. Wood plots → EXP Scroll, Stone plots → Iron, Crop plots → crop.
 - **Kapasitas**: tanpa barn/warehouse → max **1000**; dengan barn (crop) & warehouse (wood+stone) → **3000**; tiap upgrade bangunan **+1700 capacity** (teramati Warehouse Lv.3→4 = 5700→7400).
 
+## Status Pengerjaan UI (task list — sinkron 2026-11-15)
+
+Referensi desain: folder `Main UI/` (screenshot 1080×2400, nama = tampilan). Modal panel ada di `nta_demo/lib/game/ui/panels/`, wiring di `nta_demo/lib/main.dart`. Semua panel pakai design-token `design_tokens.dart` (`ntaPanel()`, `NtaText`, `NtaColors`, `NtaRadius`, `NtaBorder`, `NtaResIcon`). Pola modal: `static Future<void> show(BuildContext)` → `showDialog` + `ChangeNotifierProvider.value(value: context.read<GameState>())`.
+
+### Cara kerja umum tiap task UI (baca dulu)
+1. Buka screenshot ref di `Main UI/<nama>.jpg`, identifikasi: judul, tab/toggle, list/grid, tombol aksi, HUD counter.
+2. Cek data pendukung di `game/models/game_state.dart` (getter yang sudah ada) + `data/game_data.dart` (konstanta). Kalau butuh field baru → tambah ke `GameState` dengan pola `notifyListeners()`.
+3. Tulis panel di `lib/game/ui/panels/<nama>_panel.dart` pakai token; reuse ikon asli (`NtaAssets.heroPortrait`, `NtaResIcon`, `season`).
+4. Wiring di `main.dart` (ganti `showStubPanel(...)` → `XxxPanel.show(context)`).
+5. `cd nta_demo && flutter analyze lib` → harus "No issues found!".
+6. `flutter build web --profile -o build/web_prof`, cek mtime `main.dart.js` maju.
+7. Verifikasi screenshot via harness `_drive.py` (port 9441, static server 8899), bandingkan dgn ref. Simpan di `_shots/p_<nama>.png`.
+
+---
+
+### Selesai (sudah dibangun + diverifikasi)
+- **#28** Harness web + Edge CDP (`_drive.py`) jalan — `boot/shoot/click/drag/wheel/js/kill`, viewport 504×860.
+- **#31** Redesign map-view capital & plot sprite (sprite asli `city_1001`; checkerboard wild `#7BAF81`/`#80B486`, owned `#8FC17A`/`#91C078`, outline `#3C854D`).
+- **#32** Tile action panel map gaya asli (4 tombol vertikal: Enter/Grain Garrison/Build/March) saat tile dikuasai diklik.
+- **#33** Modal Armies 3 tab (All Armies / Territory / Battle Report) — verified.
+- **#47** Right icon rail (map kanan atas) — verified.
+- **#39** Modal Map (minimap overview) — verified (`_shots/p_mapoverview.png`). Arahan bila revisi: legend, `_MiniMapPainter` 80×80, InteractiveViewer, chip koordinat X/Y, tombol View untuk lompat ke posisi.
+- **#41** Modal Profil (Personal Info/Add/Battle Info) — verified layout (`_shots/p_profile.png`). Arahan bila revisi: tab Personal Info (Commander + UID + class + win pts + ranked battles + reaction count), tab Add (cari teman by UID), tab Battle Info (statistik tempur); avatar hero pakai `portrayal_*` topCenter.
+- **#34** Battle Rankings (`battle_rankings_panel.dart`) — verified (`_shots/p_rankings.png`). Buka: rail `help_outline` (467,232) atau gold `emoji_events`. Avatar pakai portrait valid, poin + league tampil.
+- **#35** Chat (`chat_panel.dart`) — verified (`_shots/p_chat2.png`). Buka: tombol chat kiri bawah. World/Alles/Private + Union/Team toggle, counter 39/40, pesan seed + avatar, input bar.
+- **#36** Construction Queue (`construction_queue_panel.dart`) — verified (`_shots/p_constrq2.png`). Buka: chip `home_repair_service "13:05"` (459,468). Item + progress + ETA + Quick Complete.
+- **#40** March List (`march_list_panel.dart`) — verified (`_shots/p_marchlist.png`). Buka: chip `hourglass_bottom "120:35"` (460,500). Baris march + ETA + tombol cancel.
+- **#44** Output Overview (`output_overview_panel.dart`) — verified (`_shots/p_output2.png`). Buka: tap pill crop/wood/stone top-left (50,25). Tabel plot per level, baris stat, tab Crop/Wood/Stone, "Current Resources/Capacity".
+- **#45** Season Detail (`season_detail_panel.dart`) — verified (`_shots/p_season2.png`). Buka: lingkaran red `card_giftcard` rail (467,362). Ikon musim, 4 tile, mystic remains, victory rules, Server Activeness/Time.
+- **#46** Special Resource Info (`special_resource_panel.dart`) — verified (`_shots/p_special2.png`). Buka: tap mini pill special (25,137). 4 baris EXP Scroll/Iron/Scroll/Nail + deskripsi + count.
+- **#37** General Muster Terrace fullscreen (`general_muster_panel.dart`) — verified (`_shots/p_muster.png`, `p_muster_result.png`). Buka: rail `workspace_premium` emas (467,420) atau tombol Muster di Heroes List. Drum + counter `n/50` + banner guaranteed + 3 tombol Free + skip checkbox + grid hasil fragment + tap fragment → repair dialog. **Semua muster GRATIS** (anti-coin).
+- **#38** Heroes List modal (`heroes_list_panel.dart`) — verified (`_shots/p_heroeslist.png`). Buka: rail `person` (467,198). 3 tab (Hero Portrait/Skin/Socialization), sort dropdown + ALL(n/59), grid 3 kolom dengan frame tier (gold Chosen/purple/blue), badge fragment + tier, footer Exchange + Muster.
+- **#42** Shop modal (`shop_panel.dart`) — verified (`_shots/p_shop.png`). Buka: tombol Shop bawah (325,717). Rail kategori (Limited-Time/Value/Top-up/Skin Mall/Exclusive), Daily/Weekly tabs, kartu diskon + tombol **Free**, Daily Gift claim. Top-up = "Not available in offline build".
+- **#43** Lucky Wheel (`lucky_wheel_panel.dart`) — verified (`_shots/p_wheel2.png`, `p_wheel_spin2.png`). Buka: thumb prajurit pojok kanan bawah (461,714). 12 slot wheel (`_WheelPainter`), spin animasi 5 putaran, "Unlimited" chances, reward masuk `GameState.grantWheelReward`. Catatan: label segmen **text-only** — `WidgetSpan(Icon)` di dalam `CustomPainter` bikin painter abort.
+
+### Belum dibangun (masih showStubPanel)
+(tidak ada — semua panel sudah dibangun + diverifikasi 2026-11-15)
+
+### Verifikasi & QA
+
+- **#48** Screenshot-verify tiap panel via Edge CDP vs `Main UI/*.jpg` — **SELESAI 2026-11-15**: semua panel (#34–#46, #37/#38/#42/#43) sudah di-screenshot & dicocokkan dgn ref (`_shots/p_*.png`).
+  - **Langkah**: `cd nta_demo/build/web_prof && python -m http.server 8899` → `python _drive.py boot` → per panel: `python _drive.py click X Y` lalu `python _drive.py shot p_<nama>` (panggil click lalu shot terpisah; jangan andalkan arg wait di `click`). Viewport 504×860.
+  - **Koordinat klik terverifikasi**: rail=heroes(467,198)/rankings(467,232)/profile(467,270)/season(467,362)/armies(467,584); rail chips constrq(459,468)/march(460,500); rail gold-spin=wheel asc? **(461,714 = thumb prajurit → Lucky Wheel)**; HUD crop pill(50,25)/special pill(25,137); bawah: chat kiri(40,650 di capital / 40,693 di map), Shop(325,717), Armies-swap; Heroes List footer Muster(364,694); Muster*1(84,556); back muster(39,722).
+- **#29** Season timer pause saat close — **SELESAI 2026-11-15**.
+  - **Semantik terverifikasi**: `_elapsedSeconds` hanya menghitung *active playtime*. Close 60s → elapsed tidak berubah (15577→15607 cuma autosave pra-kill, bukan closed time). Gap guard `_closedGapSeconds=30` di `_onTick()` self-heal walau lifecycle event tidak datang; `pauseClock()`/`resumeClock()` dipanggil dari `WidgetsBindingObserver` (`main.dart:321`).
+  - **Catatan harness**: headless Edge men-throttle `Timer.periodic` (~30s/menit) walau `document.visibilityState=visible` + flag `--disable-background-timer-throttling`. Ini artefak harness (tab headless tanpa fokus), **bukan bug produk** — tab/device asli tick 1s. Sudah tambah flag anti-throttle di `_drive.py` (sebagian menolong, tidak penuh di headless).
+- **#30** Combat testing exhaustif — **SELESAI 2026-11-15** (`test/combat_engine_test.dart`, 26 tes lulus).
+  - **Diverifikasi via sim langsung `BattleEngine`**: type-triangle (Spear>Cavalry>Shield>Bow>Spear; ×1.4 counter / ×0.6 reverse), urutan aksi (grup attacker dulu tiap ronde walau SPD musuh lebih tinggi), rage (isi saat menyerang/diserang, reset 0 saat cast skill), passive DR (Fortitude 10301 ranged ×0.4, Scale Armor 10601 ×0.6), reflect Hedgehog 10501 (35%), eskalasi kesulitan (Hell≫Easy, distance→hard, Hell2 = Soulreaper + 4 Boar Knight, label Easy1/Hell1).
+  - **2 bug diperbaiki di `battle_engine.dart`**: (1) **Iron Mountain Stance (12001)** guardian sebelumnya **tidak dimodelkan** → guardian kena DMG penuh, Hell jadi sepele; kini +70% DR saat diserang + attacker 12001 menembus 70% DR target. (2) **Counter pasif terbalik**: target ber-`Counter Shield` (Boar Knight 10104) kini memotong ATK Shieldman penyerang ×0.6.
+  - **Stack Leap Trainee Warrior (11401-6)** — SELESAI 2026-11-15: tiap Boar Knight (enemy 4205) mati = +1 stack, +0.5 ATK / +5 HP per prajurit Sword&Shield (3205). Cap 10→100 mengikuti level drill (`10+(lv-1)*18`). Field `_leapStacks` di GameState, disimpan di save (`leapStacks`), diterapkan di `BattleEngine.buildPlayerUnits(leapStacks:)`, gain di `_gainLeapStacks` dari `attackPlot`/`attackRemains` via `_boarKnightKills` (defenderLosses uid→id). Tes: 4 di `combat_engine_test.dart` (20 lulus).
+  - **Enemy active skills (§3.1)** — SELESAI 2026-11-15: 16 families dimodelkan (Wolf Howl buff, Elephant Sling 200%, Bear Smash 5% Max HP true DMG + stun, Lion Tear 120% ATK + bleed, Viper Venom Spit poison 10% cur HP, Rhino Trample AoE stun, dsb). Diwire ke `_act()` + `_tickStatuses()` end-of-round. Tes: 6 di `combat_engine_test.dart` (26 total lulus).
+  - **Clinic recovery** — SELESAI 2026-11-15: `_applyCasualties` formula (wounded = round(lost × 0.55 menang / ×0.50 kalah)) dikunci 4 tes di group `clinic recovery (§Clinic)` yang memanggil `GameState.clinicWounded()` + `clinicWoundedRate()` (29 total lulus). Helper static diekstrak supaya testable tanpa instance GameState.
+- **Save codec** — SELESAI 2026-11-15: `test/save_codec_test.dart` (11 tes) mengunci round-trip semua field + loader toleran legacy: string-number coercion, drop troop/equip id invalid, exclusiveEquipment normalisasi (string legacy di-skip, effects/smelt difilter, locked int), portrait grade clamp 0..7, battleReports DateTime round-trip, worshippedHeroes hanya yang punya portrait, troopLevels clamp 1..6, leapStacks clamp ke cap. Suite total: 41 tes lulus (29 combat + 11 codec + 1 plot widget).
+  - **TIER_POINTS_PER_PLOT_LEVEL** — SELESAI 2026-11-15: user-confirmed curve plot Lv.1=2, Lv.2=4, Lv.3=6, Lv.4=8, Lv.5=10 → `TIER_POINTS_PER_PLOT_LEVEL = 2` (linear 2× plot level). Dipakai di `attackPlot` conquest ranked.
+  - **Army cap formula** — SUDAH DATA ASLI: `BUILD_LADDER[2001]` effect 11 Lv1=2, Lv10=7, Lv12=8, Lv20=12 (cocok screenshot).
+  - **Policy capital unlock pattern** — SUDAH DATA ASLI: `POLICY_SLOT_LEVELS = [1, 5, 10, 15, 20]` → Lv.10 = 3 slot (1,5,10), unlock baru Lv.15.
+
+### Catatan teknis
+- **Avatar hero fix (2026-11-15)**: `avatar_pawn_*.png` hasil ekstrak **korup** (bar kuning 40×80 / silhouette putih). `NtaAssets.heroAvatar()` sekarang menunjuk `portrayal_<id>.png` (ilustrasi valid, 63 file). Caller (profil/battle_rankings/chat) pakai `BoxFit.cover` + `alignment: Alignment.topCenter`.
+- **`NtaAssets.heroPortrait(id)`** = `portrayal_<id>.png`; **`heroAvatar(id)`** kini juga `portrayal_<id>.png` (dulu `avatar_pawn_*_01.png`).
+- **`NtaAssets.heroAvatar(id)`** dipakai di 3 panel + `heroPortrait` di `capital_interior_view.dart`, `game_tabs.dart`.
+
 ## Konvensi
 
 - Data numerik game (HP, ATK, drop, difficulty) harus mengikuti sumber authoritative di atas — jangan mengarang angka. Kalau belum ada data, tandai TODO.

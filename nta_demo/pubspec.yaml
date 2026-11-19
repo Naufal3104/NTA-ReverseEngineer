@@ -49,6 +49,7 @@ dependencies:
   # Utilities
   path_drawing: ^1.0.1
   collection: ^1.18.0
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
@@ -77,12 +78,15 @@ flutter:
     - assets/images/plots/
     - assets/images/terrain/
     - assets/images/ui/
+    - assets/images/ui_chrome/
     - assets/images/flags/
     - assets/images/capital/
     - assets/images/buildings/
     - assets/images/units/
     - assets/images/units/anim/
     - assets/images/heroes/
+    - assets/images/res/
+    - assets/images/equip/
     - assets/sounds/ui/
     - assets/sounds/bgm/
     - assets/sounds/unit/

@@ -123,6 +123,32 @@ class _TroopPortrait extends StatelessWidget {
 }
 
 /// Kartu daftar: raised cream + border hairline.
+/// Ikon equipment asli (`equip_<id>.png`), fallback ke Material Icon.
+class _EquipIcon extends StatelessWidget {
+  final String equipId;
+  final IconData fallback;
+
+  const _EquipIcon(this.equipId, {required this.fallback});
+
+  static const double _size = 28;
+
+  @override
+  Widget build(BuildContext context) {
+    final path = NtaAssets.equipIcon(equipId);
+    if (path != null) {
+      return Image.asset(
+        path,
+        width: _size,
+        height: _size,
+        filterQuality: FilterQuality.none,
+        errorBuilder: (_, _, _) =>
+            Icon(fallback, color: NtaColors.textMuted, size: _size),
+      );
+    }
+    return Icon(fallback, color: NtaColors.textMuted, size: _size);
+  }
+}
+
 class _ListCard extends StatelessWidget {
   final Widget leading;
   final Widget title;
@@ -510,7 +536,7 @@ class _SmithyTab extends StatelessWidget {
             .join(' · ');
         return _ListCard(
           bg: NtaColors.accentSoft,
-          leading: const Icon(Icons.stars, color: NtaColors.heroNamePill, size: 28),
+          leading: _EquipIcon(id, fallback: Icons.stars),
           title: Text('${owned['name']} (${owned['subtype']})', style: NtaText.bodyBold),
           subtitle: Text(rolled, style: NtaText.caption),
         );
@@ -518,7 +544,7 @@ class _SmithyTab extends StatelessWidget {
       final blocker = state.exclusiveForgeBlocker(id);
       final needLv = (eq['needLv'] as List).cast<int>();
       return _ListCard(
-        leading: const Icon(Icons.stars, color: NtaColors.heroNamePill, size: 28),
+        leading: _EquipIcon(id, fallback: Icons.stars),
         title: Text('${eq['nameIdl']} — ${eq['subtype']}', style: NtaText.bodyBold),
         subtitle: Text(
           blocker ?? 'Smithy Lv.${needLv.first}/${needLv.last} · Cost: $costText',
@@ -539,7 +565,7 @@ class _SmithyTab extends StatelessWidget {
     final canAfford = !locked && state.hasResources(cost);
 
     return _ListCard(
-      leading: Icon(Icons.hardware, color: NtaColors.textMuted, size: 28),
+      leading: _EquipIcon(id, fallback: Icons.hardware),
       title: Row(
         children: [
           Flexible(child: Text('${eq['nameIdl']}  x$owned', style: NtaText.bodyBold)),

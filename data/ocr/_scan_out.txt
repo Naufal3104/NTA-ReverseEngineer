@@ -1,0 +1,48 @@
+== apk_extracted/assets/assets\app\config.json 10 paths
+== apk_extracted/assets/assets\internal\config.json 17 paths
+== apk_extracted/assets/assets\main\config.json 0 paths
+== apk_extracted/assets/assets\manifest\config.json 1 paths
+== apk_extracted/assets/assets\resources\config.json 24730 paths
+   tmp/image/land_3/stone_104
+   tmp/image/land_0/stone_101
+   tmp/prefab/snailisle/SNAILISLE_3
+   tmp/image/icon/shop_ingot_6
+   view/common/ShopBuyIngotTipPnl
+   tmp/image/land_1/stone_102
+   common/image/exp_book
+   tmp/image/icon/shop_ingot_1
+   view/common/ShopBuyDailyIngotPackTipPnl
+   tmp/image/land_2/stone_103
+   tmp/image/land_0/stone_104
+   common/image/ingot
+   tmp/image/land_3/stone_103
+   common/image/fixator
+   tmp/prefab/snailisle/SNAILISLE_6
+   tmp/image/icon/shop_ingot_3
+   tmp/image/land_0/stone_102
+   tmp/image/land_1/stone_104
+   tmp/prefab/snailisle/SNAILISLE_7
+   tmp/image/land_2/stone_101
+   common/image/cereal
+   common/json/ingotGiftPack
+   tmp/prefab/snailisle/SNAILISLE_2
+   tmp/prefab/snailisle/SNAILISLE_4
+   common/image/timber
+   tmp/image/icon/shop_ingot_2
+   tmp/prefab/snailisle/SNAILISLE_8
+   tmp/prefab/snailisle/SNAILISLE_5
+   tmp/image/land_3/stone_102
+   common/json/_snailIsle_build
+   tmp/image/land_3/stone_101
+   common/image/iron
+   tmp/image/land_2/stone_102
+   tmp/image/icon/shop_ingot_5
+   common/image/stone
+   tmp/image/icon/shop_ingot_4
+   tmp/image/help/exp_book
+   tmp/image/land_0/stone_103
+   tmp/prefab/snailisle/SNAILISLE_1
+   common/image/cereal_c
+   tmp/image/land_1/stone_103
+   tmp/image/land_2/stone_104
+   tmp/image/land_1/stone_101

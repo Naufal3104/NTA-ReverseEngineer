@@ -2,6 +2,21 @@
 import 'package:provider/provider.dart';
 import 'game/models/game_state.dart';
 import 'game/components/viewport.dart' show GameViewport;
+import 'game/components/map_hud_overlay.dart';
+import 'game/ui/panels/armies_panel.dart';
+import 'game/ui/panels/heroes_list_panel.dart';
+import 'game/ui/panels/shop_panel.dart';
+import 'game/ui/panels/lucky_wheel_panel.dart';
+import 'game/ui/panels/battle_rankings_panel.dart';
+import 'game/ui/panels/chat_panel.dart';
+import 'game/ui/panels/construction_queue_panel.dart';
+import 'game/ui/panels/map_overview_panel.dart';
+import 'game/ui/panels/march_list_panel.dart';
+import 'game/ui/panels/output_overview_panel.dart';
+import 'game/ui/panels/profile_panel.dart';
+import 'game/ui/panels/season_detail_panel.dart';
+import 'game/ui/panels/special_resource_panel.dart';
+import 'game/ui/panels/general_muster_panel.dart';
 import 'game/ui/asset_manager.dart';
 import 'game/ui/design_tokens.dart';
 import 'data/game_data.dart';
@@ -354,6 +369,28 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               child: _TopRightPanel(),
             ),
 
+            // Rail kanan vertikal + event + timer + petak unit (gaya asli).
+            // Posisi di bawah top-right panel agar tidak tumpang tindih.
+            if (!inPlot)
+              Positioned(
+                top: 180,
+                right: 8,
+                child: MapHudRail(
+                  callbacks: MapHudCallbacks(
+                    onMapOverview: () => MapOverviewPanel.show(context),
+                    onHeroes: () => HeroesListPanel.show(context),
+                    onBattleRankings: () =>
+                        BattleRankingsPanel.show(context),
+                    onProfile: () => ProfilePanel.show(context),
+                    onGeneralMuster: () => GeneralMusterPanel.show(context),
+                    onConstructionQueue: () =>
+                        ConstructionQueuePanel.show(context),
+                    onMarchList: () => MarchListPanel.show(context),
+                    onArmies: () => ArmiesPanel.show(context),
+                  ),
+                ),
+              ),
+
             // Bottom-left action buttons
             Positioned(
               bottom: 16,
@@ -455,80 +492,107 @@ class _VictoryOverlay extends StatelessWidget {
 
 // Top-left: tiga pill resource dasar (crop/wood/stone) + baris resource khusus.
 // Layout mengikuti HUD game asli (S4): ikon menonjol di kiri pill, nilai + rate hijau,
-// bar progress biru tipis di bawah nilai.
+// bar progress biru tipis di bawah nilai. Pill basic dan special lebarnya sama (size to content).
 class _ResourcePanel extends StatelessWidget {
   const _ResourcePanel();
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<GameState>();
-    final rates = state.getHourlyProduction();
+    // Use context.select to only rebuild when specific resources change
+    final crop = context.select((GameState s) => s.crop);
+    final wood = context.select((GameState s) => s.wood);
+    final stone = context.select((GameState s) => s.stone);
+    final cropCap = context.select((GameState s) => s.cropCapacity);
+    final matCap = context.select((GameState s) => s.materialCapacity);
+    final iron = context.select((GameState s) => s.iron);
+    final expScroll = context.select((GameState s) => s.expScroll);
+    final scroll = context.select((GameState s) => s.scroll);
+    final nail = context.select((GameState s) => s.nail);
+    final rates = context.select((GameState s) => s.getHourlyProduction());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _pill('crop', state.crop, rates['crop'] ?? 0, state.cropCapacity),
+        // Basic resource pills: constrain width so Expanded inside NtaResourcePill works
+        SizedBox(width: 180, child: _pill(context, 'crop', crop, rates['crop'] ?? 0, cropCap)),
         const SizedBox(height: 4),
-        _pill('wood', state.wood, rates['wood'] ?? 0, state.materialCapacity),
+        SizedBox(width: 180, child: _pill(context, 'wood', wood, rates['wood'] ?? 0, matCap)),
         const SizedBox(height: 4),
-        _pill('stone', state.stone, rates['stone'] ?? 0, state.materialCapacity),
+        SizedBox(width: 180, child: _pill(context, 'stone', stone, rates['stone'] ?? 0, matCap)),
         const SizedBox(height: 6),
         // Resource khusus (chest-only) — ikon + angka, tanpa produksi.
         Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            _special('iron', state.iron),
+            _special(context, 'iron', iron),
             const SizedBox(width: 6),
-            _special('exp_scroll', state.expScroll),
+            _special(context, 'exp_scroll', expScroll),
             const SizedBox(width: 6),
-            _special('scroll', state.scroll),
+            _special(context, 'scroll', scroll),
             const SizedBox(width: 6),
-            _special('nail', state.nail),
+            _special(context, 'nail', nail),
           ],
         ),
       ],
     );
   }
 
-  Widget _pill(String resource, int value, double rate, int cap) {
+  Widget _pill(BuildContext context, String resource, int value, double rate,
+      int cap) {
     final progress = cap <= 0 ? 0.0 : value / cap;
-    return NtaResourcePill(
-      icon: NtaResIcon(resource, size: 18),
-      value: '$value',
-      rate: '+${rate.round()}',
-      progress: progress,
+    return GestureDetector(
+      onTap: () => OutputOverviewPanel.show(context, initialRes: resource),
+      child: NtaResourcePill(
+        icon: NtaResIcon(resource, size: 18),
+        value: '$value',
+        rate: '+${rate.round()}',
+        progress: progress,
+      ),
     );
   }
 
-  Widget _special(String resource, int value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: NtaColors.surfaceCard,
-        border: Border.all(color: NtaColors.border, width: NtaBorder.hairline),
-        borderRadius: BorderRadius.circular(NtaRadius.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          NtaResIcon(resource, size: 13),
-          const SizedBox(width: 4),
-          Text('$value', style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
-        ],
+  Widget _special(BuildContext context, String resource, int value) {
+    return GestureDetector(
+      onTap: () => SpecialResourcePanel.show(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+          color: NtaColors.surfaceCard,
+          border:
+              Border.all(color: NtaColors.border, width: NtaBorder.hairline),
+          borderRadius: BorderRadius.circular(NtaRadius.pill),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            NtaResIcon(resource, size: 13),
+            const SizedBox(width: 4),
+            Text('$value',
+                style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
+          ],
+        ),
       ),
     );
   }
 }
 
-// Top-right panel: coins, reward points, season/time
+// Top-right panel: reward points, tier win points (ranked), season/time
 class _TopRightPanel extends StatelessWidget {
   const _TopRightPanel();
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<GameState>();
+    // Use context.select to only rebuild when specific values change
+    final rewardPoints = context.select((GameState s) => s.rewardPoints);
+    final earnsTierWinPoints = context.select((GameState s) => s.earnsTierWinPoints);
+    final tierWinPoints = context.select((GameState s) => s.tierWinPoints);
+    final rankTier = context.select((GameState s) => s.rankTier);
+    final season = context.select((GameState s) => s.season);
+    final dayInSeason = context.select((GameState s) => s.dayInSeason);
+    final seasonTimeLeftLabel = context.select((GameState s) => s.seasonTimeLeftLabel);
 
-    final seasonIndex = switch (state.season) {
+    final seasonIndex = switch (season) {
       'Spring' => 0,
       'Summer' => 1,
       'Autumn' => 2,
@@ -542,61 +606,52 @@ class _TopRightPanel extends StatelessWidget {
         // Reward Points (di game asli: coin dihapus, diganti tally/reward points).
         NtaCounterPill(
           icon: const Icon(Icons.redeem, size: 18, color: NtaColors.text),
-          value: '${state.rewardPoints}',
+          value: '$rewardPoints',
         ),
         // Ranked: Tier Win Points + current tier.
-        if (state.earnsTierWinPoints) ...[
+        if (earnsTierWinPoints) ...[
           const SizedBox(height: 4),
           NtaCounterPill(
             icon: const Icon(Icons.military_tech, size: 18, color: NtaColors.text),
-            value: '${state.tierWinPoints} ${state.rankTier}',
+            value: '$tierWinPoints $rankTier',
           ),
         ],
-        const SizedBox(height: 4),
-        // Victory-objective progress (Remains level or defeated rivals).
-        NtaCounterPill(
-          icon: Icon(
-            state.victoryCondition == 'Final Conquest'
-                ? Icons.gavel
-                : Icons.account_balance,
-            size: 18,
-            color: NtaColors.text,
-          ),
-          value: state.victoryProgressLabel,
-        ),
         const SizedBox(height: 6),
-        // Musim + sisa waktu season (pause saat game ditutup).
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: NtaColors.surfaceRaised,
-            border: Border.all(color: NtaColors.hudBorder, width: 2),
-            borderRadius: BorderRadius.circular(NtaRadius.pill),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                NtaAssets.season(seasonIndex),
-                width: 16,
-                height: 16,
-                filterQuality: FilterQuality.none,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '${state.season} D${state.dayInSeason}',
-                style: NtaText.xs.copyWith(fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                state.seasonTimeLeftLabel,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  color: NtaColors.hudText,
-                  fontSize: 11,
+        // Musim + sisa waktu season — tap → SeasonDetailPanel.
+        GestureDetector(
+          onTap: () => SeasonDetailPanel.show(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: NtaColors.surfaceRaised,
+              border: Border.all(color: NtaColors.hudBorder, width: 2),
+              borderRadius: BorderRadius.circular(NtaRadius.pill),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(
+                  NtaAssets.season(seasonIndex),
+                  width: 16,
+                  height: 16,
+                  filterQuality: FilterQuality.none,
                 ),
-              ),
-            ],
+                const SizedBox(width: 4),
+                Text(
+                  '$season D$dayInSeason',
+                  style: NtaText.xs.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  seasonTimeLeftLabel,
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    color: NtaColors.hudText,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -615,31 +670,28 @@ class _BottomLeftPanel extends StatelessWidget {
     final state = context.watch<GameState>();
     final isInCapitalOrPlot = state.currentView == 'capital' || state.currentView == 'plot';
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Message button (always top)
-        _ActionButton(
-          icon: Icons.chat_bubble_outline,
-          label: 'Message',
-          onPressed: () {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Messages coming soon!'), duration: Duration(seconds: 2)),
-              );
-            }
-          },
-        ),
-        const SizedBox(height: 8),
-        // Context-aware bottom button
-        _ActionButton(
-          icon: isInCapitalOrPlot ? Icons.map : Icons.fort,
-          label: isInCapitalOrPlot ? 'Back' : 'Capital',
-          onPressed: isInCapitalOrPlot
-              ? () => state.goToMap()
-              : () => state.switchView('capital'),
-        ),
-      ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 72),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Message button (always top)
+          _ChromeActionButton(
+            chromeKey: 'ic_chat',
+            label: 'Chat',
+            onPressed: () => ChatPanel.show(context),
+          ),
+          const SizedBox(height: 8),
+          // Context-aware bottom button
+          _ChromeActionButton(
+            chromeKey: isInCapitalOrPlot ? 'ic_back' : 'ic_user',
+            label: isInCapitalOrPlot ? 'Back' : 'Capital',
+            onPressed: isInCapitalOrPlot
+                ? () => state.goToMap()
+                : () => state.switchView('capital'),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -657,131 +709,115 @@ class _BottomRightPanel extends StatelessWidget {
 
     if (isInCapitalOrPlot) {
       // Inside capital/plot: Quest, Build, Facility Access, Troops (horizontal)
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Quest/Reward Info button
-          _ActionButton(
-            icon: Icons.assignment,
-            label: 'Quest',
+      return ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 280),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Quest/Reward Info button
+            _ChromeActionButton(
+              chromeKey: 'ic_chat',
+              label: 'Quest',
               onPressed: () {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Quest info coming soon!'), duration: Duration(seconds: 2)),
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Quest info coming soon!'), duration: Duration(seconds: 2)),
+                  );
+                }
+              },
+            ),
+            const SizedBox(width: 6),
+            // Building selection button
+            _ChromeActionButton(
+              chromeKey: 'ic_back',
+              label: 'Build',
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (ctx) => BuildingListModal(
+                    state: state,
+                    onClose: () => Navigator.pop(ctx),
+                  ),
                 );
-              }
-            },
-          ),
-          const SizedBox(width: 8),
-          // Building selection button
-          _ActionButton(
-            icon: Icons.construction,
-            label: 'Build',
+              },
+            ),
+            const SizedBox(width: 6),
+            // Facility Access button (replaces the old facility quick access navbar)
+            _ChromeActionButton(
+              chromeKey: 'ic_user',
+              label: 'Facility',
               onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (ctx) => BuildingListModal(
-                  state: state,
-                  onClose: () => Navigator.pop(ctx),
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          // Facility Access button (replaces the old facility quick access navbar)
-          _ActionButton(
-            icon: Icons.fort,
-            label: 'Facility',
-              onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (ctx) => FacilityAccessModal(
-                  state: state,
-                  onClose: () => Navigator.pop(ctx),
-                  capitalBuildings: state.capitalBuildings,
-                ),
-              );
-            },
-          ),
-          const SizedBox(width: 8),
-          // Troops in this capital/plot only
-          _ActionButton(
-            icon: Icons.person_outline,
-            label: 'Troops',
+                showModalBottomSheet(
+                  context: context,
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                  builder: (ctx) => FacilityAccessModal(
+                    state: state,
+                    onClose: () => Navigator.pop(ctx),
+                    capitalBuildings: state.capitalBuildings,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 6),
+            // Troops in this capital/plot only
+            _ChromeActionButton(
+              chromeKey: 'ic_user',
+              label: 'Troops',
               badge: _getGarrisonCount(state),
-            onPressed: () {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Garrison management coming soon!'), duration: Duration(seconds: 2)),
-                );
-              }
-            },
-          ),
-        ],
+              onPressed: () {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Garrison management coming soon!'), duration: Duration(seconds: 2)),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       );
     }
 
-    // Map view: Lucky Spin, Shop, Map, Troops
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // General Muster Terrace (free spin → hero fragments).
-        _ActionButton(
-          icon: Icons.casino,
-          label: 'Muster',
-          onPressed: () {
-            final state = context.read<GameState>();
-            final id = state.musterFragments();
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${GameState.heroName(id!)}: '
-                      '${state.fragmentsOf(id)} fragments'),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            }
-          },
-        ),
-        const SizedBox(width: 8),
-        // Shop
-        _ActionButton(
-          icon: Icons.store,
-          label: 'Shop',
-          onPressed: () {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Shop coming soon!'), duration: Duration(seconds: 2)),
-              );
-            }
-          },
-        ),
-        const SizedBox(width: 8),
-        // Back to the lobby (division picker / session info).
-        _ActionButton(
-          icon: Icons.meeting_room,
-          label: 'Lobby',
-          onPressed: () => state.returnToLobby(),
-        ),
-        const SizedBox(width: 8),
-        // Troop list button (far right - corner)
-        _ActionButton(
-          icon: Icons.person_outline,
-          label: 'Troops',
-          badge: state.troops.values.fold<int>(0, (a, b) => a + b),
-          onPressed: () {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Troop management coming soon!'), duration: Duration(seconds: 2)),
-              );
-            }
-          },
-        ),
-      ],
+    // Map view — referensi `Tampilan Utama.jpg`:
+    // Left to right: Lucky Wheel · Shop · Map Overview · Armies (All Armies/Territories/Battle Report tabs)
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 280),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          // Lucky Wheel
+          _ChromeActionButton(
+            chromeKey: 'ic_confirm',
+            label: 'Lucky Wheel',
+            onPressed: () => LuckyWheelPanel.show(context),
+          ),
+          const SizedBox(width: 6),
+          // Shop
+          _ChromeActionButton(
+            chromeKey: 'ic_chat',
+            label: 'Shop',
+            onPressed: () => ShopPanel.show(context),
+          ),
+          const SizedBox(width: 6),
+          // Map Overview
+          _ChromeActionButton(
+            chromeKey: 'ic_max',
+            label: 'Map',
+            onPressed: () => MapOverviewPanel.show(context),
+          ),
+          const SizedBox(width: 6),
+          // Armies (All Armies / Territories / Battle Report tabs)
+          _ChromeActionButton(
+            chromeKey: 'ic_user',
+            label: 'Armies',
+            badge: state.troops.values.fold<int>(0, (a, b) => a + b),
+            onPressed: () => ArmiesPanel.show(context),
+          ),
+        ],
+      ),
     );
   }
 
@@ -791,18 +827,17 @@ class _BottomRightPanel extends StatelessWidget {
   }
 }
 
-// Generic action button
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
+class _ChromeActionButton extends StatelessWidget {
+  final String chromeKey;
   final String label;
   final VoidCallback? onPressed;
-  final int? badge;
+  final int badge;
 
-  const _ActionButton({
-    required this.icon,
+  const _ChromeActionButton({
+    required this.chromeKey,
     required this.label,
     this.onPressed,
-    this.badge,
+    this.badge = 0,
   });
 
   @override
@@ -814,22 +849,26 @@ class _ActionButton extends StatelessWidget {
           label: label,
           child: GestureDetector(
             onTap: onPressed,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: NtaColors.surfaceRaised,
-                borderRadius: BorderRadius.circular(NtaRadius.button),
-                border: Border.all(color: NtaColors.hudBorder, width: 2),
-                boxShadow: const [
-                  BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2)),
-                ],
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 56, minHeight: 56),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: NtaColors.surfaceRaised,
+                  borderRadius: BorderRadius.circular(NtaRadius.button),
+                  border: Border.all(color: NtaColors.hudBorder, width: 2),
+                  boxShadow: const [
+                    BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2)),
+                  ],
+                ),
+                child: Center(
+                  child: NtaAssets.chromeImage(chromeKey, width: 28, height: 28, fit: BoxFit.contain),
+                ),
               ),
-              child: Icon(icon, color: NtaColors.text, size: 28),
             ),
           ),
         ),
-        if (badge != null && badge! > 0)
+        if (badge > 0)
           Positioned(
             top: 2,
             right: 2,

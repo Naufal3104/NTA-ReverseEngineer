@@ -1,0 +1,186 @@
+OK 126
+common/image/cereal (40, 40)
+common/image/timber (40, 40)
+common/image/stone (40, 40)
+common/image/iron (40, 40)
+common/image/exp_book (40, 40)
+common/image/up_scroll (40, 40)
+common/image/fixator (40, 40)
+common/image/ingot (50, 50)
+common/image/gold (48, 48)
+common/image/rank_coin (40, 40)
+common/image/war_token (48, 48)
+common/image/voucher (48, 48)
+common/image/stamina (48, 48)
+tmp/image/icon/battle_pass_up (64, 40)
+tmp/image/icon/giftbox_101 (64, 64)
+tmp/image/icon/giftbox_102 (64, 64)
+tmp/image/icon/giftbox_201 (64, 60)
+tmp/image/icon/giftbox_202 (64, 64)
+tmp/image/icon/hero_opt_1 (48, 48)
+tmp/image/icon/hero_opt_2 (48, 48)
+tmp/image/icon/hero_opt_3 (48, 48)
+tmp/image/icon/hero_opt_4 (48, 48)
+tmp/image/icon/hero_opt_5 (40, 36)
+tmp/image/icon/lucky_bag_1 (48, 48)
+tmp/image/icon/lucky_bag_2 (48, 48)
+tmp/image/icon/lucky_bag_3 (48, 48)
+tmp/image/icon/pawn_empty (38, 38)
+tmp/image/icon/title_empty (52, 64)
+tmp/image/icon/season_0 (40, 40)
+tmp/image/icon/season_1 (40, 40)
+tmp/image/icon/season_2 (40, 40)
+tmp/image/icon/season_3 (40, 40)
+tmp/image/icon/shop_ingot_1 (66, 44)
+tmp/image/icon/shop_ingot_2 (96, 55)
+tmp/image/icon/shop_ingot_3 (114, 71)
+tmp/image/icon/shop_ingot_4 (95, 65)
+tmp/image/icon/shop_ingot_5 (110, 93)
+tmp/image/icon/shop_ingot_6 (164, 99)
+tmp/image/icon/treasure_1_0 (64, 48)
+tmp/image/icon/treasure_1_1 (64, 52)
+tmp/image/icon/treasure_2_0 (64, 48)
+tmp/image/icon/treasure_2_1 (64, 52)
+tmp/image/icon/treasure_3_0 (64, 56)
+tmp/image/icon/treasure_3_1 (64, 56)
+tmp/image/icon/treasure_4_0 (64, 56)
+tmp/image/icon/treasure_4_1 (64, 56)
+tmp/image/icon/treasure_5_0 (64, 60)
+tmp/image/icon/treasure_5_1 (68, 56)
+tmp/image/icon/treasure_10_0 (64, 52)
+tmp/image/icon/treasure_10_1 (68, 52)
+tmp/image/icon/treasure_11_0 (72, 64)
+tmp/image/icon/treasure_11_1 (80, 56)
+tmp/image/icon/up_recruit (40, 40)
+tmp/image/icon/win_point (48, 48)
+tmp/image/icon/wdz_tb_1 (64, 40)
+tmp/image/icon/wdz_tb_2 (71, 62)
+tmp/image/icon/wdz_tb_3 (48, 48)
+tmp/image/icon/wdz_tb_4 (48, 48)
+tmp/image/equip/equip_6001 (64, 64)
+tmp/image/equip/equip_6002 (64, 64)
+tmp/image/equip/equip_6003 (64, 64)
+tmp/image/equip/equip_6004 (64, 64)
+tmp/image/equip/equip_6005 (64, 64)
+tmp/image/equip/equip_6006 (64, 64)
+tmp/image/equip/equip_6007 (64, 64)
+tmp/image/equip/equip_6008 (64, 64)
+tmp/image/equip/equip_6009 (64, 64)
+tmp/image/equip/equip_6010 (64, 64)
+tmp/image/equip/equip_6011 (64, 64)
+tmp/image/equip/equip_6012 (64, 64)
+tmp/image/equip/equip_6013 (64, 64)
+tmp/image/equip/equip_6014 (64, 64)
+tmp/image/equip/equip_6015 (64, 64)
+tmp/image/equip/equip_6016 (64, 64)
+tmp/image/equip/equip_6017 (64, 64)
+tmp/image/equip/equip_6018 (64, 64)
+tmp/image/equip/equip_6019 (64, 64)
+tmp/image/equip/equip_6020 (64, 64)
+tmp/image/equip/equip_6021 (64, 64)
+tmp/image/equip/equip_6022 (64, 64)
+tmp/image/equip/equip_6023 (64, 64)
+tmp/image/equip/equip_6024 (64, 64)
+tmp/image/equip/equip_6025 (64, 64)
+tmp/image/equip/equip_6026 (64, 64)
+tmp/image/equip/equip_6027 (64, 64)
+tmp/image/equip/equip_6028 (64, 64)
+tmp/image/equip/equip_6029 (64, 64)
+tmp/image/equip/equip_6030 (64, 64)
+tmp/image/equip/equip_6031 (64, 64)
+tmp/image/equip/equip_6032 (64, 64)
+tmp/image/equip/equip_6033 (64, 64)
+tmp/image/equip/equip_6034 (64, 64)
+tmp/image/equip/equip_6035 (64, 64)
+tmp/image/equip/equip_6036 (64, 64)
+tmp/image/equip/equip_6037 (64, 64)
+tmp/image/equip/equip_6038 (64, 64)
+tmp/image/equip/equip_6039 (64, 64)
+tmp/image/equip/equip_6040 (64, 64)
+tmp/image/equip/equip_6041 (64, 64)
+tmp/image/equip/equip_6042 (64, 64)
+tmp/image/equip/equip_6043 (64, 64)
+tmp/image/equip/equip_6044 (64, 64)
+tmp/image/equip/equip_6101 (64, 64)
+tmp/image/equip/equip_6102 (64, 64)
+tmp/image/equip/equip_6103 (64, 64)
+tmp/image/equip/equip_6104 (64, 64)
+tmp/image/equip/equip_6105 (64, 64)
+tmp/image/equip/equip_6106 (64, 64)
+tmp/image/equip/equip_6107 (64, 64)
+tmp/image/equip/equip_6108 (64, 64)
+tmp/image/equip/equip_6109 (64, 64)
+tmp/image/equip/equip_6110 (64, 64)
+tmp/image/equip/equip_6111 (64, 64)
+tmp/image/equip/equip_6112 (64, 64)
+tmp/image/equip/equip_6113 (64, 64)
+tmp/image/equip/equip_6114 (64, 64)
+tmp/image/equip/equip_6115 (64, 64)
+tmp/image/equip/equip_6116 (64, 64)
+tmp/image/equip/equip_6117 (64, 64)
+tmp/image/equip/equip_6118 (64, 64)
+tmp/image/equip/equip_6119 (64, 64)
+tmp/image/equip/equip_6120 (64, 64)
+tmp/image/equip/equip_6121 (64, 64)
+tmp/image/equip/equip_6122 (64, 64)
+tmp/image/equip/equip_6123 (64, 64)
+tmp/image/equip/equip_6124 (64, 64)
+MISS 58
+common/image/win_point
+tmp/image/icon/0
+tmp/image/equip/equip_6045
+tmp/image/equip/equip_6046
+tmp/image/equip/equip_6047
+tmp/image/equip/equip_6048
+tmp/image/equip/equip_6049
+tmp/image/equip/equip_6050
+tmp/image/equip/equip_6051
+tmp/image/equip/equip_6052
+tmp/image/equip/equip_6053
+tmp/image/equip/equip_6054
+tmp/image/equip/equip_6055
+tmp/image/equip/equip_6056
+tmp/image/equip/equip_6057
+tmp/image/equip/equip_6058
+tmp/image/equip/equip_6059
+tmp/image/equip/equip_6060
+tmp/image/equip/equip_6061
+tmp/image/equip/equip_6062
+tmp/image/equip/equip_6063
+tmp/image/equip/equip_6064
+tmp/image/equip/equip_6065
+tmp/image/equip/equip_6066
+tmp/image/equip/equip_6067
+tmp/image/equip/equip_6068
+tmp/image/equip/equip_6069
+tmp/image/equip/equip_6070
+tmp/image/equip/equip_6071
+tmp/image/equip/equip_6072
+tmp/image/equip/equip_6073
+tmp/image/equip/equip_6074
+tmp/image/equip/equip_6075
+tmp/image/equip/equip_6076
+tmp/image/equip/equip_6077
+tmp/image/equip/equip_6078
+tmp/image/equip/equip_6079
+tmp/image/equip/equip_6080
+tmp/image/equip/equip_6081
+tmp/image/equip/equip_6082
+tmp/image/equip/equip_6083
+tmp/image/equip/equip_6084
+tmp/image/equip/equip_6085
+tmp/image/equip/equip_6086
+tmp/image/equip/equip_6087
+tmp/image/equip/equip_6088
+tmp/image/equip/equip_6089
+tmp/image/equip/equip_6090
+tmp/image/equip/equip_6091
+tmp/image/equip/equip_6092
+tmp/image/equip/equip_6093
+tmp/image/equip/equip_6094
+tmp/image/equip/equip_6095
+tmp/image/equip/equip_6096
+tmp/image/equip/equip_6097
+tmp/image/equip/equip_6098
+tmp/image/equip/equip_6099
+tmp/image/equip/equip_6100

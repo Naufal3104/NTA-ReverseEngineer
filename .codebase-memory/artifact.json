@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "46b0fc544b1b3cfda38116ee399856c3196b9dcb",
+    "indexed_at": "2026-11-18T12:10:18Z",
+    "project": "nta-reverse-engineering",
+    "nodes": 2591,
+    "edges": 7235,
+    "original_size": 11337728,
+    "compressed_size": 2120205,
+    "compression_level": 3
+}

@@ -1,5 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'asset_manager.dart';
+
+/// Helper: BoxDecoration pakai chrome 9-slice (panel, tombol, frame).
+BoxDecoration _chromeDeco(String key, {Color? color, List<BoxShadow>? boxShadow}) {
+  final deco = NtaAssets.chromeDecoration(key, color: color);
+  if (boxShadow != null) {
+    return deco.copyWith(boxShadow: boxShadow);
+  }
+  return deco;
+}
+
 /// Design tokens — diukur piksel-per-piksel dari screenshot game asli
 /// (Building Info, Hero detail, Rules, HUD world map).
 ///
@@ -137,7 +148,8 @@ IconData ntaBuildingIcon(String id) {
   }
 }
 
-/// Ikon resource siap pakai.
+/// Ikon resource siap pakai — pakai PNG asli dari atlas game.
+/// Fallback ke Material Icon kalau aset belum diekstrak.
 class NtaResIcon extends StatelessWidget {
   final String resource;
   final double size;
@@ -147,6 +159,22 @@ class NtaResIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final path = NtaAssets.resIcon(resource);
+    if (path != null) {
+      return Image.asset(
+        path,
+        width: size,
+        height: size,
+        color: color,
+        filterQuality: FilterQuality.none,
+        errorBuilder: (_, _, _) => Icon(
+          ntaResIconData(resource),
+          size: size,
+          color: color ?? NtaColors.text,
+        ),
+      );
+    }
+    // fallback Material icon
     return Icon(
       ntaResIconData(resource),
       size: size,
@@ -204,7 +232,8 @@ class NtaText {
 // Spec: replica/design/components.md
 // ---------------------------------------------------------------------------
 
-/// Panel modal: cream + border coklat 3dp + radius 16 + shadow.
+/// Panel modal: solid background + border + radius + shadow.
+/// No chrome 9-slice (broken on web).
 BoxDecoration ntaPanel({Color bg = NtaColors.surface, double radius = NtaRadius.panel}) {
   return BoxDecoration(
     color: bg,
@@ -216,31 +245,34 @@ BoxDecoration ntaPanel({Color bg = NtaColors.surface, double radius = NtaRadius.
   );
 }
 
-/// Kartu di dalam panel.
+/// Kartu di dalam panel: solid background + border + radius.
+/// No chrome 9-slice (broken on web).
 BoxDecoration ntaCard({Color bg = NtaColors.surfaceCard, bool selected = false}) {
   return BoxDecoration(
     color: selected ? NtaColors.accentSoft : bg,
-    border: Border.all(color: NtaColors.border, width: NtaBorder.card),
+    border: Border.all(color: NtaColors.borderSoft, width: NtaBorder.card),
     borderRadius: BorderRadius.circular(NtaRadius.card),
   );
 }
 
-/// Kartu terang (raised) untuk konten di atas panel.
+/// Kartu terang (raised) untuk konten di atas panel: solid background + border + radius.
+/// No chrome 9-slice (broken on web).
 BoxDecoration ntaRaisedCard() {
   return BoxDecoration(
     color: NtaColors.surfaceRaised,
-    border: Border.all(color: NtaColors.borderSoft, width: NtaBorder.hairline),
+    border: Border.all(color: NtaColors.borderSoft, width: NtaBorder.card),
     borderRadius: BorderRadius.circular(NtaRadius.card),
   );
 }
 
-/// Tombol utama gold: gradient accent-top -> accent-bottom, border 2.5dp.
-/// states: default, pressed (geser 1dp, shadow mati), disabled (bg disabled).
+/// Tombol utama gold: gradient background (no chrome 9-slice, broken on web).
+/// Gradient: accentTop -> accentBottom, border accentBorder, shadow, pressed state.
 class NtaGoldButton extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
   final double fontSize;
   final EdgeInsets padding;
+  final bool wide;
 
   const NtaGoldButton(
     this.label, {
@@ -248,6 +280,7 @@ class NtaGoldButton extends StatefulWidget {
     this.onTap,
     this.fontSize = 16,
     this.padding = const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+    this.wide = false,
   });
 
   @override
@@ -260,6 +293,9 @@ class _NtaGoldButtonState extends State<NtaGoldButton> {
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
+    final shadows = enabled && !_pressed
+        ? const [BoxShadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 3))]
+        : null;
     return Semantics(
       button: true,
       enabled: enabled,
@@ -269,34 +305,31 @@ class _NtaGoldButtonState extends State<NtaGoldButton> {
         onTapUp: enabled ? (_) => setState(() => _pressed = false) : null,
         onTapCancel: enabled ? () => setState(() => _pressed = false) : null,
         onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          transform: Matrix4.translationValues(0, _pressed ? 1 : 0, 0),
-          padding: widget.padding,
-          decoration: BoxDecoration(
-            gradient: enabled
-                ? const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [NtaColors.accentTop, NtaColors.accentBottom],
-                  )
-                : null,
-            color: enabled ? null : NtaColors.disabled,
-            border: Border.all(
-              color: enabled ? NtaColors.accentBorder : NtaColors.borderSoft,
-              width: NtaBorder.button,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(NtaRadius.button),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            transform: Matrix4.translationValues(0, _pressed ? 1 : 0, 0),
+            padding: widget.padding,
+            decoration: BoxDecoration(
+              gradient: enabled
+                  ? const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [NtaColors.accentTop, NtaColors.accentBottom],
+                    )
+                  : null,
+              color: enabled ? null : NtaColors.disabled,
+              border: Border.all(color: NtaColors.accentBorder, width: NtaBorder.button),
+              boxShadow: shadows,
             ),
-            borderRadius: BorderRadius.circular(NtaRadius.button),
-            boxShadow: enabled && !_pressed
-                ? const [BoxShadow(color: Color(0x66000000), blurRadius: 4, offset: Offset(0, 3))]
-                : null,
-          ),
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontSize: widget.fontSize,
-              fontWeight: FontWeight.w700,
-              color: enabled ? NtaColors.onAccent : NtaColors.textMuted,
+            child: Text(
+              widget.label,
+              style: TextStyle(
+                fontSize: widget.fontSize,
+                fontWeight: FontWeight.w700,
+                color: enabled ? NtaColors.onAccent : NtaColors.textMuted,
+              ),
             ),
           ),
         ),
@@ -309,7 +342,7 @@ class _NtaGoldButtonState extends State<NtaGoldButton> {
 Widget ntaGoldButton(String label, {VoidCallback? onTap, double fontSize = 16}) =>
     NtaGoldButton(label, onTap: onTap, fontSize: fontSize);
 
-/// Pill resource HUD: cream, border coklat 2dp, progress biru di bawah nilai.
+/// Pill resource HUD: solid background + border (no chrome 9-slice, broken on web).
 class NtaResourcePill extends StatelessWidget {
   final Widget icon;
   final String value;
@@ -330,53 +363,55 @@ class NtaResourcePill extends StatelessWidget {
       label: rate == null ? value : '$value, $rate',
       child: Container(
         height: 34,
-        padding: const EdgeInsets.fromLTRB(8, 3, 10, 3),
+        margin: const EdgeInsets.only(left: NtaSpace.x2), // icon overhangs left edge
+        padding: const EdgeInsets.fromLTRB(NtaSpace.x2 + 20, 3, 10, 3),
         decoration: BoxDecoration(
           color: NtaColors.hudSurface,
           border: Border.all(color: NtaColors.hudBorder, width: 2),
           borderRadius: BorderRadius.circular(NtaRadius.pill),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: 20, height: 20, child: icon),
             const SizedBox(width: 6),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(value, style: NtaText.hudValue.copyWith(height: 1.05)),
-                    if (rate != null) ...[
-                      const SizedBox(width: 2),
-                      Text(rate!, style: NtaText.hudRate.copyWith(height: 1.05)),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(value, style: NtaText.hudValue.copyWith(height: 1.05)),
+                      if (rate != null) ...[
+                        const SizedBox(width: 2),
+                        Text(rate!, style: NtaText.hudRate.copyWith(height: 1.05)),
+                      ],
                     ],
-                  ],
-                ),
-                if (progress != null)
-                  Container(
-                    width: 76,
-                    height: 3,
-                    margin: const EdgeInsets.only(top: 1),
-                    decoration: BoxDecoration(
-                      color: NtaColors.hudTrack,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                    child: FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: progress!.clamp(0.0, 1.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: NtaColors.hudProgress,
-                          borderRadius: BorderRadius.circular(2),
+                  ),
+                  if (progress != null)
+                    Container(
+                      height: 3,
+                      margin: const EdgeInsets.only(top: 1),
+                      decoration: BoxDecoration(
+                        color: NtaColors.hudTrack,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: progress!.clamp(0.0, 1.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: NtaColors.hudProgress,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -386,12 +421,20 @@ class NtaResourcePill extends StatelessWidget {
 }
 
 /// Pill counter HUD (coin / reward points), opsional tombol plus hijau.
+/// Solid background + border (no chrome 9-slice, broken on web).
 class NtaCounterPill extends StatelessWidget {
   final Widget icon;
   final String value;
   final VoidCallback? onPlus;
+  final bool ellipsis;
 
-  const NtaCounterPill({super.key, required this.icon, required this.value, this.onPlus});
+  const NtaCounterPill({
+    super.key,
+    required this.icon,
+    required this.value,
+    this.onPlus,
+    this.ellipsis = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -408,7 +451,18 @@ class NtaCounterPill extends StatelessWidget {
           const SizedBox(width: 6),
           SizedBox(width: 20, height: 20, child: icon),
           const SizedBox(width: 6),
-          Text(value, style: NtaText.hudValue),
+          if (ellipsis)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 160),
+              child: Text(
+                value,
+                style: NtaText.hudValue,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            )
+          else
+            Text(value, style: NtaText.hudValue),
           const SizedBox(width: 8),
           if (onPlus != null)
             GestureDetector(
@@ -476,7 +530,7 @@ class NtaStatRow extends StatelessWidget {
   }
 }
 
-/// Tombol ikon di HUD: kartu cream + border coklat.
+/// Tombol ikon di HUD: pakai `panel_cream` 9-slice.
 class NtaIconButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -501,12 +555,7 @@ class NtaIconButton extends StatelessWidget {
         child: Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            color: NtaColors.surfaceRaised,
-            border: Border.all(color: NtaColors.hudBorder, width: 2),
-            borderRadius: BorderRadius.circular(NtaRadius.button),
-            boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 4, offset: Offset(0, 2))],
-          ),
+          decoration: _chromeDeco('panel_cream', color: NtaColors.surfaceRaised),
           child: Icon(icon, size: size * 0.5, color: NtaColors.text),
         ),
       ),
@@ -533,6 +582,7 @@ class NtaToast extends StatelessWidget {
 }
 
 /// Tab segment ala panel asli: aktif = cream, non-aktif = tint coklat.
+/// Pakai `panel_cream` 9-slice untuk tab aktif, `panel_square` untuk non-aktif.
 class NtaSegmentedTabs extends StatelessWidget {
   final List<String> labels;
   final int selected;
@@ -555,9 +605,9 @@ class NtaSegmentedTabs extends StatelessWidget {
               onTap: () => onChanged(i),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
+                decoration: _chromeDeco(
+                  i == selected ? 'panel_cream' : 'panel_square',
                   color: i == selected ? NtaColors.surface : NtaColors.surfaceCard,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(NtaRadius.card)),
                 ),
                 child: Text(
                   labels[i],

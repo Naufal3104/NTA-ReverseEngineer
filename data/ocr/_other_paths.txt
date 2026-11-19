@@ -1,0 +1,15 @@
+common/image/base_res_2
+common/image/base_res_3
+tmp/prefab/help/GUIDE_HELP_ITEM_1
+tmp/prefab/help/GUIDE_HELP_ITEM_10
+tmp/prefab/help/GUIDE_HELP_ITEM_11
+tmp/prefab/help/GUIDE_HELP_ITEM_12
+tmp/prefab/help/GUIDE_HELP_ITEM_13
+tmp/prefab/help/GUIDE_HELP_ITEM_2
+tmp/prefab/help/GUIDE_HELP_ITEM_3
+tmp/prefab/help/GUIDE_HELP_ITEM_4
+tmp/prefab/help/GUIDE_HELP_ITEM_5
+tmp/prefab/help/GUIDE_HELP_ITEM_6
+tmp/prefab/help/GUIDE_HELP_ITEM_7
+tmp/prefab/help/GUIDE_HELP_ITEM_8
+tmp/prefab/help/GUIDE_HELP_ITEM_9

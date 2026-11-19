@@ -1,44 +1,42 @@
 # ── Large binaries & captures (excluded from curated push) ──
-*.apk
-*.xapk
-*.mp4
-*.exe
-frida-server
-frida-server.xz
+artifacts/apk/
+artifacts/video/
+artifacts/frida-server
+artifacts/frida-server.xz
 *.zip
-game_logcat.txt
+artifacts/logs/game_logcat.txt
 
 # ── Bulk raw screenshot dumps (OCR sudah diekstrak ke ocr_*.txt) ──
-Hero-20261024T130155Z-1-001/
-Weapon-20261024T114708Z-1-001/
-Soldier-20261024T114215Z-1-001/
-Soldier lv 6-20261024T130158Z-1-001/
-Policy-20261024T113120Z-1-001/
-Rules -20261024T130204Z-1-001/
-Building-20261024T130202Z-1-001/
-Plot/
-Battle Guide/
-screenshots/
-sdcard_files/
+references/ui/Hero-20261024T130155Z-1-001/
+references/ui/Weapon-20261024T114708Z-1-001/
+references/ui/Soldier-20261024T114215Z-1-001/
+references/ui/Soldier lv 6-20261024T130158Z-1-001/
+references/ui/Policy-20261024T113120Z-1-001/
+references/ui/Rules -20261024T130204Z-1-001/
+references/ui/Building-20261024T130202Z-1-001/
+references/ui/Plot/
+references/ui/Battle Guide/
+references/ui/screenshots/
+artifacts/sdcard_files/
 
 # ── RE extraction dirs ──
-apk_extracted/
-apk_out/
-arm64_extracted/
-arm64_libs/
+artifacts/extracted/apk_extracted/
+artifacts/extracted/apk_out/
+artifacts/extracted/arm64_extracted/
+artifacts/extracted/arm64_libs/
 
 # ── Generated RE catalogs (regenerate via *.py extract scripts) ──
-asset_catalog/
-asset_catalog_manifest.json
-contact_sheets/
-extracted_sprites/
-game_json/
+artifacts/extracted/asset_catalog/
+data/json/asset_catalog_manifest.json
+references/ui/contact_sheets/
+artifacts/extracted/extracted_sprites/
+artifacts/extracted/game_json/
 
 # ── Bulk audio (18 MB, regenerate via extract_demo_pack.py) ──
 nta_demo/assets/sounds/
 
 # ── Headless-browser test profiles ──
-_edgeprof*/
+artifacts/_edgeprof*/
 
 # ── Build outputs ──
 NTAGame/build/

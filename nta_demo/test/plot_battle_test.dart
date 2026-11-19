@@ -24,10 +24,11 @@ void main() {
     }
     expect(row, isNotNull);
 
+    state.setPlotView(row!, col!);
     await tester.pumpWidget(
       ChangeNotifierProvider<GameState>.value(
         value: state,
-        child: MaterialApp(home: PlotInteriorView(row: row!, col: col!)),
+        child: const MaterialApp(home: PlotInteriorView()),
       ),
     );
     await tester.pumpAndSettle();

@@ -54,14 +54,13 @@ class ResourceBar extends StatelessWidget {
           Container(
             height: 34,
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: NtaColors.hudSurface,
-              border: Border.all(color: NtaColors.hudBorder, width: 2),
-              borderRadius: BorderRadius.circular(NtaRadius.pill),
-            ),
+            decoration: NtaAssets.chromeDecoration('panel_cream', color: NtaColors.hudSurface),
             child: Row(
               children: [
-                const Icon(Icons.timer_outlined, size: 16, color: NtaColors.hudText),
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(NtaColors.hudText, BlendMode.srcIn),
+                  child: NtaAssets.chromeImage('ic_chat', width: 16, height: 16, fit: BoxFit.contain),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   '$hours:$minutes:$seconds',
@@ -107,18 +106,23 @@ class SeasonIndicator extends StatelessWidget {
     };
 
     final color = seasonColors[state.season] ?? NtaColors.textMuted;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: NtaSpace.x5, vertical: NtaSpace.x3),
-      decoration: BoxDecoration(
-        color: NtaColors.surfaceCard,
-        border: Border.all(color: color, width: 2),
-        borderRadius: BorderRadius.circular(NtaRadius.card),
-      ),
-      child: Row(
+    final idx = seasonIndex[state.season] ?? 0;
+    final baseDecor = NtaAssets.chromeDecoration('season_bg_$idx', color: NtaColors.surfaceCard);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: NtaSpace.x5, vertical: NtaSpace.x3),
+        decoration: BoxDecoration(
+          color: baseDecor.color,
+          image: baseDecor.image,
+          border: Border.all(color: color, width: 2),
+          borderRadius: BorderRadius.circular(NtaRadius.card),
+          boxShadow: baseDecor.boxShadow,
+          gradient: baseDecor.gradient,
+        ),
+        child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            NtaAssets.season(seasonIndex[state.season] ?? 0),
+            NtaAssets.season(idx),
             width: 22,
             height: 22,
             filterQuality: FilterQuality.none,

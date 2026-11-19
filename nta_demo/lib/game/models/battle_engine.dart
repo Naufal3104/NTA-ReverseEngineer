@@ -77,7 +77,25 @@ class BattleUnit {
   int row;
   int col;
 
+  // --- Status effects (enemy active skills) ---
+  // Stun: skips the unit's next N turns. Poison/Bleed: True DMG each round
+  // (poison scales with the owner's current HP, bleed is flat ATK-based).
+  // Buff: flat ATK + DMG Reduction for N rounds (Wolf Howl).
+  int stunRounds = 0;
+  double poisonPct = 0;
+  int poisonTurns = 0;
+  int bleedDmg = 0;
+  int bleedTurns = 0;
+  int buffTurns = 0;
+  int buffAtk = 0;
+  double buffDr = 0;
+  // Fury: queued empowered attacks remaining (Ape).
+  int furyCharges = 0;
+
   bool get alive => hp > 0 && count > 0;
+
+  /// ATK per soldier including skill buffs (Wolf Howl +3 ATK).
+  int get effAtk => atkPer + buffAtk;
 
   /// Sisa anggota hidup (dibulatkan) — dipakai untuk casualty report.
   int get aliveCount =>
@@ -206,6 +224,29 @@ class BattleEngine {
     10104: 'shield',
   };
 
+  /// Enemy active-skill families (3xxxx). Key = skillId ~/ 100 (301..316).
+  /// Each entry: `{ 'kind': <type>, ...params }`
+  /// Types: 'sling','aim','smash','tear','collision','gash','fury','charge',
+  ///        'frenzy','tusk','howl','spine','venom','shell','trample','poisoning'
+  static const Map<int, Map<String, dynamic>> _enemySkillFamilies = {
+    301: {'kind': 'poisoning'}, // Skunk (4106) - 30101 Poisoning
+    302: {'kind': 'sling', 'mult': 2.0}, // Elephant (4110) - 30201 Sling 200%
+    303: {'kind': 'aim', 'currentHpPct': 0.10}, // Bandit Bowman (4204) - 30301 Aim +10% cur HP
+    304: {'kind': 'smash', 'maxHpPct': 0.05, 'stun': 1}, // Bear (4103) - 30401 Smash 5% Max HP + stun
+    305: {'kind': 'tear', 'mult': 1.20, 'bleedPct': 0.50, 'healCut': 0.60, 'rounds': 3}, // Lion (4104) - 30501 Tear
+    306: {'kind': 'collision', 'mult': 0.50, 'breakShield': true}, // Buffalo (4111) - 30601 Wild Collision
+    307: {'kind': 'gash', 'mult': 1.0, 'extraMult': 0.35, 'radius': 1, 'cap': 20}, // Tiger (4112) - 30701 Gash
+    308: {'kind': 'fury', 'mult': 3.0, 'truePct': 0.50, 'radius': 2, 'cap': 8}, // Ape (4114) - 30801 Fury
+    309: {'kind': 'charge', 'maxHpPct': 0.15, 'radius': 2, 'cap': 8, 'stun': 1}, // Goat (4115) - 30901 Rampant Charge
+    310: {'kind': 'frenzy', 'baseMult': 0.20, 'hits': 3, 'step': 0.05, 'radius': 2, 'cap': 8}, // Soulreaper (4206) - 31001 Frenzy Claw
+    311: {'kind': 'tusk', 'mult': 0.50}, // Boar (4101) - 31101 Tusk Assault
+    312: {'kind': 'howl', 'buffAtk': 3, 'buffDr': 0.20, 'radius': 5, 'rounds': 3}, // Wolf (4102) - 31201 Wolf Howl
+    313: {'kind': 'spine', 'mult': 0.75, 'radius': 1}, // Porcupine (4116) - 31301 Spine Burst
+    314: {'kind': 'venom', 'mult': 0.70, 'poisonPct': 0.10, 'rounds': 3}, // Viper (4117) - 31401 Venom Spit
+    315: {'kind': 'shell', 'buffDr': 0.20, 'rounds': 3}, // Snapping Turtle (4118) - 31501 Shell Defense
+    316: {'kind': 'trample', 'mult': 0.75, 'radius': 1, 'cap': 8, 'stun': 1}, // Rhino (4119) - 31601 Trample
+  };
+
   static Map<String, dynamic>? _lookup(List<Map<String, dynamic>> pool, String id) {
     for (final u in pool) {
       if (u['id'] == id) return u;
@@ -261,6 +302,8 @@ class BattleEngine {
   /// Bangun stack prajurit pemain dari inventori `troops` (id -> count).
   /// Level prajurit diambil dari `troopLevels`.
   /// Hero yang di-worship masuk sebagai unit tersendiri (1 hero per army).
+  /// [leapStacks] Trainee Warrior (Sword&Shield 3205) passive: +0.5 ATK / +5 HP
+  /// per stack per soldier (SolarAttribute.md §Skill Passive Trainee Warrior).
   static List<BattleUnit> buildPlayerUnits({
     required Map<String, int> troops,
     required Map<String, int> troopLevels,
@@ -274,6 +317,7 @@ class BattleEngine {
     Map<String, double> hpPctByType = const {},
     Map<String, double> atkPctByType = const {},
     Map<String, double> drByType = const {},
+    int leapStacks = 0,
   }) {
     final gate = gates[gateIndex % gates.length];
     final units = <BattleUnit>[];
@@ -288,10 +332,17 @@ class BattleEngine {
       final type = def['type'] as String;
       final hpPct = (hpPctByTroop[id] ?? 0) + (hpPctByType[type] ?? 0);
       final atkPct = (atkPctByTroop[id] ?? 0) + (atkPctByType[type] ?? 0);
-      final hpPer =
+      var hpPer =
           (((row['hp'] as int) + hpFlatPerLevel * lv) * (1 + hpPct)).round();
-      final atkPer =
+      var atkPer =
           (((row['atk'] as int) + atkFlatPerLevel * lv) * (1 + atkPct)).round();
+
+      // Trainee Warrior passive (Sword&Shield 3205): Leap stacks add flat stats.
+      if (id == 'sword_shield' && leapStacks > 0) {
+        hpPer += 5 * leapStacks;
+        atkPer += (0.5 * leapStacks).round();
+      }
+
       units.add(BattleUnit(
         id: combatId,
         name: def['name'] as String,
@@ -500,11 +551,317 @@ class BattleEngine {
   static int _dist(BattleUnit a, BattleUnit b) =>
       (a.row - b.row).abs() + (a.col - b.col).abs();
 
+  /// Enemy active-skill family for a unit, or null. Player skills are 2xxxx
+  /// and never match.
+  static Map<String, dynamic>? _enemySkillFamily(BattleUnit u) {
+    final skill = u.activeSkill;
+    if (skill == null || skill < 30000) return null;
+    return _enemySkillFamilies[skill ~/ 100];
+  }
+
+  /// Resolve a beast/bandit active skill (Battle Guide §3.1). Returns true
+  /// when the skill was handled; the caller then ends the unit's action.
+  static bool _castEnemySkill(
+    BattleUnit unit,
+    List<BattleUnit> foes,
+    List<BattleUnit> allies,
+    List<BattleEvent> events,
+    int round,
+    math.Random rng,
+  ) {
+    final fam = _enemySkillFamily(unit);
+    if (fam == null) return false;
+    final kind = fam['kind'] as String;
+    final label = GameData.SKILL_NAMES[unit.activeSkill] ?? 'Skill';
+
+    void hit(BattleUnit tgt, double mult, {bool trueDmg = false}) {
+      if (!tgt.alive) return;
+      final dr = trueDmg ? 0.0 : _damageReduction(tgt, ranged: unit.range > 1);
+      final raw = unit.effAtk * math.max(1, unit.count) * mult * (1 - dr);
+      final dmg = math.max(1, raw.round());
+      tgt.hp -= dmg;
+      events.add(BattleEvent(
+        round: round,
+        actor: unit.name,
+        actorUid: unit.uid,
+        action: 'skill',
+        detail: '$label: $dmg',
+        target: tgt.name,
+        targetUid: tgt.uid,
+        damage: dmg,
+      ));
+      if (!tgt.alive) {
+        events.add(BattleEvent(
+          round: round,
+          actor: tgt.name,
+          actorUid: tgt.uid,
+          action: 'die',
+          detail: 'Defeated',
+        ));
+      }
+    }
+
+    void trueHit(BattleUnit tgt, int dmg, String tag) {
+      if (!tgt.alive || dmg <= 0) return;
+      tgt.hp -= dmg;
+      events.add(BattleEvent(
+        round: round,
+        actor: unit.name,
+        actorUid: unit.uid,
+        action: 'skill',
+        detail: '$label ($tag): $dmg',
+        target: tgt.name,
+        targetUid: tgt.uid,
+        damage: dmg,
+      ));
+      if (!tgt.alive) {
+        events.add(BattleEvent(
+          round: round,
+          actor: tgt.name,
+          actorUid: tgt.uid,
+          action: 'die',
+          detail: 'Defeated',
+        ));
+      }
+    }
+
+    List<BattleUnit> around(BattleUnit center, int radius, int cap) {
+      final out = foes
+          .where((f) => f.alive && _dist(center, f) <= radius)
+          .toList()
+        ..sort((a, b) => a.hp.compareTo(b.hp));
+      return out.take(cap).toList();
+    }
+
+    final primary = _pickTarget(unit, foes);
+    if (primary == null && kind != 'howl' && kind != 'shell') return false;
+
+    switch (kind) {
+      case 'howl': {
+        // Wolf: allies within 5 tiles +3 ATK, +20% DR, 3 rounds.
+        final rounds = (fam['rounds'] as int?) ?? 3;
+        for (final a in allies.where((a) => a.alive)) {
+          if (_dist(unit, a) > ((fam['radius'] as int?) ?? 5)) continue;
+          a.buffAtk = math.max(a.buffAtk, (fam['buffAtk'] as int?) ?? 3);
+          a.buffDr = math.max(a.buffDr, (fam['buffDr'] as double?) ?? 0.20);
+          a.buffTurns = math.max(a.buffTurns, rounds);
+        }
+        events.add(BattleEvent(
+            round: round,
+            actor: unit.name,
+            actorUid: unit.uid,
+            action: 'skill',
+            detail: '$label — allies inspired'));
+      }
+      case 'shell': {
+        unit.buffDr = math.max(unit.buffDr, (fam['buffDr'] as double?) ?? 0.20);
+        unit.buffTurns = math.max(unit.buffTurns, (fam['rounds'] as int?) ?? 3);
+        events.add(BattleEvent(
+            round: round,
+            actor: unit.name,
+            actorUid: unit.uid,
+            action: 'skill',
+            detail: '$label — shell raised'));
+      }
+      case 'sling': {
+        // Elephant: hurl at the highest-HP target within 5 tiles.
+        final candidates = foes
+            .where((f) => f.alive && _dist(unit, f) <= 5)
+            .toList()
+          ..sort((a, b) => b.hp.compareTo(a.hp));
+        final t = candidates.isNotEmpty ? candidates.first : primary!;
+        hit(t, (fam['mult'] as num).toDouble());
+      }
+      case 'aim': {
+        final extra =
+            (primary!.hpPer * primary.count * (fam['currentHpPct'] as num))
+                .round();
+        hit(primary, 1.0);
+        trueHit(primary, extra, 'current HP');
+      }
+      case 'smash': {
+        hit(primary!, 1.0);
+        final extra = (primary.hpPer * primary.count * (fam['maxHpPct'] as num))
+            .round();
+        trueHit(primary, extra, 'Max HP');
+        primary.stunRounds = math.max(primary.stunRounds, (fam['stun'] as int?) ?? 1);
+        events.add(BattleEvent(
+            round: round,
+            actor: unit.name,
+            actorUid: unit.uid,
+            action: 'skill',
+            detail: '$label — stun',
+            target: primary.name,
+            targetUid: primary.uid));
+      }
+      case 'tear': {
+        hit(primary!, (fam['mult'] as num).toDouble());
+        primary.bleedDmg =
+            math.max(primary.bleedDmg, (unit.effAtk * unit.count * (fam['bleedPct'] as num)).round());
+        primary.bleedTurns = math.max(primary.bleedTurns, (fam['rounds'] as int?) ?? 3);
+      }
+      case 'collision': // Buffalo: breaks shields/stance — direct DMG here.
+      case 'tusk': {
+        hit(primary!, (fam['mult'] as num).toDouble());
+      }
+      case 'spine': {
+        for (final t in around(unit, (fam['radius'] as int?) ?? 1, 99)) {
+          hit(t, (fam['mult'] as num).toDouble());
+        }
+      }
+      case 'gash': {
+        hit(primary!, (fam['mult'] as num).toDouble());
+        final extraMult = (fam['extraMult'] as num).toDouble();
+        for (final t in around(primary,
+            (fam['radius'] as int?) ?? 1, (fam['cap'] as int?) ?? 20)) {
+          if (identical(t, primary)) continue;
+          hit(t, extraMult);
+        }
+      }
+      case 'fury': {
+        // Ape: clear own debuffs, then 300% ATK hit + 50% true AoE splash.
+        unit.poisonTurns = 0;
+        unit.bleedTurns = 0;
+        unit.stunRounds = 0;
+        final mult = (fam['mult'] as num).toDouble();
+        final dealt = (unit.effAtk * unit.count * mult).round();
+        hit(primary!, mult);
+        final splash = (dealt * (fam['truePct'] as num)).round();
+        for (final t in around(primary,
+            (fam['radius'] as int?) ?? 2, (fam['cap'] as int?) ?? 8)) {
+          if (identical(t, primary)) continue;
+          trueHit(t, splash, 'splash');
+        }
+      }
+      case 'charge': {
+        final pct = (fam['maxHpPct'] as num).toDouble();
+        final pctDmg = (primary!.hpPer * primary.count * pct).round();
+        trueHit(primary, pctDmg, 'Max HP');
+        primary.stunRounds = math.max(primary.stunRounds, (fam['stun'] as int?) ?? 1);
+        events.add(BattleEvent(
+            round: round,
+            actor: unit.name,
+            actorUid: unit.uid,
+            action: 'skill',
+            detail: '$label — stun',
+            target: primary.name,
+            targetUid: primary.uid));
+        for (final t in around(primary,
+            (fam['radius'] as int?) ?? 2, (fam['cap'] as int?) ?? 8)) {
+          if (!identical(t, primary)) hit(t, 0.0 + 0.0); // 0 extra; AoE true only
+        }
+      }
+      case 'frenzy': {
+        final hits = (fam['hits'] as int?) ?? 3;
+        final base = (fam['baseMult'] as num).toDouble();
+        final step = (fam['step'] as num).toDouble();
+        for (var i = 0; i < hits; i++) {
+          final mult = base + step * i;
+          hit(primary!, mult);
+          for (final t in around(primary,
+              (fam['radius'] as int?) ?? 2, (fam['cap'] as int?) ?? 8)) {
+            if (!identical(t, primary)) hit(t, mult);
+          }
+        }
+      }
+      case 'venom': {
+        hit(primary!, (fam['mult'] as num).toDouble());
+        primary.poisonPct = math.max(primary.poisonPct, (fam['poisonPct'] as num).toDouble());
+        primary.poisonTurns = math.max(primary.poisonTurns, (fam['rounds'] as int?) ?? 3);
+      }
+      case 'trample': {
+        // Centered on the caster (rhino), not the primary target.
+        for (final t in around(unit, (fam['radius'] as int?) ?? 1,
+            (fam['cap'] as int?) ?? 8)) {
+          hit(t, (fam['mult'] as num).toDouble());
+          t.stunRounds = math.max(t.stunRounds, (fam['stun'] as int?) ?? 1);
+          events.add(BattleEvent(
+              round: round,
+              actor: unit.name,
+              actorUid: unit.uid,
+              action: 'skill',
+              detail: '$label — stun',
+              target: t.name,
+              targetUid: t.uid));
+        }
+      }
+      case 'poisoning': {
+        // Skunk: basic hit plus a poison layer.
+        hit(primary!, 1.0);
+        primary.poisonPct = math.max(primary.poisonPct, 0.05);
+        primary.poisonTurns = math.max(primary.poisonTurns, 3);
+      }
+      default:
+        // Unknown family: fall back to a plain empowered hit.
+        hit(primary!, 1.0);
+    }
+    return true;
+  }
+
+  /// End-of-round status tick: poison/bleed True DMG and buff/stun expiry.
+  static void _tickStatuses(
+      List<BattleUnit> all, List<BattleEvent> events, int round) {
+    for (final u in all) {
+      if (!u.alive) continue;
+      if (u.poisonTurns > 0) {
+        // Viper Venom Spit: 10% of CURRENT HP as True DMG.
+        final dmg = math.max(1, (u.hp * u.poisonPct).round());
+        u.hp -= dmg;
+        u.poisonTurns--;
+        events.add(BattleEvent(
+            round: round,
+            actor: u.name,
+            actorUid: u.uid,
+            action: 'skill',
+            detail: 'Poison: $dmg',
+            damage: dmg));
+        if (!u.alive) {
+          events.add(BattleEvent(
+              round: round,
+              actor: u.name,
+              actorUid: u.uid,
+              action: 'die',
+              detail: 'Defeated'));
+          continue;
+        }
+      }
+      if (u.bleedTurns > 0 && u.bleedDmg > 0) {
+        u.hp -= u.bleedDmg;
+        u.bleedTurns--;
+        events.add(BattleEvent(
+            round: round,
+            actor: u.name,
+            actorUid: u.uid,
+            action: 'skill',
+            detail: 'Bleed: ${u.bleedDmg}',
+            damage: u.bleedDmg));
+        if (!u.alive) {
+          events.add(BattleEvent(
+              round: round,
+              actor: u.name,
+              actorUid: u.uid,
+              action: 'die',
+              detail: 'Defeated'));
+          continue;
+        }
+      }
+      if (u.buffTurns > 0) {
+        u.buffTurns--;
+        if (u.buffTurns == 0) {
+          u.buffAtk = 0;
+          u.buffDr = 0;
+        }
+      }
+    }
+  }
+
   /// Damage Reduction pasif bawaan unit (persen, 0..1).
   static double _damageReduction(BattleUnit u, {required bool ranged}) {
     double dr = u.bonusDr;
+    if (u.buffDr > 0) dr += u.buffDr; // buff from Wolf Howl / Shell Defense
     if (u.hasSkill(10601)) dr += 0.40; // Scale Armor
     if (ranged && u.hasSkill(10301)) dr += 0.60; // Fortitude (Boar Knight)
+    if (u.hasSkill(12001)) dr += 0.70; // Iron Mountain Stance (guardians)
     return dr.clamp(0.0, 0.9);
   }
 
@@ -565,6 +922,15 @@ class BattleEngine {
         ignoredDr = math.max(ignoredDr, 0.20);
       }
     }
+    // Target passively counters the attacker's type (e.g. Boar Knight's
+    // Counter Shield Soldier when hit by a Shieldman): attacker ATK -40%.
+    for (final s in target.skills) {
+      final t = _counterSkillType[s];
+      if (t != null && t == attacker.type) {
+        mult *= 0.6;
+        break;
+      }
+    }
 
     if (skillCast) {
       mult *= attacker.skillMultiplier * (1 + attacker.skillBonusPct);
@@ -575,9 +941,12 @@ class BattleEngine {
 
     final ranged = attacker.range > 1;
     var dr = _damageReduction(target, ranged: ranged) - ignoredDr;
+    // Iron Mountain Stance attackers (guardians) ignore 70% of the target's
+    // DMG Reduction.
+    if (attacker.hasSkill(12001)) dr *= 0.30;
     dr = dr.clamp(0.0, 0.9);
 
-    var raw = attacker.atkPer * attacker.count * mult * (1 - dr);
+    var raw = attacker.effAtk * attacker.count * mult * (1 - dr);
     if (skillCast && attacker.skillFlatDamage > 0) {
       raw += attacker.skillFlatDamage.toDouble();
     }
@@ -620,9 +989,10 @@ class BattleEngine {
     final attackerStart = {for (final u in attackers) u.uid: u.count};
     final defenderStart = {for (final u in defenders) u.uid: u.count};
 
-    void act(BattleUnit unit, List<BattleUnit> foes, int round) {
+    void act(
+        BattleUnit unit, List<BattleUnit> foes, List<BattleUnit> friends, int round) {
       final before = events.length;
-      _act(unit, foes, events, round, rng);
+      _act(unit, foes, friends, events, round, rng);
       for (var i = before; i < events.length; i++) {
         frames.add(_snapshot(attackers, defenders));
       }
@@ -639,7 +1009,7 @@ class BattleEngine {
         ..sort((a, b) => b.speed.compareTo(a.speed));
       for (final unit in actingAttackers) {
         if (!unit.alive) continue;
-        act(unit, defenders, round);
+        act(unit, defenders, attackers, round);
         if (!defenders.any((u) => u.alive)) break;
       }
       if (!defenders.any((u) => u.alive)) break;
@@ -648,9 +1018,10 @@ class BattleEngine {
         ..sort((a, b) => b.speed.compareTo(a.speed));
       for (final unit in actingDefenders) {
         if (!unit.alive) continue;
-        act(unit, attackers, round);
+        act(unit, attackers, defenders, round);
         if (!attackers.any((u) => u.alive)) break;
       }
+      _tickStatuses([...attackers, ...defenders], events, round);
       round++;
     }
 
@@ -682,12 +1053,39 @@ class BattleEngine {
   static void _act(
     BattleUnit unit,
     List<BattleUnit> foes,
+    List<BattleUnit> friends,
     List<BattleEvent> events,
     int round,
     math.Random rng,
   ) {
+    // Stun: lose this turn entirely (Bear Smash, Rhino Trample, Goat Charge).
+    if (unit.stunRounds > 0) {
+      unit.stunRounds--;
+      events.add(BattleEvent(
+        round: round,
+        actor: unit.name,
+        actorUid: unit.uid,
+        action: 'skill',
+        detail: 'Stunned',
+      ));
+      return;
+    }
+
     final target = _pickTarget(unit, foes);
     if (target == null) return;
+
+    // Enemy active skill: cast instead of a normal attack when off cooldown.
+    // Enemy units use `rage` as the skill meter; a full meter casts and resets.
+    if (unit.rageNeed > 0 &&
+        unit.rage >= unit.rageNeed &&
+        _enemySkillFamily(unit) != null) {
+      if (_dist(unit, target) <= math.max(unit.range, 5) &&
+          _castEnemySkill(unit, foes, friends, events, round, rng)) {
+        _applyRage(unit, 1);
+        unit.rage = 0;
+        return;
+      }
+    }
 
     // Gerak hanya bila tidak ada musuh dalam jangkauan (Battle Guide §4.2).
     if (_dist(unit, target) > unit.range) {

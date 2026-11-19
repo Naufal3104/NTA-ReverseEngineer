@@ -1,12 +1,13 @@
 ﻿import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' hide Colors;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:provider/provider.dart';
 import '../models/game_state.dart';
 import '../../data/game_data.dart';
 import '../ui/asset_manager.dart';
 import '../ui/design_tokens.dart';
+import 'map_tile_panel.dart';
 
 class GameMap extends StatefulWidget {
   const GameMap({super.key});
@@ -24,6 +25,10 @@ class _GameMapState extends State<GameMap> {
 
   /// Tile terrain asli dari atlas game (tanah/air/hutan/gunung/pasir).
   final Map<String, ui.Image> _terrainSprites = {};
+
+  /// Sprite bangunan tampilan-dunia (capital/watchtower/fortress/barn/remains)
+  /// diambil dari atlas `tmp/image/city/` asli.
+  final Map<String, ui.Image> _mapSprites = {};
 
   @override
   void initState() {
@@ -72,6 +77,18 @@ class _GameMapState extends State<GameMap> {
     for (int d = 0; d <= 9; d++) {
       jobs.add(put(_terrainSprites, 'digit$d', NtaAssets.flagNum('$d')));
     }
+    // Taburan dekorasi plot liar (jerami / pohon / batu) — atlas decorate.
+    for (int v = 0; v < 6; v++) {
+      jobs.add(put(_terrainSprites, 'deco$v', NtaAssets.plotDecoration(v)));
+    }
+    for (int v = 0; v < 4; v++) {
+      jobs.add(put(_terrainSprites, 'garden$v', NtaAssets.capitalGardenDecoration(v)));
+    }
+    jobs.add(put(_mapSprites, 'capital', NtaAssets.mapCapital));
+    jobs.add(put(_mapSprites, 'watchtower', NtaAssets.mapWatchtower));
+    jobs.add(put(_mapSprites, 'fortress', NtaAssets.mapFortress));
+    jobs.add(put(_mapSprites, 'farm', NtaAssets.mapFarm));
+    jobs.add(put(_mapSprites, 'remains', NtaAssets.mapRemains));
     await Future.wait(jobs);
     if (mounted) setState(() {});
   }
@@ -106,12 +123,6 @@ class _GameMapState extends State<GameMap> {
     final double mapPixelWidth = GameData.MAP_WIDTH * GameData.TILE_SIZE.toDouble();
     final double mapPixelHeight = GameData.MAP_HEIGHT * GameData.TILE_SIZE.toDouble();
 
-    final bool isCapitalSelected = selectedTile != null &&
-        state.isCapitalTile(selectedTile[0], selectedTile[1]);
-    final remainsSel = selectedTile == null
-        ? null
-        : state.remainsAt(selectedTile[0], selectedTile[1]);
-    final bool isRemainsSelected = remainsSel != null;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -141,117 +152,69 @@ class _GameMapState extends State<GameMap> {
                       state.selectTile(row, col);
                     }
                   },
-                  child: CustomPaint(
-                    size: Size(mapPixelWidth, mapPixelHeight),
-                    painter: MapPainter(
-                      map: state.map,
-                      conqueredPlots: state.conqueredPlots,
-                      plotSprites: _plotSprites,
-                      terrainSprites: _terrainSprites,
-                      plotLevelAt: (r, c) => state.getPlotData(r, c)?['level'] as int? ?? 1,
-                      plotResourceAt: (r, c) => state.getPlotData(r, c)?['resource'] as String? ?? 'crop',
-                      remains: state.remains.values.toList(),
-                      selectedTile: selectedTile,
-                      capitalMinRow: GameState.capitalMinRow,
-                      capitalMaxRow: GameState.capitalMaxRow,
-                      capitalMinCol: GameState.capitalMinCol,
-                      capitalMaxCol: GameState.capitalMaxCol,
-                    ),
+                  // ListenableBuilder rebuilds on pan/zoom so visibleRect updates for culling.
+                  child: ListenableBuilder(
+                    listenable: _transController,
+                    builder: (context, _) {
+                      // Compute visible viewport rect in map pixel coordinates for culling.
+                      Rect? visibleRect;
+                      final m = _transController.value;
+                      if (!m.isIdentity()) {
+                        final viewportWidth = constraints.maxWidth;
+                        final viewportHeight = constraints.maxHeight;
+                        final inv = Matrix4.inverted(m);
+                        final tl = inv.transform3(Vector3(0, 0, 0));
+                        final br = inv.transform3(Vector3(viewportWidth, viewportHeight, 0));
+                        visibleRect = Rect.fromLTRB(
+                          tl.x.clamp(0.0, mapPixelWidth),
+                          tl.y.clamp(0.0, mapPixelHeight),
+                          br.x.clamp(0.0, mapPixelWidth),
+                          br.y.clamp(0.0, mapPixelHeight),
+                        );
+                      }
+                      return RepaintBoundary(
+                        child: CustomPaint(
+                          size: Size(mapPixelWidth, mapPixelHeight),
+                          painter: MapPainter(
+                            map: state.map,
+                            conqueredPlots: state.conqueredPlots,
+                            plotSprites: _plotSprites,
+                            terrainSprites: _terrainSprites,
+                            mapSprites: _mapSprites,
+                            plotLevelAt: (r, c) => state.getPlotData(r, c)?['level'] as int? ?? 1,
+                            plotResourceAt: (r, c) => state.getPlotData(r, c)?['resource'] as String? ?? 'crop',
+                            plotBuildingAt: (r, c) => (state.plotBuildings['$r,$c']?['type'] as String?) ?? '',
+                            remains: state.remains.values.toList(),
+                            playerName: state.playerName,
+                            selectedTile: selectedTile,
+                            capitalMinRow: GameState.capitalMinRow,
+                            capitalMaxRow: GameState.capitalMaxRow,
+                            capitalMinCol: GameState.capitalMinCol,
+                            capitalMaxCol: GameState.capitalMaxCol,
+                            visibleRect: visibleRect,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
             ),
 
-            // Floating Tile Action Bar
+            // Tile action panel — plate + info card + button stack (gaya asli).
             if (selectedTile != null)
               Positioned(
                 bottom: 96,
-                left: 16,
-                right: 16,
+                left: 12,
+                right: 12,
                 child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: NtaSpace.panelPad,
-                      vertical: NtaSpace.x5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: NtaColors.surface,
-                      borderRadius: BorderRadius.circular(NtaRadius.panel),
-                      border: Border.all(color: NtaColors.border, width: NtaBorder.panel),
-                      boxShadow: const [
-                        BoxShadow(color: Color(0x66000000), blurRadius: 12, offset: Offset(0, 4)),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isCapitalSelected ? Icons.fort : Icons.location_on,
-                          color: isCapitalSelected ? NtaColors.heroNamePill : NtaColors.textMuted,
-                        ),
-                        const SizedBox(width: NtaSpace.itemGap),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                isCapitalSelected
-                                    ? 'Imperial Capital Citadel (2x2 Space)'
-                                    : isRemainsSelected
-                                        ? '${remainsSel['name']} Remains (2x2 Space)'
-                                        : 'Tile (${selectedTile[0]}, ${selectedTile[1]}) - ${state.getTileTerrainName(selectedTile[0], selectedTile[1])}',
-                                style: NtaText.bodyBold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                isCapitalSelected
-                                    ? 'Contains Barracks, Smithy, Hall of Heroes & Workshops'
-                                    : isRemainsSelected
-                                        ? 'Neutral capital · Lv.${remainsSel['level']} · held by '
-                                            '${remainsSel['owner'] == 'player' ? 'you' : remainsSel['owner']}'
-                                        : (state.isTileConquered(selectedTile[0], selectedTile[1])
-                                            ? 'Controlled Domain (Secured with Watchtower & Player Flag)'
-                                            : 'Wild Territory (11x11 Grid with 4 Gates)'),
-                                style: NtaText.caption,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: NtaSpace.itemGap),
-                        NtaGoldButton(
-                          isCapitalSelected
-                              ? 'Enter Capital'
-                              : isRemainsSelected
-                                  ? 'Enter Remains'
-                                  : 'Inspect Plot',
-                          fontSize: 13,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: NtaSpace.x5,
-                            vertical: NtaSpace.x3,
-                          ),
-                          onTap: isCapitalSelected
-                              ? () => _openCapitalInterior(context)
-                              : () => _openPlotInterior(context, selectedTile[0], selectedTile[1]),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: MapTilePanel(row: selectedTile[0], col: selectedTile[1]),
                 ),
               ),
           ],
         );
       },
     );
-  }
-
-  void _openCapitalInterior(BuildContext context) {
-    context.read<GameState>().switchView('capital');
-  }
-
-  void _openPlotInterior(BuildContext context, int row, int col) {
-    context.read<GameState>().setPlotView(row, col);
   }
 }
 
@@ -260,28 +223,37 @@ class MapPainter extends CustomPainter {
   final Set<String> conqueredPlots;
   final Map<String, ui.Image> plotSprites;
   final Map<String, ui.Image> terrainSprites;
+  final Map<String, ui.Image> mapSprites;
   final int Function(int row, int col) plotLevelAt;
   final String Function(int row, int col) plotResourceAt;
+  final String Function(int row, int col) plotBuildingAt;
   final List<Map<String, dynamic>> remains;
+  final String playerName;
   final List<int>? selectedTile;
   final int capitalMinRow;
   final int capitalMaxRow;
   final int capitalMinCol;
   final int capitalMaxCol;
+  /// Visible viewport in map pixel coordinates (for culling). If null, draw all.
+  final Rect? visibleRect;
 
   MapPainter({
     required this.map,
     required this.conqueredPlots,
     required this.plotSprites,
     required this.terrainSprites,
+    required this.mapSprites,
     required this.plotLevelAt,
     required this.plotResourceAt,
+    required this.plotBuildingAt,
     required this.remains,
+    required this.playerName,
     this.selectedTile,
     required this.capitalMinRow,
     required this.capitalMaxRow,
     required this.capitalMinCol,
     required this.capitalMaxCol,
+    this.visibleRect,
   });
 
   Map<String, dynamic>? _remainsAt(int row, int col) {
@@ -304,22 +276,48 @@ class MapPainter extends CustomPainter {
       ..strokeWidth = 0.5
       ..color = const Color(0x2A4E4037);
 
-    // Terrain Colors
-    const Color cGrass = NtaColors.mapGreenA;
+    // Terrain Colors — warna dasar rumput diambil langsung dari screenshot
+    // `Tampilan Utama.jpg` (checkerboard hijau: wild `#7BAF81`/`#80B486`,
+    // territory dikuasai `#8FC17A`/`#91C078`).
+    const Color cGrass = Color(0xFF7BAF81);
+    const Color cGrassAlt = Color(0xFF80B486);
+    const Color cOwnedA = Color(0xFF8FC17A);
+    const Color cOwnedB = Color(0xFF91C078);
     const Color cForest = Color(0xFFA8BE63);
     const Color cMountain = Color(0xFFC2AE86);
     const Color cWater = Color(0xFF8FC7E0);
     const Color cSand = NtaColors.mapRoad;
 
+    // Viewport culling: only draw tiles intersecting visibleRect (+1 tile margin)
+    final int mapH = map.length;
+    final int mapW = map[0].length;
+    int startRow = 0, endRow = mapH - 1;
+    int startCol = 0, endCol = mapW - 1;
+    if (visibleRect != null) {
+      startRow = (visibleRect!.top / tileSize).floor() - 1;
+      endRow = (visibleRect!.bottom / tileSize).ceil() + 1;
+      startCol = (visibleRect!.left / tileSize).floor() - 1;
+      endCol = (visibleRect!.right / tileSize).ceil() + 1;
+      startRow = startRow.clamp(0, mapH - 1);
+      endRow = endRow.clamp(0, mapH - 1);
+      startCol = startCol.clamp(0, mapW - 1);
+      endCol = endCol.clamp(0, mapW - 1);
+    }
+
     // 1. Draw base terrain grid
-    for (int row = 0; row < map.length; row++) {
-      for (int col = 0; col < map[row].length; col++) {
+    for (int row = startRow; row <= endRow; row++) {
+      for (int col = startCol; col <= endCol; col++) {
         final int terrain = map[row][col];
         final Rect rect = Rect.fromLTWH(col * tileSize, row * tileSize, tileSize, tileSize);
 
-        // Base: grassland colour; the original atlas has no seamless grass fill
-        // (grass_101-104 are sparse tufts), so tufts are drawn as an overlay.
-        bgPaint.color = cGrass;
+        // Base: checkerboard grassland (2x2 pattern), matching the original
+        // map. `grass_*` sprites from the atlas are sparse single tufts, so
+        // they are drawn on top as decoration.
+        final bool checker = ((row + col) & 1) == 0;
+        final bool inDomain = conqueredPlots.contains('$row,$col');
+        bgPaint.color = inDomain
+            ? (checker ? cOwnedA : cOwnedB)
+            : (checker ? cGrass : cGrassAlt);
         canvas.drawRect(rect, bgPaint);
 
         switch (terrain) {
@@ -375,25 +373,78 @@ class MapPainter extends CustomPainter {
         final bool isCap = row >= capitalMinRow && row <= capitalMaxRow &&
                            col >= capitalMinCol && col <= capitalMaxCol;
 
-        // 2a. Original plot-resource sprite (levels 2-5) — anchors the tile to the
-        // real game's land.json icon per (resource, level).
+        // 2a. Plot sprite di atas tile.
+        // Wild plot -> ikon resource asli (land.json) + badge level.
+        // Plot dikuasai -> sprite watchtower/fortress asli dari atlas city.
         final bool isRemains = _remainsAt(row, col) != null;
-        if (!isCap && !isRemains) {
-          final lv = plotLevelAt(row, col);
-          final sprite = plotSprites['${plotResourceAt(row, col)}:$lv'];
-          if (sprite != null) {
-            _drawSprite(canvas, rect, sprite);
-          }
-          // Level badge — digit glyphs from the original map_flag_num atlas.
-          final digit = terrainSprites['digit$lv'];
-          if (lv > 1) {
-            _drawDigitBadge(canvas, rect, digit);
-          }
+        final bool isConquered = conqueredPlots.contains('$row,$col');
+
+        // Batas domain — garis hijau gelap tebal hanya di tepi teritori
+        // (lihat `Tampilan Utama.jpg`: `#3C854D`/`#368045` mengelilingi
+        // seluruh wilayah milik sendiri). Warna interior tile sudah
+        // dibedakan di base fill, jadi tidak perlu overlay lagi.
+        if (isConquered && !isCap) {
+          final Paint edge = Paint()
+            ..color = const Color(0xFF3C854D)
+            ..strokeWidth = 3
+            ..style = PaintingStyle.stroke;
+          bool owned(int r, int c) =>
+              r >= 0 && r < map.length && c >= 0 && c < map[r].length &&
+              conqueredPlots.contains('$r,$c');
+          if (!owned(row - 1, col)) canvas.drawLine(rect.topLeft, rect.topRight, edge);
+          if (!owned(row + 1, col)) canvas.drawLine(rect.bottomLeft, rect.bottomRight, edge);
+          if (!owned(row, col - 1)) canvas.drawLine(rect.topLeft, rect.bottomLeft, edge);
+          if (!owned(row, col + 1)) canvas.drawLine(rect.topRight, rect.bottomRight, edge);
         }
 
-        // 2b. Conquered plots (outside capital): draw automatic Watchtower & Player Flag
-        if (!isCap && conqueredPlots.contains('$row,$col')) {
-          _drawConqueredWatchtowerAndFlag(canvas, rect);
+        if (!isCap && !isRemains) {
+          final lv = plotLevelAt(row, col);
+          if (isConquered) {
+            // Domain: bangunan asli (fortress / farm / watchtower). Tile
+            // rumput kosong (kebun istana di sekitar capital) sengaja dibiarkan
+            // tanpa bangunan supaya sama dengan tampilan asli.
+            final btype = plotBuildingAt(row, col);
+            final bool garden = lv <= 1 &&
+                btype.isEmpty &&
+                row > 34 && row < 45 &&
+                col > 34 && col < 45;
+            if (garden) {
+              // Halaman istana: taburan batu / semak (referensi
+              // `Tampilan Utama.jpg` — ring di sekitar pagoda).
+              final rough = (row * 73 + col * 41) % 7;
+              if (rough < 3) {
+                final g = terrainSprites['garden${(row * 5 + col * 3) % 4}'];
+                if (g != null) _drawDecoration(canvas, rect, g, scale: 0.8);
+              }
+            } else {
+              final sprite = btype == 'fortress'
+                  ? mapSprites['fortress']
+                  : (btype == 'farm' || btype == 'sawmill' || btype == 'quarry')
+                      ? mapSprites['farm']
+                      : mapSprites['watchtower'];
+              if (sprite != null) _drawSprite(canvas, rect, sprite);
+            }
+            if (lv > 1) _drawDigitBadge(canvas, rect, terrainSprites['digit$lv']);
+          } else {
+            final sprite = plotSprites['${plotResourceAt(row, col)}:$lv'];
+            if (sprite != null) {
+              _drawSprite(canvas, rect, sprite);
+            }
+            // Taburan dekorasi kecil (jerami / rumput / batu) di tile liar
+            // — referensi menunjukkan plot liar tidak seluruhnya kosong.
+            final rough = (row * 31 + col * 17) % 11;
+            if (rough < 2 && lv <= 1) {
+              final d = terrainSprites['deco${(row + col * 3) % 6}'];
+              if (d != null) {
+                _drawDecoration(canvas, rect, d, scale: 0.85);
+              }
+            }
+            // Level badge — digit glyphs from the original map_flag_num atlas.
+            final digit = terrainSprites['digit$lv'];
+            if (lv > 1) {
+              _drawDigitBadge(canvas, rect, digit);
+            }
+          }
         }
       }
     }
@@ -450,75 +501,24 @@ class MapPainter extends CustomPainter {
     }
   }
 
-  /// Remains: 2x2 neutral capital. Colour = owner (neutral stone grey,
-  /// player imperial red, rival union slate blue), with a level badge.
+  /// Remains (capital netral) — sprite dinding asli city_10010, plus badge
+  /// level di pojok kanan bawah.
   void _drawRemains(Canvas canvas, double tileSize, Map<String, dynamic> r) {
     final double left = (r['col'] as int) * tileSize;
     final double top = (r['row'] as int) * tileSize;
     final Rect rect = Rect.fromLTWH(left, top, tileSize * 2, tileSize * 2);
-    final String owner = r['owner'] as String? ?? 'neutral';
-
-    final Color wallColor;
-    final Color roofColor;
-    switch (owner) {
-      case 'player':
-        wallColor = const Color(0xFF8B2B2B);
-        roofColor = const Color(0xFFFFB703);
-        break;
-      case 'neutral':
-        wallColor = const Color(0xFF5A5F6A);
-        roofColor = const Color(0xFF9AA3AE);
-        break;
-      default:
-        wallColor = const Color(0xFF33415C);
-        roofColor = const Color(0xFF6C8EBF);
+    final sprite = mapSprites['remains'];
+    if (sprite != null) {
+      _drawFootprint(canvas, rect, sprite);
+    } else {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect.deflate(4), const Radius.circular(8)),
+        Paint()..color = const Color(0xFF6B5B47),
+      );
     }
 
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect.deflate(4), const Radius.circular(8)),
-      Paint()..color = const Color(0xFF3B3A38),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect.deflate(6), const Radius.circular(6)),
-      Paint()
-        ..color = wallColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4.0,
-    );
-
-    final double cx = rect.center.dx;
-    final double cy = rect.center.dy;
-
-    // Keep/tower block + roof, smaller than the Capital citadel.
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx, cy + 8), width: 48, height: 38),
-        const Radius.circular(5),
-      ),
-      Paint()..color = wallColor,
-    );
-    final Path roof = Path()
-      ..moveTo(cx - 32, cy + 10)
-      ..lineTo(cx, cy - 20)
-      ..lineTo(cx + 32, cy + 10)
-      ..close();
-    canvas.drawPath(roof, Paint()..color = roofColor);
-
-    // Corner turrets.
-    final Paint turret = Paint()..color = const Color(0xFF2B2D42);
-    canvas.drawCircle(Offset(left + 16, top + 16), 9, turret);
-    canvas.drawCircle(Offset(rect.right - 16, top + 16), 9, turret);
-    canvas.drawCircle(Offset(left + 16, rect.bottom - 16), 9, turret);
-    canvas.drawCircle(Offset(rect.right - 16, rect.bottom - 16), 9, turret);
-
-    // Level badge in the bottom-right corner.
     final level = (r['level'] as int?) ?? 1;
-    final Rect badge = Rect.fromLTWH(
-      rect.right - 26,
-      rect.bottom - 20,
-      22,
-      16,
-    );
+    final Rect badge = Rect.fromLTWH(rect.right - 26, rect.bottom - 20, 22, 16);
     canvas.drawRRect(
       RRect.fromRectAndRadius(badge, const Radius.circular(3)),
       Paint()..color = const Color(0xD92B2118),
@@ -537,68 +537,115 @@ class MapPainter extends CustomPainter {
     tp.paint(canvas, Offset(badge.center.dx - tp.width / 2, badge.center.dy - tp.height / 2));
   }
 
-  // Draw Grand 2x2 Capital Citadel (spans rows 39-40, cols 39-40)
+  /// Capital pemain (2x2) — sprite pagoda asli city_1001 + label nama gelap
+  /// di atasnya. Halaman kekuningan & garis batas sudah bagian dari skin
+  /// capital, jadi tidak digambar ulang (lihat `Tampilan Utama.jpg`).
   void _drawGrandCapitalCitadel(Canvas canvas, double tileSize) {
     final double left = capitalMinCol * tileSize;
     final double top = capitalMinRow * tileSize;
-    final double width = (capitalMaxCol - capitalMinCol + 1) * tileSize; // 2 tiles = 128px
+    final double width = (capitalMaxCol - capitalMinCol + 1) * tileSize;
     final double height = (capitalMaxRow - capitalMinRow + 1) * tileSize;
+    final Rect rect = Rect.fromLTWH(left, top, width, height);
 
-    final Rect citadelRect = Rect.fromLTWH(left, top, width, height);
+    final sprite = mapSprites['capital'];
+    if (sprite != null) {
+      // Sprite pagoda menempati seluruh 2x2; gambar anchor ke bawah-tengah.
+      final Rect dst = Rect.fromLTWH(
+        rect.left + (rect.width - rect.height * sprite.width / sprite.height) / 2,
+        rect.top,
+        rect.height * sprite.width / sprite.height,
+        rect.height,
+      );
+      canvas.drawImageRect(
+        sprite,
+        Rect.fromLTWH(0, 0, sprite.width.toDouble(), sprite.height.toDouble()),
+        dst,
+        Paint()..filterQuality = FilterQuality.none,
+      );
+    }
 
-    // Stone fortress courtyard
-    final Paint courtPaint = Paint()..color = const Color(0xFF423B36);
-    canvas.drawRRect(RRect.fromRectAndRadius(citadelRect.deflate(4), const Radius.circular(8)), courtPaint);
+    // Label nama pemain (pill gelap) menggantung di atas puncak pagoda.
+    _drawNamePill(canvas, rect, playerName, tileSize);
+  }
 
-    // Citadel walls
-    final Paint wallPaint = Paint()
-      ..color = const Color(0xFF8B2B2B)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4.0;
-    canvas.drawRRect(RRect.fromRectAndRadius(citadelRect.deflate(6), const Radius.circular(6)), wallPaint);
+  /// Gambar sprite mempertahankan rasio, di tengah footprint.
+  void _drawFootprint(Canvas canvas, Rect rect, ui.Image sprite) {
+    final double sw = sprite.width.toDouble();
+    final double sh = sprite.height.toDouble();
+    final double scale = (rect.width / sw) < (rect.height / sh)
+        ? rect.width / sw
+        : rect.height / sh;
+    final double w = sw * scale;
+    final double h = sh * scale;
+    final Rect dst = Rect.fromCenter(center: rect.center, width: w, height: h);
+    canvas.drawImageRect(
+      sprite,
+      Rect.fromLTWH(0, 0, sw, sh),
+      dst,
+      Paint()..filterQuality = FilterQuality.none,
+    );
+  }
 
-    // Central Palace Pavilions
-    final double cx = citadelRect.center.dx;
-    final double cy = citadelRect.center.dy;
+  /// Label nama pemain gaya referensi: pill gelap besar dengan avatar
+  /// kepala ksatria di sisi kiri (`Tampilan Utama.jpg`, "FallStar7").
+  /// Ukuran font diskalakan mengikuti tileSize agar tetap proporsional
+  /// saat zoom.
+  void _drawNamePill(Canvas canvas, Rect rect, String name, double tileSize) {
+    final double fontPx = (tileSize * 0.22).clamp(11.0, 26.0);
+    final double avatar = fontPx * 1.55;
+    final TextPainter tp = TextPainter(
+      text: TextSpan(
+        text: name,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: fontPx,
+          fontWeight: FontWeight.w700,
+          shadows: const [
+            Shadow(color: Color(0x99000000), offset: Offset(1, 1), blurRadius: 2),
+          ],
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
 
-    final Paint palaceBase = Paint()..color = const Color(0xFF9E2A2B);
+    final double pillH = avatar + 4;
+    final double pillW = tp.width + avatar + 16;
+    final Rect pill = Rect.fromLTWH(
+      rect.center.dx - pillW / 2,
+      rect.top - pillH * 0.55,
+      pillW,
+      pillH,
+    );
+    final RRect rr = RRect.fromRectAndRadius(pill, Radius.circular(pillH * 0.32));
+    canvas.drawRRect(rr, Paint()..color = const Color(0xE0302822));
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(cx, cy + 6), width: 68, height: 50), const Radius.circular(6)),
-      palaceBase,
+      rr,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = const Color(0xFF6B5B47),
     );
 
-    // Golden Imperial Pagoda Roof
-    final Path roof = Path()
-      ..moveTo(cx - 44, cy + 6)
-      ..lineTo(cx, cy - 32)
-      ..lineTo(cx + 44, cy + 6)
-      ..close();
-    canvas.drawPath(roof, Paint()..color = const Color(0xFFFFB703));
+    // Avatar kotak kiri — bingkai + ikon helm.
+    final Rect av = Rect.fromLTWH(pill.left + 2, pill.top + 2, avatar - 2, avatar - 2);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(av, const Radius.circular(3)),
+      Paint()..color = const Color(0xFFB0866A),
+    );
+    TextPainter helmet = TextPainter(
+      text: TextSpan(
+        text: '⚔',
+        style: TextStyle(fontSize: avatar * 0.62, color: const Color(0xFFF2E9D8)),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    helmet.paint(
+      canvas,
+      Offset(av.center.dx - helmet.width / 2, av.center.dy - helmet.height / 2),
+    );
 
-    // Secondary upper roof
-    final Path upperRoof = Path()
-      ..moveTo(cx - 26, cy - 14)
-      ..lineTo(cx, cy - 38)
-      ..lineTo(cx + 26, cy - 14)
-      ..close();
-    canvas.drawPath(upperRoof, Paint()..color = const Color(0xFFFB8500));
-
-    // Corner Watchtowers on Citadel (4 corners of 2x2 space)
-    final Paint towerPaint = Paint()..color = const Color(0xFF2B2D42);
-    final double r12 = 12.0;
-    canvas.drawCircle(Offset(left + r12 + 6, top + r12 + 6), r12, towerPaint);
-    canvas.drawCircle(Offset(left + width - r12 - 6, top + r12 + 6), r12, towerPaint);
-    canvas.drawCircle(Offset(left + r12 + 6, top + height - r12 - 6), r12, towerPaint);
-    canvas.drawCircle(Offset(left + width - r12 - 6, top + height - r12 - 6), r12, towerPaint);
-
-    // Imperial Player Flag in Center
-    final Path flag = Path()
-      ..moveTo(cx, cy - 38)
-      ..lineTo(cx + 22, cy - 46)
-      ..lineTo(cx, cy - 54)
-      ..close();
-    canvas.drawPath(flag, Paint()..color = Colors.redAccent);
-    canvas.drawLine(Offset(cx, cy - 36), Offset(cx, cy - 56), Paint()..color = Colors.white..strokeWidth = 2.5);
+    tp.paint(canvas, Offset(av.right + 7, pill.center.dy - tp.height / 2));
   }
 
   /// Draw an extracted sprite stretched to fill a tile exactly.
@@ -630,6 +677,21 @@ class MapPainter extends CustomPainter {
     );
   }
 
+  /// Tempel dekorasi kecil (batu/semak/jerami) di tengah tile, tanpa
+  /// menutupi seluruh petak — atlas `decorate/*` punya konten kecil di
+  /// sudut kiri-bawah slice 80x80.
+  void _drawDecoration(Canvas canvas, Rect tile, ui.Image sprite, {double scale = 1.0}) {
+    final double side = tile.shortestSide * scale;
+    final Rect dst = Rect.fromCenter(center: tile.center, width: side, height: side);
+    final Paint p = Paint()..filterQuality = FilterQuality.none;
+    canvas.drawImageRect(
+      sprite,
+      Rect.fromLTWH(0, 0, sprite.width.toDouble(), sprite.height.toDouble()),
+      dst,
+      p,
+    );
+  }
+
   /// Draw a plot-level digit in the tile's bottom-right corner.
   ///
   /// The atlas glyphs are near-white, so a dark rounded backing keeps them
@@ -652,57 +714,16 @@ class MapPainter extends CustomPainter {
     );
   }
 
-  /// Draw an extracted original sprite centred in a map tile.
+  /// Gambar sprite plot (8x8 tile slice, isi di sudut kiri-bawah) di dalam
+  /// satu tile map. Isi dianchor ke tepi bawah tile seperti tile asli.
   void _drawSprite(Canvas canvas, Rect tile, ui.Image sprite) {
-    final double side = tile.shortestSide * 0.86;
-    final Rect dst = Rect.fromCenter(
-      center: Offset(tile.center.dx, tile.center.dy - side * 0.06),
-      width: side,
-      height: side,
-    );
     final Paint p = Paint()..filterQuality = FilterQuality.none;
     canvas.drawImageRect(
       sprite,
       Rect.fromLTWH(0, 0, sprite.width.toDouble(), sprite.height.toDouble()),
-      dst,
+      tile,
       p,
     );
-  }
-
-  // Automatic Watchtower and Player Flag on conquered plots
-  void _drawConqueredWatchtowerAndFlag(Canvas canvas, Rect r) {
-    final double cx = r.center.dx;
-    final double cy = r.center.dy;
-
-    // Territory control border
-    final Paint borderPaint = Paint()
-      ..color = const Color(0x66FFD700)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
-    canvas.drawRect(r.deflate(2), borderPaint);
-
-    // Automatic Watchtower base
-    final Paint towerBase = Paint()..color = const Color(0xFF4A4E69);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromCenter(center: Offset(cx, cy + 6), width: 18, height: 26), const Radius.circular(2)),
-      towerBase,
-    );
-
-    // Observation deck
-    canvas.drawRect(
-      Rect.fromCenter(center: Offset(cx, cy - 8), width: 24, height: 8),
-      Paint()..color = const Color(0xFF22223B),
-    );
-
-    // Player Ownership Flag
-    final Paint flagPaint = Paint()..color = const Color(0xFFE63946);
-    final Path flagPath = Path()
-      ..moveTo(cx + 2, cy - 12)
-      ..lineTo(cx + 14, cy - 17)
-      ..lineTo(cx + 2, cy - 22)
-      ..close();
-    canvas.drawPath(flagPath, flagPaint);
-    canvas.drawLine(Offset(cx + 2, cy - 8), Offset(cx + 2, cy - 24), Paint()..color = Colors.white..strokeWidth = 1.5);
   }
 
   void _drawGrassDetails(Canvas canvas, Rect r) {
@@ -753,7 +774,9 @@ class MapPainter extends CustomPainter {
         oldDelegate.conqueredPlots != conqueredPlots ||
         oldDelegate.plotSprites.length != plotSprites.length ||
         oldDelegate.terrainSprites.length != terrainSprites.length ||
+        oldDelegate.mapSprites.length != mapSprites.length ||
         _remainsSignature(oldDelegate.remains) != _remainsSignature(remains) ||
+        oldDelegate.playerName != playerName ||
         oldDelegate.selectedTile != selectedTile;
   }
 }

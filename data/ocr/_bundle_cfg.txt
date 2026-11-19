@@ -1,0 +1,32 @@
+=== main uuids 42 paths 0
+=== app uuids 10 paths 10
+   core/@api/api.d
+   core/@api/array.d
+   core/@api/cc.d
+   core/@api/mc.d
+   core/@api/ut.d
+   lib/ThinkingAnalyticsSDK.d
+   lib/lib.d
+   lib/pb/long/long.js
+   lib/pb/protobuf/protobuf.js
+   proto/msg.d
+=== manifest uuids 1 paths 1
+   project
+=== internal uuids 18 paths 17
+   effects/builtin-2d-graphics
+   effects/builtin-2d-gray-sprite
+   effects/builtin-2d-label
+   effects/builtin-2d-spine
+   effects/builtin-2d-sprite
+   effects/builtin-3d-trail
+   effects/builtin-clear-stencil
+   effects/builtin-unlit
+   materials/builtin-2d-base
+   materials/builtin-2d-graphics
+   materials/builtin-2d-gray-sprite
+   materials/builtin-2d-label
+   materials/builtin-2d-spine
+   materials/builtin-2d-sprite
+   materials/builtin-3d-trail
+   materials/builtin-clear-stencil
+   materials/builtin-unlit

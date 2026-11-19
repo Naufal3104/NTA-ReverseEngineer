@@ -37,6 +37,17 @@ class GameState extends ChangeNotifier {
   bool _divisionChosen = false;
   int _tierWinPoints = 0;
 
+  // Commander name — shown on the map capital pill and tile-info card
+  // (reference: `FallStar7`). Editable later from the profile modal.
+  String _playerName = 'Commander';
+  String get playerName => _playerName;
+  set playerName(String v) {
+    if (v.trim().isEmpty) return;
+    _playerName = v.trim();
+    notifyListeners();
+    saveGame(silent: true);
+  }
+
   // Bot AI difficulty for rival unions (rebuild rule: 3 levels).
   int _botDifficultyIndex = 1;
   int _botSeconds = 0;
@@ -78,6 +89,45 @@ class GameState extends ChangeNotifier {
   // Per-troop training levels 1-6 (SoldierAttribute.md ranges).
   // Weaponry (catapult/trebuchet) cannot train — fixed at level 1.
   final Map<String, int> _troopLevels = {};
+
+  // Leap stacks (Trainee Warrior passive, Sword&Shield 3205): +0.5 ATK and
+  // +5 HP per stack, one stack per Boar Knight (enemy 4205) slain. Cap scales
+  // with the troop's training level: 10 at Lv.1 through 100 at Lv.6.
+  int _leapStacks = 0;
+  int get leapStacks => _leapStacks;
+
+  /// Stack cap at the current Sword&Shield training level ("[10-100]").
+  int get leapStackCap {
+    final lv = troopLevel('sword_shield').clamp(1, 6);
+    return (10 + (lv - 1) * 18).clamp(10, 100);
+  }
+
+  /// Grant one Leap stack per Boar Knight killed in a battle.
+  /// Only applies if the army contains Sword&Shield soldiers.
+  void _gainLeapStacks(int boarKills) {
+    if (boarKills <= 0) return;
+    if ((_troops['sword_shield'] ?? 0) <= 0) return;
+    final cap = leapStackCap;
+    final before = _leapStacks;
+    _leapStacks = math.min(cap, _leapStacks + boarKills);
+    final gained = _leapStacks - before;
+    if (gained > 0) {
+      addLog('Trainee Warrior: +$gained Leap stack${gained == 1 ? '' : 's'} '
+          '($_leapStacks/$cap) — Sword&Shield +'
+          '${(_leapStacks * 0.5).toStringAsFixed(1)} ATK, '
+          '+${_leapStacks * 5} HP.');
+    }
+  }
+
+  /// Boar Knight (4205) kills from a battle's defender loss map.
+  int _boarKnightKills(BattleResult result, List<BattleUnit> defenders) {
+    final uidToId = {for (final u in defenders) u.uid: u.id};
+    var kills = 0;
+    result.defenderLosses.forEach((uid, n) {
+      if (uidToId[uid] == '4205') kills += n;
+    });
+    return kills;
+  }
 
   // Conquered plots on map (format: 'row,col')
   // Conquered plots automatically possess a Watchtower & Player Flag
@@ -179,6 +229,10 @@ class GameState extends ChangeNotifier {
   final Map<int, List<int?>> _portraitStrategies = {310101: []};
   // Worshipped hero ids (permanently bound at Hall of Heroes).
   final Set<int> _worshippedHeroes = {310101};
+  // General Muster Terrace: draws toward the 50-draw guaranteed counter.
+  int _musterDraws = 20;
+  // Shop daily gift claimed today (reset on new day).
+  bool _dailyGiftClaimed = false;
 
   // --- POLICIES ---
   // slot index (0-based) -> {'policyId': int, 'tier': 0..2}
@@ -525,6 +579,7 @@ class GameState extends ChangeNotifier {
       rng: rng,
     );
     final newlyWounded = _applyCasualties(result);
+    _gainLeapStacks(_boarKnightKills(result, defenders));
     if (getGroundBuilding(r['row'] as int, r['col'] as int)?['type'] == 'fortress') {
       fieldHealAtFortress(r['row'] as int, r['col'] as int);
     }
@@ -914,6 +969,24 @@ class GameState extends ChangeNotifier {
   // Combat log & event stream
   final List<String> _log = [];
 
+  // Battle report entries (newest first) — shown in the Armies modal's
+  // Battle Report tab. Each entry: {
+  //  'time': DateTime, 'victory': bool, 'row': int, 'col': int,
+  //  'targetLabel': String, 'rounds': int, 'kills': int, 'fallen': int,
+  //  'armies': int, 'defenderLosses': int, 'attackerStart': int,
+  // }
+  final List<Map<String, dynamic>> _battleReports = [];
+  List<Map<String, dynamic>> get battleReports =>
+      List.unmodifiable(_battleReports);
+
+  // March / march-time entries for the March List modal and per-army
+  // labels in Armies → All Armies. Each entry: {
+  //  'team': int, 'state': 'Training'|'Marching'|'Idle',
+  //  'target': String, 'secondsLeft': int, 'chest': int?,
+  // }
+  final List<Map<String, dynamic>> _marches = [];
+  List<Map<String, dynamic>> get marches => List.unmodifiable(_marches);
+
   GameState() {
     generateMap();
     _startRealtimeTicker();
@@ -1225,9 +1298,12 @@ class GameState extends ChangeNotifier {
     final now = DateTime.now();
     final gap = now.difference(_lastTickAt).inSeconds;
     _lastTickAt = now;
-    if (_clockPaused || !_divisionChosen) return;
-    // Gap > threshold = app was closed/suspended: that time is not counted.
-    if (gap > _closedGapSeconds) {
+    if (!_divisionChosen) return;
+    // Gap > threshold = tab/app was closed/suspended: that wall-clock time is
+    // not counted, but an explicit resumeClock() clears the pause flag, so we
+    // keep ticking afterward. Clamping (instead of an unconditional return)
+    // means a resume is never stuck when no lifecycle event arrives.
+    if (_clockPaused || gap > _closedGapSeconds) {
       notifyListeners();
       return;
     }
@@ -2034,9 +2110,37 @@ class GameState extends ChangeNotifier {
     final id = hero['id'] as int;
     final gained = 1 + r.nextInt(3);
     _heroFragments[id] = fragmentsOf(id) + gained;
+    _musterDraws++;
+    if (_musterDraws >= musterGuarantee) _musterDraws = 0;
     addLog('Muster Terrace: $gained fragment(s) of ${heroName(id)}.');
     notifyListeners();
     return id;
+  }
+
+  /// Draws toward the guaranteed high-multiplier fragment (`20/50` HUD).
+  int get musterDraws => _musterDraws;
+  static const int musterGuarantee = 50;
+
+  // --- SHOP (offline demo: grants are free, Daily Gift once per day) ---
+  bool get dailyGiftClaimed => _dailyGiftClaimed;
+
+  void claimDailyGift() {
+    if (_dailyGiftClaimed) return;
+    _dailyGiftClaimed = true;
+    _addResource('crop', 300);
+    _addResource('wood', 300);
+    _addResource('stone', 300);
+    addLog('Shop: Daily Gift claimed (crop/wood/stone +300).');
+    notifyListeners();
+  }
+
+  /// Lucky Wheel reward: grant a mixed bundle back into the economy.
+  void grantWheelReward(Map<String, int> reward) {
+    reward.forEach(_addResource);
+    final parts =
+        reward.entries.map((e) => '${e.value} ${e.key}').join(', ');
+    addLog('Lucky Wheel: $parts.');
+    notifyListeners();
   }
 
   int fragmentsOf(int id) => _heroFragments[id] ?? 0;
@@ -2580,8 +2684,18 @@ class GameState extends ChangeNotifier {
       hpPctByType: polMods['hpPctByType'] as Map<String, double>,
       atkPctByType: polMods['atkPctByType'] as Map<String, double>,
       drByType: polMods['drByType'] as Map<String, double>,
+      leapStacks: _leapStacks,
     );
   }
+
+  /// Clinic wounded rate: 55% of casualties survive as wounded after a win,
+  /// 50% after a loss — the remainder are dead. Pure so it stays testable.
+  static double clinicWoundedRate(bool victory) => victory ? 0.55 : 0.50;
+
+  /// Wounded survivors for [lost] casualties in a battle resolved as
+  /// [victory]. Rounded to whole soldiers.
+  static int clinicWounded(int lost, bool victory) =>
+      (lost * clinicWoundedRate(victory)).round();
 
   /// Terapkan korban ke inventori; kembalikan jumlah wounded (Clinic).
   /// Unit pemain memakai uid == pawnBase id, jadi lookup langsung.
@@ -2604,9 +2718,7 @@ class GameState extends ChangeNotifier {
       totalLost += take;
     });
 
-    // Clinic: 55% of casualties wounded (win) / 50% (loss) — remainder dead.
-    final woundedRate = result.victory ? 0.55 : 0.50;
-    final newlyWounded = (totalLost * woundedRate).round();
+    final newlyWounded = clinicWounded(totalLost, result.victory);
     _woundedTroops += newlyWounded;
     return newlyWounded;
   }
@@ -2649,6 +2761,7 @@ class GameState extends ChangeNotifier {
     );
 
     final newlyWounded = _applyCasualties(result);
+    _gainLeapStacks(_boarKnightKills(result, defenders));
     // A fortress at the plot heals wounded troops that reach it.
     if (getGroundBuilding(row, col)?['type'] == 'fortress') {
       fieldHealAtFortress(row, col);
@@ -2677,6 +2790,30 @@ class GameState extends ChangeNotifier {
           '$newlyWounded wounded (Clinic).');
     }
 
+    // Battle report entry (target label comes from plot level+resource).
+    final int startCount = result.attackerStart.length;
+    int kills = 0;
+    int fallen = 0;
+    result.defenderLosses.forEach((_, n) => kills += n);
+    result.attackerLosses.forEach((_, n) => fallen += n);
+    final String targetLabel = plotLvl <= 1
+        ? 'Wasteland($row,$col)'
+        : '${_resTitle(_plots[key]?['resource'] as String? ?? 'crop')} '
+            'Plot($row,$col)';
+    _battleReports.insert(0, {
+      'time': DateTime.now(),
+      'victory': result.victory,
+      'row': row,
+      'col': col,
+      'targetLabel': targetLabel,
+      'rounds': result.rounds,
+      'kills': kills,
+      'fallen': fallen,
+      'armies': startCount,
+      'wounded': newlyWounded,
+    });
+    if (_battleReports.length > 50) _battleReports.removeLast();
+
     notifyListeners();
 
     return {
@@ -2693,6 +2830,10 @@ class GameState extends ChangeNotifier {
       'reward': reward,
     };
   }
+
+  /// Label pendek resource → kata judul untuk battle report.
+  String _resTitle(String id) =>
+      id == 'wood' ? 'Wood' : (id == 'stone' ? 'Stone' : 'Crop');
 
   /// Gerbang masuk army: sisi terdekat dengan capital.
   int _approachGate(int row, int col) {

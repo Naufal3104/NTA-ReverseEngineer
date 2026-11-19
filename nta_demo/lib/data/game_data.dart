@@ -3003,9 +3003,9 @@ class GameData {
   ];
 
   /// Tier Win Points granted per plot level on a ranked-division conquest.
-  /// TODO: exact in-game value is server-side; 5/level lands a full season's
-  /// conquests inside the Bronze..Silver band of [RANK_TIERS].
-  static const int TIER_POINTS_PER_PLOT_LEVEL = 5;
+  /// User-confirmed curve: plot Lv.1→2, Lv.2→4, Lv.3→6, Lv.4→8, Lv.5→10, i.e.
+  /// 2 points per plot level (0..10 for the 1..5 plot levels).
+  static const int TIER_POINTS_PER_PLOT_LEVEL = 2;
 
   /// Tier reached at `points` (Tier Win Points). Below the first threshold
   /// the player is still unranked.

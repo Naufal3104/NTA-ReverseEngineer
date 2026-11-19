@@ -9,14 +9,7 @@ import '../ui/asset_manager.dart';
 import '../ui/design_tokens.dart';
 
 class PlotInteriorView extends StatefulWidget {
-  final int row;
-  final int col;
-
-  const PlotInteriorView({
-    super.key,
-    required this.row,
-    required this.col,
-  });
+  const PlotInteriorView({super.key});
 
   @override
   State<PlotInteriorView> createState() => _PlotInteriorViewState();
@@ -31,6 +24,10 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
   int _replayIndex = -1;
   Timer? _replayTimer;
   AnimationController? _clipController;
+
+  /// Current plot coordinates (read from GameState to support IndexedStack reuse)
+  int get _row => context.read<GameState>().plotViewRow;
+  int get _col => context.read<GameState>().plotViewCol;
 
   @override
   void initState() {
@@ -132,11 +129,11 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
   @override
   Widget build(BuildContext context) {
     final state = context.watch<GameState>();
-    final remains = state.remainsAt(widget.row, widget.col);
+    final remains = state.remainsAt(_row, _col);
     if (remains != null) return _buildRemainsScaffold(state, remains);
 
-    final isConquered = state.isTileConquered(widget.row, widget.col);
-    final plotData = state.getPlotData(widget.row, widget.col);
+    final isConquered = state.isTileConquered(_row, _col);
+    final plotData = state.getPlotData(_row, _col);
     final plotLvl = plotData?['level'] as int? ?? 1;
     final resType = plotData?['resource'] as String? ?? 'crop';
     final garrisonName = plotData?['garrisonName'] as String? ?? 'Wild Wolf Pack';
@@ -177,7 +174,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
                         const SizedBox(width: NtaSpace.itemGap),
                         Flexible(
                           child: Text(
-                            'Plot (${widget.row}, ${widget.col})',
+                            'Plot ($_row, $_col)',
                             style: NtaText.title,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -222,7 +219,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
                     ),
                   ),
                   Flexible(
-                    child: _infoBadge('Terrain', state.getTileTerrainName(widget.row, widget.col)),
+                    child: _infoBadge('Terrain', state.getTileTerrainName(_row, _col)),
                   ),
                   Flexible(
                     child: _infoBadge(
@@ -291,9 +288,9 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
                           const Icon(Icons.check_circle, size: 18, color: NtaColors.textMuted),
                           const SizedBox(width: NtaSpace.x3),
                           Builder(builder: (context) {
-                            final tower = state.plotTowerStats(widget.row, widget.col);
+                            final tower = state.plotTowerStats(_row, _col);
                             final isFortress =
-                                state.getGroundBuilding(widget.row, widget.col)?['type'] == 'fortress';
+                                state.getGroundBuilding(_row, _col)?['type'] == 'fortress';
                             return Text(
                               isFortress
                                   ? 'Secured by Fortress (HP ${tower['hp']} / ATK ${tower['atk']})'
@@ -523,31 +520,34 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
 
     const cell = 330 / 11;
 
-    return Stack(
-      children: [
-        Column(
-          children: List.generate(11, (r) {
-            return Expanded(
-              child: Row(
-                children: List.generate(11, (c) {
-                  return Expanded(
-                    child: _buildRemainsCell(r, c, owned),
-                  );
-                }),
+    // RepaintBoundary isolates the static grid from unit token animations.
+    return RepaintBoundary(
+      child: Stack(
+        children: [
+          Column(
+            children: List.generate(11, (r) {
+              return Expanded(
+                child: Row(
+                  children: List.generate(11, (c) {
+                    return Expanded(
+                      child: _buildRemainsCell(r, c, owned),
+                    );
+                  }),
+                ),
+              );
+            }),
+          ),
+          for (final entry in stacks.entries)
+            for (var i = 0; i < entry.value.length; i++)
+              Positioned(
+                left: int.parse(entry.key.split(',')[1]) * cell + i * 2.0,
+                top: int.parse(entry.key.split(',')[0]) * cell + i * 2.0,
+                width: cell - 2 - i * 2.0,
+                height: cell - 2 - i * 2.0,
+                child: IgnorePointer(child: _buildUnitToken(entry.value[i])),
               ),
-            );
-          }),
-        ),
-        for (final entry in stacks.entries)
-          for (var i = 0; i < entry.value.length; i++)
-            Positioned(
-              left: int.parse(entry.key.split(',')[1]) * cell + i * 2.0,
-              top: int.parse(entry.key.split(',')[0]) * cell + i * 2.0,
-              width: cell - 2 - i * 2.0,
-              height: cell - 2 - i * 2.0,
-              child: IgnorePointer(child: _buildUnitToken(entry.value[i])),
-            ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -622,7 +622,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
   }
 
   Widget _buildGroundBuildingCard(GameState state, String resType) {
-    final building = state.getGroundBuilding(widget.row, widget.col);
+    final building = state.getGroundBuilding(_row, _col);
 
     if (building != null) {
       final type = building['type'] as String;
@@ -633,7 +633,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
       );
       final isFortress = type == 'fortress';
       final maxLevel = state.groundBuildingMaxLevel(type);
-      final tower = isFortress ? state.plotTowerStats(widget.row, widget.col) : null;
+      final tower = isFortress ? state.plotTowerStats(_row, _col) : null;
       final costMap = (bDef['cost'] as Map<String, dynamic>).cast<String, int>();
       final nextCost = <String, int>{};
       for (var e in costMap.entries) {
@@ -672,7 +672,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
                   'Field Heal',
                   fontSize: 12,
                   padding: const EdgeInsets.symmetric(horizontal: NtaSpace.itemGap, vertical: NtaSpace.x3),
-                  onTap: () => state.fieldHealAtFortress(widget.row, widget.col),
+                  onTap: () => state.fieldHealAtFortress(_row, _col),
                 ),
               ),
             if (!atMax)
@@ -680,7 +680,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
                 'Upgrade to Lv.${lvl + 1}',
                 fontSize: 12,
                 padding: const EdgeInsets.symmetric(horizontal: NtaSpace.sectionGap, vertical: NtaSpace.x3),
-                onTap: canAfford ? () => state.upgradeGroundBuilding(widget.row, widget.col) : null,
+                onTap: canAfford ? () => state.upgradeGroundBuilding(_row, _col) : null,
               )
             else
               Text('Max Lv.$maxLevel', style: NtaText.caption),
@@ -689,7 +689,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
       );
     }
 
-    final targetType = state.defaultGroundBuildingType(widget.row, widget.col);
+    final targetType = state.defaultGroundBuildingType(_row, _col);
     final farmDef = GameData.GROUND_BUILDINGS.firstWhere(
       (b) => b['id'] == targetType,
       orElse: () => GameData.GROUND_BUILDINGS[0],
@@ -736,7 +736,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
             fontSize: 12,
             padding: const EdgeInsets.symmetric(horizontal: NtaSpace.sectionGap, vertical: NtaSpace.x3),
             onTap: canAfford
-                ? () => state.constructGroundBuilding(widget.row, widget.col, type: type)
+                ? () => state.constructGroundBuilding(_row, _col, type: type)
                 : null,
           ),
         ],
@@ -761,33 +761,36 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
 
     const cell = 330 / 11;
 
-    return Stack(
-      children: [
-        Column(
-          children: List.generate(11, (r) {
-            return Expanded(
-              child: Row(
-                children: List.generate(11, (c) {
-                  return Expanded(
-                    child: _buildInnerCell(r, c, isConquered, plotLvl, state),
-                  );
-                }),
+    // RepaintBoundary isolates the static grid from unit token animations.
+    return RepaintBoundary(
+      child: Stack(
+        children: [
+          Column(
+            children: List.generate(11, (r) {
+              return Expanded(
+                child: Row(
+                  children: List.generate(11, (c) {
+                    return Expanded(
+                      child: _buildInnerCell(r, c, isConquered, plotLvl, state),
+                    );
+                  }),
+                ),
+              );
+            }),
+          ),
+          for (final entry in stacks.entries)
+            for (var i = 0; i < entry.value.length; i++)
+              Positioned(
+                left: int.parse(entry.key.split(',')[1]) * cell + i * 2.0,
+                top: int.parse(entry.key.split(',')[0]) * cell + i * 2.0,
+                width: cell - 2 - i * 2.0,
+                height: cell - 2 - i * 2.0,
+                child: IgnorePointer(
+                  child: _buildUnitToken(entry.value[i]),
+                ),
               ),
-            );
-          }),
-        ),
-        for (final entry in stacks.entries)
-          for (var i = 0; i < entry.value.length; i++)
-            Positioned(
-              left: int.parse(entry.key.split(',')[1]) * cell + i * 2.0,
-              top: int.parse(entry.key.split(',')[0]) * cell + i * 2.0,
-              width: cell - 2 - i * 2.0,
-              height: cell - 2 - i * 2.0,
-              child: IgnorePointer(
-                child: _buildUnitToken(entry.value[i]),
-              ),
-            ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -879,7 +882,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
     final bool isEastGate = (r == 5 && c == 10);
     final bool isRoad = (r == 5 || c == 5);
 
-    final groundB = isConquered ? state.getGroundBuilding(widget.row, widget.col) : null;
+    final groundB = isConquered ? state.getGroundBuilding(_row, _col) : null;
     final bool isGroundBuildingCell = (r == 3 && c == 3 && groundB != null);
 
     if (isGroundBuildingCell) {
@@ -930,7 +933,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
     }
 
     if (isCenter) {
-      final centerRes = state.getPlotData(widget.row, widget.col)?['resource'] as String? ?? 'crop';
+      final centerRes = state.getPlotData(_row, _col)?['resource'] as String? ?? 'crop';
       final plotSprite = isConquered ? null : NtaAssets.plotIcon(centerRes, plotLvl);
       return Container(
         margin: const EdgeInsets.all(1),
@@ -1157,7 +1160,7 @@ class _PlotInteriorViewState extends State<PlotInteriorView>
     setState(() => _isBattling = true);
 
     final state = context.read<GameState>();
-    final result = state.attackPlot(widget.row, widget.col);
+    final result = state.attackPlot(_row, _col);
 
     _replayTimer?.cancel();
     _replayTimer = null;

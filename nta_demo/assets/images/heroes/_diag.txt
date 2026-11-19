@@ -1,0 +1,22 @@
+SMALL 61
+  avatar_pawn_310101_01.png 40x80
+  avatar_pawn_310102_01.png 40x80
+  avatar_pawn_310103_01.png 40x80
+  avatar_pawn_310201_01.png 40x80
+  avatar_pawn_310202_01.png 40x80
+  avatar_pawn_310301_01.png 40x80
+  avatar_pawn_310302_01.png 40x80
+  avatar_pawn_310303_01.png 40x80
+  avatar_pawn_310401_01.png 40x80
+  avatar_pawn_310402_01.png 40x80
+BIG 10
+  avatar_pawn_com_11.png 108x76
+  avatar_pawn_com_12.png 88x108
+  avatar_pawn_com_13.png 92x52
+  avatar_pawn_com_16.png 32x116
+  avatar_pawn_com_17.png 148x132
+  avatar_pawn_com_18.png 164x148
+  avatar_pawn_com_19.png 168x144
+  avatar_pawn_com_20.png 168x164
+  avatar_pawn_com_21.png 84x80
+  avatar_pawn_com_22.png 76x72

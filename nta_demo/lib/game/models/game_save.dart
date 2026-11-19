@@ -54,6 +54,7 @@ extension GameStateSaveCodec on GameState {
         'divisionIndex': _divisionIndex,
         'divisionChosen': _divisionChosen,
         'tierWinPoints': _tierWinPoints,
+        'playerName': _playerName,
         'botDifficultyIndex': _botDifficultyIndex,
         'botSeconds': _botSeconds,
         'currentView': _currentView,
@@ -74,8 +75,11 @@ extension GameStateSaveCodec on GameState {
           for (final e in _portraitStrategies.entries) e.key.toString(): e.value,
         },
         'worshippedHeroes': _worshippedHeroes.toList(),
+        'musterDraws': _musterDraws,
+        'dailyGiftClaimed': _dailyGiftClaimed,
         'capitalGarrison': _capitalGarrison,
         'troopLevels': _troopLevels,
+        'leapStacks': _leapStacks,
         'activePolicies': {
           for (final e in _activePolicies.entries) e.key.toString(): e.value,
         },
@@ -91,6 +95,14 @@ extension GameStateSaveCodec on GameState {
           for (final e in _remains.entries) e.key.toString(): e.value,
         },
         'rivalUnions': _rivalUnions,
+        'battleReports': [
+          for (final r in _battleReports)
+            {
+              ...r,
+              'time': (r['time'] as DateTime?)?.toIso8601String(),
+            },
+        ],
+        'marches': _marches,
         'gameOver': _gameOver,
         'gameWon': _gameWon,
         'victoryTitle': _victoryTitle,
@@ -151,6 +163,7 @@ extension GameStateSaveCodec on GameState {
         intOr(data['divisionIndex'], 0).clamp(0, GameData.DIVISIONS.length - 1);
     _divisionChosen = boolOr(data['divisionChosen'], false);
     _tierWinPoints = intOr(data['tierWinPoints'], 0);
+    _playerName = strOr(data['playerName'], 'Commander');
     _botDifficultyIndex = intOr(data['botDifficultyIndex'], 1)
         .clamp(0, GameData.BOT_DIFFICULTIES.length - 1);
     _botSeconds = intOr(data['botSeconds'], 0);
@@ -248,9 +261,16 @@ extension GameStateSaveCodec on GameState {
       }
     }
 
+    _musterDraws = intOr(data['musterDraws'], 20).clamp(0, GameState.musterGuarantee);
+    _dailyGiftClaimed = boolOr(data['dailyGiftClaimed'], false);
+
     _troopLevels.clear();
     mapOr(data['troopLevels'])
         .forEach((k, v) => _troopLevels[k] = intOr(v, 1).clamp(1, 6));
+
+    // Clamp against the cap implied by the restored training level.
+    _leapStacks =
+        intOr(data['leapStacks'], 0).clamp(0, leapStackCap);
 
     _capitalGarrison.clear();
     mapOr(data['capitalGarrison']).forEach((k, v) {
@@ -326,6 +346,25 @@ extension GameStateSaveCodec on GameState {
           'ticks': intOr(m['ticks'], 0),
           'defeated': boolOr(m['defeated'], false),
         });
+      }
+    }
+
+    _battleReports.clear();
+    if (data['battleReports'] is List) {
+      for (final r in data['battleReports'] as List) {
+        if (r is! Map) continue;
+        final m = Map<String, dynamic>.from(r);
+        final t = m['time'];
+        _battleReports.add({
+          ...m,
+          'time': t is String ? DateTime.tryParse(t) ?? DateTime.now() : DateTime.now(),
+        });
+      }
+    }
+    _marches.clear();
+    if (data['marches'] is List) {
+      for (final r in data['marches'] as List) {
+        if (r is Map) _marches.add(Map<String, dynamic>.from(r));
       }
     }
 

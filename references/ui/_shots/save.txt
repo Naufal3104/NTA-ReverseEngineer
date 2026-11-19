@@ -1,0 +1,28 @@
+crop               1867.5798611119553
+wood               1548.590277777572
+stone              911.1947222215557
+iron               22
+exp_scroll         0
+scroll             0
+nail               0
+woundedTroops      0
+rewardPoints       100
+elapsedSeconds     15457
+seasonIndex        0
+dayInSeason        1
+divisionIndex      0
+divisionChosen     True
+tierWinPoints      0
+botDifficultyIndex 1
+currentView        capital
+gameOver           False
+gameWon            False
+capitalBuildings   {'palace': 1, 'barracks': 1, 'smithy': 0, 'hall_of_heroes': 0, 'drill_ground': 0, 'clinic': 0, 'barn': 0, 'warehouse': 0, 'market': 0, 'embassy': 0, 'union_market': 0}
+troops             {'longspearman': 30, 'longbowman': 25, 'saber_shield': 20, 'sword_cavalry': 15}
+conquered          17
+remains            {'3001': (1, 'neutral'), '3002': (16, 'Golden Harvest'), '3003': (16, 'Stone Pact'), '3004': (15, 'Iron Lotus')}
+rivals             [('Golden Harvest', 256, 64), ('Stone Pact', 256, 64), ('Iron Lotus', 256, 64)]
+log                3 lines
+   · World Map generated: 80x80 tiles.
+   · Capital Fortress established at (39-40, 39-40) [2x2 Space].
+   · Game loaded successfully.

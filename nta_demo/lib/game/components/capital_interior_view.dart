@@ -2584,27 +2584,30 @@ class _CapitalInteriorViewState extends State<CapitalInteriorView> {
                                 ),
                               ],
                             ),
-                            child: ClipRect(
-                              child: Column(
-                                children: List.generate(gridSize, (r) {
-                                  return SizedBox(
-                                    height: cellSize.toDouble(),
-                                    child: ClipRect(
-                                      child: Row(
-                                        children: List.generate(gridSize, (c) {
-                                          return GestureDetector(
-                                            onTap: () => _onTileTapped(context, state, r, c, capitalBuildings),
-                                            child: SizedBox(
-                                              width: cellSize.toDouble(),
-                                              height: cellSize.toDouble(),
-                                              child: _buildCell(r, c, capitalBuildings, state),
-                                            ),
-                                          );
-                                        }),
+                            // RepaintBoundary isolates the static 17x17 grid from facility popup rebuilds.
+                            child: RepaintBoundary(
+                              child: ClipRect(
+                                child: Column(
+                                  children: List.generate(gridSize, (r) {
+                                    return SizedBox(
+                                      height: cellSize.toDouble(),
+                                      child: ClipRect(
+                                        child: Row(
+                                          children: List.generate(gridSize, (c) {
+                                            return GestureDetector(
+                                              onTap: () => _onTileTapped(context, state, r, c, capitalBuildings),
+                                              child: SizedBox(
+                                                width: cellSize.toDouble(),
+                                                height: cellSize.toDouble(),
+                                                child: _buildCell(r, c, capitalBuildings, state),
+                                              ),
+                                            );
+                                          }),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }),
+                                    );
+                                  }),
+                                ),
                               ),
                             ),
                           ),
