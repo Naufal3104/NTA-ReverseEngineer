@@ -19,23 +19,27 @@ class MapHudRail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Rail positioned higher so all 5 buttons fit above bottom UI
-        Positioned(top: 0, right: 0, child: _buildRail(context)),
-        // Timer chips positioned to the right of rail, aligned with buttons 2-3
-        Positioned(
-          top: 50,
-          right: 56,
-          child: _timerChip(context, 'ic_record', '13:05', callbacks.onConstructionQueue),
-        ),
-        Positioned(
-          top: 100,
-          right: 56,
-          child: _timerChip(context, 'ic_popularity', '120:35', callbacks.onMarchList),
-        ),
-      ],
+    // Stack needs bounded constraints — wrap in SizedBox with known rail height.
+    // Rail: 5 btns × 44 + 4 gaps × 4 + padding 12 = ~248px. Timer chips extend to right.
+    return SizedBox(
+      width: 120, // rail(44+6+6) + timer chips (~70)
+      height: 260,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Positioned(top: 0, right: 0, child: _buildRail(context)),
+          Positioned(
+            top: 50,
+            right: 56,
+            child: _timerChip(context, 'ic_record', '13:05', callbacks.onConstructionQueue),
+          ),
+          Positioned(
+            top: 100,
+            right: 56,
+            child: _timerChip(context, 'ic_popularity', '120:35', callbacks.onMarchList),
+          ),
+        ],
+      ),
     );
   }
 
