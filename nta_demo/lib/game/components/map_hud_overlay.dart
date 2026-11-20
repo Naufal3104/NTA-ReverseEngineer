@@ -31,15 +31,17 @@ class MapHudRail extends StatelessWidget {
           // Rail at top
           Positioned(top: 0, right: 0, child: _buildRail(context)),
           // Timer chips BELOW rail (diturunkan lebih)
+          // Construction Queue — hammer (ic_record) ✓
           Positioned(
             top: 300,
             right: 0,
             child: _timerChip(context, 'ic_record', '13:05', callbacks.onConstructionQueue),
           ),
+          // March List — moving troops/recruit (up_recruit)
           Positioned(
             top: 345,
             right: 0,
-            child: _timerChip(context, 'ic_popularity', '120:35', callbacks.onMarchList),
+            child: _timerChip(context, 'custom', '120:35', callbacks.onMarchList, customIcon: Image.asset(NtaAssets.marchIcon, width: 16, height: 16, fit: BoxFit.contain)),
           ),
         ],
       ),
@@ -60,20 +62,20 @@ class MapHudRail extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // 1. Setting (4 kubus)
+          // 1. Setting (4 kubus) — ic_max ✓
           _RailBtn(icon: NtaAssets.chromeImage('ic_max', width: 26, height: 26, fit: BoxFit.contain), onTap: null),
           const SizedBox(height: 4),
-          // 2. Profil
+          // 2. Profil — ic_user ✓
           _RailBtn(icon: NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onProfile),
           const SizedBox(height: 4),
-          // 3. List hero - hero portrait icon
-          _RailBtn(icon: NtaAssets.chromeImage('ic_user', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onHeroes),
+          // 3. List hero — hero portrait
+          _RailBtn(icon: Image.asset(NtaAssets.heroPortraitIcon(310101), width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onHeroes),
           const SizedBox(height: 4),
-          // 4. General Muster Terrace - gacha/gift icon ✓
-          _RailBtn(icon: NtaAssets.chromeImage('ic_confirm', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onGeneralMuster),
+          // 4. General Muster Terrace — giftbox/muster icon
+          _RailBtn(icon: Image.asset(NtaAssets.musterIcon, width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onGeneralMuster),
           const SizedBox(height: 4),
-          // 5. Ranking pemain - trophy/star icon ✓
-          _RailBtn(icon: NtaAssets.chromeImage('ic_popularity', width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onBattleRankings),
+          // 5. Ranking pemain — rank coin/trophy
+          _RailBtn(icon: Image.asset(NtaAssets.rankingIcon, width: 26, height: 26, fit: BoxFit.contain), onTap: callbacks.onBattleRankings),
         ],
       ),
     );
@@ -114,8 +116,9 @@ Widget _timerChip(
   BuildContext context,
   String chromeKey,
   String label,
-  VoidCallback? onTap,
-) {
+  VoidCallback? onTap, {
+  Widget? customIcon,
+}) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
@@ -128,7 +131,8 @@ Widget _timerChip(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          NtaAssets.chromeImage(chromeKey, width: 16, height: 16, fit: BoxFit.contain),
+          customIcon ??
+              NtaAssets.chromeImage(chromeKey, width: 16, height: 16, fit: BoxFit.contain),
           const SizedBox(width: 4),
           Text(label, style: NtaText.xs.copyWith(fontWeight: FontWeight.w700)),
         ],

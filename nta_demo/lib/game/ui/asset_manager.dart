@@ -255,6 +255,37 @@ class NtaAssets {
   /// voucher, stamina, win_point, shop_ingot_1..6.
   static String currencyIcon(String key) => 'assets/images/ui/$key.png';
 
+  /// Ikon hadiah/roda putar (Lucky Wheel) — `giftbox_101.png`.
+  static String get luckyWheelIcon => 'assets/images/ui/giftbox_101.png';
+
+  /// Ikon toko (Shop) — `shop_ingot_1.png`.
+  static String get shopIcon => 'assets/images/ui/shop_ingot_1.png';
+
+  /// Ikon peta (Map Overview) — capital skin level 1 sebagai minimap.
+  static String get mapIcon => 'assets/images/capital/city_1001.png';
+
+  /// Ikon pasukan/army (All Armies) — ikon pasukan minimal.
+  static String get armiesIcon => 'assets/images/plots/land__army_min_icon.png';
+
+  /// Ikon rekrut/gerak (March List) — ikon rekrut naik.
+  static String get marchIcon => 'assets/images/ui/up_recruit.png';
+
+  /// Ikon muster/General Muster Terrace — giftbox.
+  static String get musterIcon => 'assets/images/ui/giftbox_101.png';
+
+  /// Ikon ranking/peringkat — rank coin.
+  static String get rankingIcon => 'assets/images/ui/rank_coin.png';
+
+  /// Ikon reward points (bronze tally) — win point.
+  static String get rewardPointsIcon => 'assets/images/ui/win_point.png';
+
+  /// Ikon capital (masuk capital) — city_1001.
+  static String get capitalIcon => 'assets/images/capital/city_1001.png';
+
+  /// Ikon hero/portrait untuk rail heroes list.
+  static String heroPortraitIcon(int portrayalId) =>
+      'assets/images/heroes/portrayal_$portrayalId.png';
+
   /// Ikon equipment dari atlas asli `tmp/image/equip/equip_<id>`.
   /// Common: 6001–6044. Exclusive: 6101–6124.
   /// Null kalau id di luar jangkauan ekstraksi.

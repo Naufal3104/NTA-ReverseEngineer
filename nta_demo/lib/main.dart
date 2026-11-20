@@ -615,10 +615,9 @@ class _TopRightPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Reward Points (di game asli: coin dihapus, diganti tally/reward points).
-        // Ikon: bronze tally/coin - pakai ic_popularity (star = reward)
+        // Reward Points — ikon win_point (bronze tally/coin)
         NtaCounterPill(
-          icon: NtaAssets.chromeImage('ic_popularity', width: 18, height: 18, fit: BoxFit.contain),
+          icon: Image.asset(NtaAssets.rewardPointsIcon, width: 18, height: 18, fit: BoxFit.contain),
           value: '$rewardPoints',
         ),
         // Ranked: Tier Win Points + current tier.
@@ -688,7 +687,7 @@ class _BottomLeftPanel extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Message button (always top)
+          // Message button (always top) — ic_chat ✓
           _ChromeActionButton(
             chromeKey: 'ic_chat',
             label: 'Chat',
@@ -801,30 +800,34 @@ class _BottomRightPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Lucky Wheel - gift box ✓
+          // Lucky Wheel — giftbox icon
           _ChromeActionButton(
-            chromeKey: 'ic_confirm',
+            chromeKey: 'custom',
+            customIcon: Image.asset(NtaAssets.luckyWheelIcon, width: 28, height: 28, fit: BoxFit.contain),
             label: 'Lucky Wheel',
             onPressed: () => LuckyWheelPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Shop - shop/cart icon (pakai ic_add_friend sebagai shop icon)
+          // Shop — shop_ingot icon
           _ChromeActionButton(
-            chromeKey: 'ic_add_friend',
+            chromeKey: 'custom',
+            customIcon: Image.asset(NtaAssets.shopIcon, width: 28, height: 28, fit: BoxFit.contain),
             label: 'Shop',
             onPressed: () => ShopPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Map Overview - minimap/grid icon (pakai ic_max = 4 kubus/grid)
+          // Map Overview — capital/minimap icon
           _ChromeActionButton(
-            chromeKey: 'ic_max',
+            chromeKey: 'custom',
+            customIcon: Image.asset(NtaAssets.mapIcon, width: 28, height: 28, fit: BoxFit.contain),
             label: 'Map',
             onPressed: () => MapOverviewPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Armies - shield/army icon (pakai ic_popularity = star/unit)
+          // Armies — army icon (2 helmets)
           _ChromeActionButton(
-            chromeKey: 'ic_popularity',
+            chromeKey: 'custom',
+            customIcon: Image.asset(NtaAssets.armiesIcon, width: 28, height: 28, fit: BoxFit.contain),
             label: 'Armies',
             badge: state.troops.values.fold<int>(0, (a, b) => a + b),
             onPressed: () => ArmiesPanel.show(context),
@@ -845,12 +848,14 @@ class _ChromeActionButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final int badge;
+  final Widget? customIcon;
 
   const _ChromeActionButton({
     required this.chromeKey,
     required this.label,
     this.onPressed,
     this.badge = 0,
+    this.customIcon,
   });
 
   @override
@@ -875,7 +880,8 @@ class _ChromeActionButton extends StatelessWidget {
                   ],
                 ),
                 child: Center(
-                  child: NtaAssets.chromeImage(chromeKey, width: 28, height: 28, fit: BoxFit.contain),
+                  child: customIcon ??
+                      NtaAssets.chromeImage(chromeKey, width: 28, height: 28, fit: BoxFit.contain),
                 ),
               ),
             ),
