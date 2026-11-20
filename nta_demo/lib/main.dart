@@ -616,8 +616,9 @@ class _TopRightPanel extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Reward Points (di game asli: coin dihapus, diganti tally/reward points).
+        // Ikon: bronze tally/coin - pakai ic_popularity (star = reward)
         NtaCounterPill(
-          icon: const Icon(Icons.redeem, size: 18, color: NtaColors.text),
+          icon: NtaAssets.chromeImage('ic_popularity', width: 18, height: 18, fit: BoxFit.contain),
           value: '$rewardPoints',
         ),
         // Ranked: Tier Win Points + current tier.
@@ -800,30 +801,30 @@ class _BottomRightPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Lucky Wheel
+          // Lucky Wheel - gift box ✓
           _ChromeActionButton(
             chromeKey: 'ic_confirm',
             label: 'Lucky Wheel',
             onPressed: () => LuckyWheelPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Shop
+          // Shop - shop/cart icon (pakai ic_add_friend sebagai shop icon)
           _ChromeActionButton(
-            chromeKey: 'ic_chat',
+            chromeKey: 'ic_add_friend',
             label: 'Shop',
             onPressed: () => ShopPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Map Overview
+          // Map Overview - minimap/grid icon (pakai ic_max = 4 kubus/grid)
           _ChromeActionButton(
             chromeKey: 'ic_max',
             label: 'Map',
             onPressed: () => MapOverviewPanel.show(context),
           ),
           const SizedBox(width: 6),
-          // Armies (All Armies / Territories / Battle Report tabs)
+          // Armies - shield/army icon (pakai ic_popularity = star/unit)
           _ChromeActionButton(
-            chromeKey: 'ic_user',
+            chromeKey: 'ic_popularity',
             label: 'Armies',
             badge: state.troops.values.fold<int>(0, (a, b) => a + b),
             onPressed: () => ArmiesPanel.show(context),
